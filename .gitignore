@@ -21,6 +21,7 @@ project.lock.json
 project.fragment.lock.json
 
 # Tệp cấu hình cá nhân (chứa connection string, JWT secret, v.v.)
+appsettings.json
 appsettings.*.json
 !appsettings.Example.json
 
