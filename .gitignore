@@ -1,0 +1,79 @@
+## --- ASP.NET Core / .NET ---
+bin/
+obj/
+TestResults/
+artifacts/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.pdb
+*.cache
+*.dbmdl
+*.dbproj.schemaview
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+project.lock.json
+project.fragment.lock.json
+
+# Tệp cấu hình cá nhân (chứa connection string, JWT secret, v.v.)
+appsettings.*.json
+!appsettings.Example.json
+
+# Tệp log phát sinh trong quá trình chạy
+Logs/
+*.log
+
+## --- React / TypeScript / Node.js (Vite) ---
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# ESLint / Vite cache
+.eslintcache
+.vite/
+
+# Logs của npm/yarn/pnpm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Tệp môi trường (chứa API Keys, Secret...)
+.env*
+!.env.example
+!.env.template
+
+## --- [ Công cụ lập trình (IDE) ] ---
+# Visual Studio
+.vs/
+[Cc]heckout/
+[Pp]ublish/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains (Rider)
+.idea/
+
+## --- Hệ điều hành ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*.swp
