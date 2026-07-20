@@ -1,0 +1,6 @@
+@API_ShareDocuments_HostAddress = http://localhost:5193
+
+GET {{API_ShareDocuments_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
