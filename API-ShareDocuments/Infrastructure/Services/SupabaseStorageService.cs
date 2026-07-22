@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Services;
 using Infrastructure.Configurations;
 using Microsoft.Extensions.Options;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -17,11 +18,10 @@ namespace Infrastructure.Services
             _options = options.Value;
         }
 
-        public async Task<string> UploadFileAsync(Stream fileStream, string filePath, string contentType, CancellationToken cancellationToken = default)
+        public async Task<string> UploadAsync(Stream fileStream, string filePath, string contentType, CancellationToken cancellationToken = default)
         {
             using var content = new StreamContent(fileStream);
             content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-
             var response = await _httpClient.PostAsync($"object/{_options.Bucket}/{filePath}", content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
@@ -33,7 +33,22 @@ namespace Infrastructure.Services
             return filePath;
         }
 
-        public async Task<bool> DeleteFileAsync(string filePath, CancellationToken cancellationToken = default)
+        public async Task<string> UpdateAsync(Stream fileStream, string filePath, string contentType, CancellationToken cancellationToken = default)
+        {
+            using var content = new StreamContent(fileStream);
+            content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            var response = await _httpClient.PutAsync($"object/{_options.Bucket}/{filePath}", content, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new Exception($"Cập nhật file trên Supabase Storage thất bại: {error}");
+            }
+
+            return filePath;
+        }
+
+        public async Task<bool> DeleteAsync(string filePath, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.DeleteAsync($"object/{_options.Bucket}/{filePath}", cancellationToken);
             return response.IsSuccessStatusCode;
@@ -44,13 +59,41 @@ namespace Infrastructure.Services
             return $"{_options.Url}/storage/v1/object/public/{_options.Bucket}/{filePath}";
         }
 
-        public async Task<string> CreateSignedUrlAsync(string filePath, int expiresInSeconds, CancellationToken cancellationToken = default)
+        public async Task<(Stream Stream, string ContentType)> DownloadAsync(string filePath, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"object/{_options.Bucket}/{filePath}", HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                    throw new FileNotFoundException($"Không tìm thấy file '{filePath}' trên Supabase Storage.");
+
+                var error = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new Exception($"Tải file từ Supabase Storage thất bại: {error}");
+            }
+
+            var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+            return (stream, contentType);
+        }
+
+        public async Task<bool> ExistsAsync(string filePath, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync($"object/info/{_options.Bucket}/{filePath}", cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<string> GenerateSignedDownloadUrlAsync(string filePath, int expiresInSeconds, CancellationToken cancellationToken = default)
         {
             var payload = new { expiresIn = expiresInSeconds };
             var response = await _httpClient.PostAsJsonAsync($"object/sign/{_options.Bucket}/{filePath}", payload, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                    throw new FileNotFoundException($"Không tìm thấy file '{filePath}' trên Supabase Storage.");
+
                 var error = await response.Content.ReadAsStringAsync(cancellationToken);
                 throw new Exception($"Tạo signed URL thất bại: {error}");
             }
