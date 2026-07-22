@@ -18,5 +18,7 @@ namespace Application.Interfaces.UnitOfWork
         ICommentRepository CommentRepository { get; }
         IDocumentRepository DocumentRepository { get; }
         IReportRepository ReportRepository { get; }
+        IDocumentGroupRepository DocumentGroupRepository { get; }
+        IDocumentFileRepository DocumentFileRepository { get; }
     }
 }
