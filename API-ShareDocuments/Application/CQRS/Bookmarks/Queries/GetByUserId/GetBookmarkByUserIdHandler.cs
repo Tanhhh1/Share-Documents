@@ -7,18 +7,18 @@ using MediatR;
 
 namespace Application.CQRS.Bookmarks.Queries.GetBookmarkByUserId
 {
-    public class GetBookmarksByUserIdHandler : IRequestHandler<GetBookmarksByUserIdQuery, ApiResult<PageList<BookmarkDto>>>
+    public class GetBookmarkByUserIdHandler : IRequestHandler<GetBookmarkByUserIdQuery, ApiResult<PageList<BookmarkDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
 
-        public GetBookmarksByUserIdHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
+        public GetBookmarkByUserIdHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
         {
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
         }
 
-        public async Task<ApiResult<PageList<BookmarkDto>>> Handle(GetBookmarksByUserIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<PageList<BookmarkDto>>> Handle(GetBookmarkByUserIdQuery request, CancellationToken cancellationToken)
         {
             if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
                 return ApiResult<PageList<BookmarkDto>>.Failure("Người dùng chưa đăng nhập");

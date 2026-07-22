@@ -42,7 +42,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         [HttpGet]
         [ProducesResponseType(typeof(ApiResult<PageList<BookmarkDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByUser([FromQuery] GetBookmarksByUserIdQuery query)
+        public async Task<IActionResult> GetByUser([FromQuery] GetBookmarkByUserIdQuery query)
         {
             var result = await _mediator.Send(query);
             if (!result.Succeeded) return BadRequest(result);

@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Faculties.Queries.GetByFacultyId
 {
-    public class GetByFacultyHandler : IRequestHandler<GetByFacultyIdQuery, ApiResult<FacultyDto>>
+    public class GetByFacultyIdHandler : IRequestHandler<GetByFacultyIdQuery, ApiResult<FacultyDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public GetByFacultyHandler(IUnitOfWork unitOfWork)
+        public GetByFacultyIdHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
