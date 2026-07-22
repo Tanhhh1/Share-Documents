@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.CQRS.Tags.Validators
 {
-    public class UpdateTagValidator : AbstractValidator<UpdateTagCommand>
+    public class UpdateTagValidate : AbstractValidator<UpdateTagCommand>
     {
-        public UpdateTagValidator()
+        public UpdateTagValidate()
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0).WithMessage("Mã thẻ phân loại không hợp lệ");

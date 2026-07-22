@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.CQRS.Tags.Validators
 {
-    public class CreateTagValidator : AbstractValidator<CreateTagCommand>
+    public class CreateTagValidate : AbstractValidator<CreateTagCommand>
     {
-        public CreateTagValidator()
+        public CreateTagValidate()
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Tên tag không được để trống")

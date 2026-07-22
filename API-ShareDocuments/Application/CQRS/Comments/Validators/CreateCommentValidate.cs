@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.CQRS.Comments.Validators
 {
-    public class CreateCommentValidator : AbstractValidator<CreateCommentCommand>
+    public class CreateCommentValidate : AbstractValidator<CreateCommentCommand>
     {
-        public CreateCommentValidator()
+        public CreateCommentValidate()
         {
             RuleFor(x => x.DocumentId)
                 .GreaterThan(0).WithMessage("Tài liệu không hợp lệ");
