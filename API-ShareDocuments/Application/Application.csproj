@@ -23,8 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\DocumentGroups\Queries\GetGroupByUserID\" />
-    <Folder Include="CQRS\Documents\" />
+    <Folder Include="CQRS\Documents\Queries\" />
     <Folder Include="Exceptions\" />
   </ItemGroup>
 

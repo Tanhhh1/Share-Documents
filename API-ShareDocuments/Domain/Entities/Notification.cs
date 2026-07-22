@@ -8,8 +8,8 @@ namespace Domain.Entities
     {
         public int UserId { get; set; }
         public NotificationType Type { get; set; }
-        public string Title { get; set; } = null!;
-        public string Content { get; set; } = null!;
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
         public EntityType RelatedEntityType { get; set; }
         public int RelatedEntityId { get; set; }
         public bool IsRead { get; set; }

@@ -7,7 +7,7 @@ namespace Domain.Entities
     public class Document : BaseEntity
     {
         public int? GroupId { get; set; }
-        public string Title { get; set; } = null!;
+        public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
         public int SubjectId { get; set; }
         public int UserId { get; set; }

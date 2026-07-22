@@ -8,7 +8,7 @@ namespace Domain.Entities
         public int DocumentId { get; set; }
         public int UserId { get; set; }
         public int? ParentCommentId { get; set; }
-        public string Content { get; set; } = null!;
+        public string Content { get; set; } = string.Empty;
         public bool IsDeleted { get; set; } = false;
         public Document Document { get; set; } = null!;
         public User User { get; set; } = null!;

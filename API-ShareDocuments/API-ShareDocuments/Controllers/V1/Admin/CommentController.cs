@@ -3,8 +3,6 @@ using Application.Common;
 using Application.CQRS.Comments.Commands.HideComment;
 using Application.CQRS.Comments.DTOs;
 using Application.CQRS.Comments.Queries.GetAllCmt;
-using Application.CQRS.Reports.DTOs;
-using Application.CQRS.Reports.Queries.GetAllReport;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

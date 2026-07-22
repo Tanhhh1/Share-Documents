@@ -7,8 +7,8 @@ namespace Domain.Entities
     {
         public int DocumentId { get; set; }
         public int UserId { get; set; }
-        public string Reason { get; set; } = null!;
-        public string Content { get; set; } = null!;
+        public string Reason { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
         public Document Document { get; set; } = null!;
         public User User { get; set; } = null!;
     }

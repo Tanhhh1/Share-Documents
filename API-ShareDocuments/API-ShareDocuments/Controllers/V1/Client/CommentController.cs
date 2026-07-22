@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_ShareDocuments.Controllers.V1.Client
 {
+    [Authorize(Roles = "User")]
     public class CommentController : ApiController
     {
         private readonly IMediator _mediator;
@@ -19,7 +20,6 @@ namespace API_ShareDocuments.Controllers.V1.Client
         }
 
         [HttpPost]
-        [Authorize(Roles = "User")]
         [ProducesResponseType(typeof(ApiResult<CommentDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateCommentCommand command)
@@ -30,7 +30,6 @@ namespace API_ShareDocuments.Controllers.V1.Client
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "User")]
         [ProducesResponseType(typeof(ApiResult<bool>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(int id)
@@ -41,6 +40,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         }
 
         [HttpGet("document/{id}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ApiResult<PageList<CommentDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByDocument(int id)

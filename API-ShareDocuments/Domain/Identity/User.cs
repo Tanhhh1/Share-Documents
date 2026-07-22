@@ -4,7 +4,7 @@ namespace Domain.Identity
 {
     public class User : IdentityUser<int>
     {
-        public string FullName { get; set; } = null!;
+        public string FullName { get; set; } = string.Empty;
         public bool IsMember { get; set; }
         public DateTime? MemberExpiresAt { get; set; }
         public bool IsActive { get; set; } = true;
