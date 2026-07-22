@@ -23,8 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\DocumentGroups\Validators\" />
-    <Folder Include="CQRS\DocumentGroups\Queries\" />
+    <Folder Include="CQRS\DocumentGroups\Queries\GetGroupByUserID\" />
     <Folder Include="CQRS\Documents\" />
     <Folder Include="Exceptions\" />
   </ItemGroup>

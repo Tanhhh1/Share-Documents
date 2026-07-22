@@ -21,7 +21,7 @@ namespace Application.CQRS.Bookmarks.Queries.GetBookmarkByUserId
         public async Task<ApiResult<PageList<BookmarkDto>>> Handle(GetBookmarksByUserIdQuery request, CancellationToken cancellationToken)
         {
             if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<PageList<BookmarkDto>>.Failure("Người dùng chưa đăng nhập.");
+                return ApiResult<PageList<BookmarkDto>>.Failure("Người dùng chưa đăng nhập");
 
             var userId = _currentUser.Id.Value;
 
