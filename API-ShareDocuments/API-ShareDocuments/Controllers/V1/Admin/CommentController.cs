@@ -21,7 +21,7 @@ namespace API_ShareDocuments.Controllers.V1.Admin
         [HttpGet]
         [ProducesResponseType(typeof(ApiResult<PageList<ListCommentDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<PageList<ListCommentDto>>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllCmtQuery query)
+        public async Task<IActionResult> GetAll([FromQuery] GetAllcommentQuery query)
         {
             var result = await _mediator.Send(query);
             if (!result.Succeeded)
@@ -34,7 +34,7 @@ namespace API_ShareDocuments.Controllers.V1.Admin
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Hide(int id)
         {
-            var result = await _mediator.Send(new HideCmtCommand { Id = id });
+            var result = await _mediator.Send(new HideCommentCommand { Id = id });
             if (!result.Succeeded) return BadRequest(result);
             return Ok(result);
         }

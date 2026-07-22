@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Comments.Commands.HideComment
 {
-    public class HideCmtHandler : IRequestHandler<HideCmtCommand, ApiResult<bool>>
+    public class HideCommentHandler : IRequestHandler<HideCommentCommand, ApiResult<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public HideCmtHandler(IUnitOfWork unitOfWork)
+        public HideCommentHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResult<bool>> Handle(HideCmtCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<bool>> Handle(HideCommentCommand request, CancellationToken cancellationToken)
         {
             var comment = await _unitOfWork.CommentRepository
                 .GetByCondition(c => c.Id == request.Id)

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.CQRS.Comments.Queries.GetAllCmt
 {
-    public class GetAllCmtQuery : IRequest<ApiResult<PageList<ListCommentDto>>>
+    public class GetAllcommentQuery : IRequest<ApiResult<PageList<ListCommentDto>>>
     {
         public string? Keyword { get; set; }
         public int? DocumentId { get; set; }

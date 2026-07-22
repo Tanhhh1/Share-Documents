@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.CQRS.Comments.Commands.CreateComment
 {
-    public class CreateCmtCommand : IRequest<ApiResult<CommentDto>>
+    public class CreateCommentCommand : IRequest<ApiResult<CommentDto>>
     {
         public int DocumentId { get; set; }
         public int? ParentCommentId { get; set; }

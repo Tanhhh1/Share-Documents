@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.CQRS.Comments.Validators
 {
-    public class CreateCommentValidator : AbstractValidator<CreateCmtCommand>
+    public class CreateCommentValidator : AbstractValidator<CreateCommentCommand>
     {
         public CreateCommentValidator()
         {

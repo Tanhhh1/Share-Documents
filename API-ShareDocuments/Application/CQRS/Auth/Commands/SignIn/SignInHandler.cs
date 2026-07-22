@@ -2,7 +2,6 @@
 using Application.CQRS.Auth.DTOs;
 using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
-using Domain.Entities;
 using Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

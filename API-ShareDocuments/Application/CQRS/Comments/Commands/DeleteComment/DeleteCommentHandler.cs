@@ -6,18 +6,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Comments.Commands.DeleteComment
 {
-    public class DeleteCmtHandler : IRequestHandler<DeleteCmtCommand, ApiResult<bool>>
+    public class DeleteCommentHandler : IRequestHandler<DeleteCommentCommand, ApiResult<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
 
-        public DeleteCmtHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
+        public DeleteCommentHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
         {
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
         }
 
-        public async Task<ApiResult<bool>> Handle(DeleteCmtCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<bool>> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
         {
             if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
                 return ApiResult<bool>.Failure("Người dùng chưa đăng nhập");

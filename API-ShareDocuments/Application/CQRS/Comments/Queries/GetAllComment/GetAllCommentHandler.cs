@@ -7,16 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Comments.Queries.GetAllCmt
 {
-    public class GetAllCmtHandler : IRequestHandler<GetAllCmtQuery, ApiResult<PageList<ListCommentDto>>>
+    public class GetAllCommentHandler : IRequestHandler<GetAllcommentQuery, ApiResult<PageList<ListCommentDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public GetAllCmtHandler(IUnitOfWork unitOfWork)
+        public GetAllCommentHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResult<PageList<ListCommentDto>>> Handle(GetAllCmtQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<PageList<ListCommentDto>>> Handle(GetAllcommentQuery request, CancellationToken cancellationToken)
         {
             var comments = _unitOfWork.CommentRepository.GetByCondition().AsNoTracking();
 

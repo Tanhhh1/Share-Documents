@@ -22,7 +22,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         [Authorize(Roles = "User")]
         [ProducesResponseType(typeof(ApiResult<CommentDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CreateCmtCommand command)
+        public async Task<IActionResult> Create([FromBody] CreateCommentCommand command)
         {
             var result = await _mediator.Send(command);
             if (!result.Succeeded) return BadRequest(result);
@@ -35,7 +35,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _mediator.Send(new DeleteCmtCommand { Id = id });
+            var result = await _mediator.Send(new DeleteCommentCommand { Id = id });
             if (!result.Succeeded) return BadRequest(result);
             return Ok(result);
         }
@@ -45,7 +45,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByDocument(int id)
         {
-            var result = await _mediator.Send(new GetCmtByDocIdQuery { Id = id });
+            var result = await _mediator.Send(new GetCommentByDocIdQuery { Id = id });
             if (!result.Succeeded) return BadRequest(result);
             return Ok(result);
         }

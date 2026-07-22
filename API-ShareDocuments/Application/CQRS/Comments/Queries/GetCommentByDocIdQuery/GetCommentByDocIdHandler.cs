@@ -7,16 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Comments.Queries.GetCmtByDocIdQuery
 {
-    public class GetCmtByDocIdHandler : IRequestHandler<GetCmtByDocIdQuery, ApiResult<PageList<CommentDto>>>
+    public class GetCommentByDocIdHandler : IRequestHandler<GetCommentByDocIdQuery, ApiResult<PageList<CommentDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public GetCmtByDocIdHandler(IUnitOfWork unitOfWork)
+        public GetCommentByDocIdHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResult<PageList<CommentDto>>> Handle(GetCmtByDocIdQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<PageList<CommentDto>>> Handle(GetCommentByDocIdQuery request, CancellationToken cancellationToken)
         {
             var listComment = _unitOfWork.CommentRepository
                 .GetByCondition(

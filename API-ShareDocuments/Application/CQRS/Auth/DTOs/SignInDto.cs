@@ -1,6 +1,4 @@
-﻿using Shared.Identity;
-
-namespace Application.CQRS.Auth.DTOs
+﻿namespace Application.CQRS.Auth.DTOs
 {
     public class SignInDto
     {
