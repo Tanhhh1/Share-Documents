@@ -25,7 +25,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         [ProducesResponseType(typeof(ApiResult<ProfileDto>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetProfile()
         {
-            var result = await _mediator.Send(new GetByUserIdQuery());
+            var result = await _mediator.Send(new GetMyProfileQuery());
             if (!result.Succeeded)
                 return BadRequest(result);
             return Ok(result);

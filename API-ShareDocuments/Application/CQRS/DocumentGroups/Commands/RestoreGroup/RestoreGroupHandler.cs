@@ -21,13 +21,10 @@ namespace Application.CQRS.DocumentGroups.Commands.RestoreGroup
 
         public async Task<ApiResult<DocumentGroupDto>> Handle(RestoreGroupCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<DocumentGroupDto>.Failure("Người dùng chưa đăng nhập");
-
             var documentGroup = await _unitOfWork.DocumentGroupRepository.GetByIdAsync(request.Id);
             if (documentGroup is null)
                 return ApiResult<DocumentGroupDto>.Failure("Không tìm thấy nhóm chủ đề");
-            if (documentGroup.UserId != _currentUser.Id.Value)
+            if (documentGroup.UserId != _currentUser.Id!.Value)
                 return ApiResult<DocumentGroupDto>.Failure("Bạn không có quyền khôi phục nhóm chủ đề này");
             if (!documentGroup.IsDeleted)
                 return ApiResult<DocumentGroupDto>.Failure("Nhóm chủ đề hiện không ở trạng thái bị xóa");
@@ -47,8 +44,8 @@ namespace Application.CQRS.DocumentGroups.Commands.RestoreGroup
                 _unitOfWork.DocumentRepository.Update(document);
             }
 
-            var dto = documentGroup.Adapt<DocumentGroupDto>();
-            return ApiResult<DocumentGroupDto>.Success(dto);
+            var documentGroupDto = documentGroup.Adapt<DocumentGroupDto>();
+            return ApiResult<DocumentGroupDto>.Success(documentGroupDto);
         }
     }
 }

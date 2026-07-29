@@ -19,10 +19,7 @@ namespace Application.CQRS.Bookmarks.Commands.DeleteBookmark
 
         public async Task<ApiResult<bool>> Handle(DeleteBookmarkCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<bool>.Failure("Người dùng chưa đăng nhập");
-
-            var userId = _currentUser.Id.Value;
+            var userId = _currentUser.Id!.Value;
 
             var bookmark = await _unitOfWork.BookmarkRepository
                 .GetByCondition(b => b.UserId == userId && b.DocumentId == request.Id)

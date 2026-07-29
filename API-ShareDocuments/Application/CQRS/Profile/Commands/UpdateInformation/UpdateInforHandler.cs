@@ -21,10 +21,7 @@ namespace Application.CQRS.Profile.Commands.UpdateInformation
 
         public async Task<ApiResult<ProfileDto>> Handle(UpdateInforCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<ProfileDto>.Failure("Người dùng chưa đăng nhập");
-
-            var user = await _userManager.FindByIdAsync(_currentUser.Id.Value.ToString());
+            var user = await _userManager.FindByIdAsync(_currentUser.Id!.Value.ToString());
             if (user is null)
                 return ApiResult<ProfileDto>.Failure("Tài khoản không tồn tại");
 

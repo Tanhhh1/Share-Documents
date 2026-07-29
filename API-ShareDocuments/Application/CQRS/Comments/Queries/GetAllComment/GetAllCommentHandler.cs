@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Comments.Queries.GetAllCmt
 {
-    public class GetAllCommentHandler : IRequestHandler<GetAllcommentQuery, ApiResult<PageList<ListCommentDto>>>
+    public class GetAllCommentHandler : IRequestHandler<GetAllCommentQuery, ApiResult<PageList<ListCommentDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,7 +16,7 @@ namespace Application.CQRS.Comments.Queries.GetAllCmt
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResult<PageList<ListCommentDto>>> Handle(GetAllcommentQuery request, CancellationToken cancellationToken)
+        public async Task<ApiResult<PageList<ListCommentDto>>> Handle(GetAllCommentQuery request, CancellationToken cancellationToken)
         {
             var comments = _unitOfWork.CommentRepository.GetByCondition().AsNoTracking();
 
@@ -35,11 +35,7 @@ namespace Application.CQRS.Comments.Queries.GetAllCmt
             if (request.IsDeleted.HasValue)
                 comments = comments.Where(c => c.IsDeleted == request.IsDeleted.Value);
 
-            comments = comments
-                .Include(c => c.Document)
-                .Include(c => c.User)
-                .Include(c => c.Replies)
-                .OrderByDescending(c => c.CreatedAt);
+            comments = comments.OrderByDescending(c => c.CreatedAt);
 
             var pageList = await PageList<ListCommentDto>.ToPagedListAsync(
                 comments.ProjectToType<ListCommentDto>(),

@@ -21,13 +21,10 @@ namespace Application.CQRS.DocumentGroups.Commands.DeleteGroup
 
         public async Task<ApiResult<DocumentGroupDto>> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<DocumentGroupDto>.Failure("Người dùng chưa đăng nhập");
-
             var documentGroup = await _unitOfWork.DocumentGroupRepository.GetByIdAsync(request.Id);
             if (documentGroup is null)
                 return ApiResult<DocumentGroupDto>.Failure("Không tìm thấy nhóm chủ đề");
-            if (documentGroup.UserId != _currentUser.Id.Value)
+            if (documentGroup.UserId != _currentUser.Id!.Value)
                 return ApiResult<DocumentGroupDto>.Failure("Bạn không có quyền xóa nhóm chủ đề này");
             if (documentGroup.IsDeleted)
                 return ApiResult<DocumentGroupDto>.Failure("Nhóm chủ đề đã bị xóa trước đó");
@@ -49,8 +46,8 @@ namespace Application.CQRS.DocumentGroups.Commands.DeleteGroup
                 _unitOfWork.DocumentRepository.Update(document);
             }
 
-            var dto = documentGroup.Adapt<DocumentGroupDto>();
-            return ApiResult<DocumentGroupDto>.Success(dto);
+            var documentGroupDto = documentGroup.Adapt<DocumentGroupDto>();
+            return ApiResult<DocumentGroupDto>.Success(documentGroupDto);
         }
     }
 }

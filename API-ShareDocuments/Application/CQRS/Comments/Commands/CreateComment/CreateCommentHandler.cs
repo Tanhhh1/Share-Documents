@@ -20,9 +20,6 @@ namespace Application.CQRS.Comments.Commands.CreateComment
         }
         public async Task<ApiResult<CommentDto>> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<CommentDto>.Failure("Người dùng chưa đăng nhập");
-
             if (request.ParentCommentId.HasValue)
             {
                 var parentExists = await _unitOfWork.CommentRepository
@@ -33,7 +30,7 @@ namespace Application.CQRS.Comments.Commands.CreateComment
             }
 
             var comment = request.Adapt<Domain.Entities.Comment>();
-            comment.UserId = _currentUser.Id.Value;
+            comment.UserId = _currentUser.Id!.Value;
             await _unitOfWork.CommentRepository.AddAsync(comment);
             await _unitOfWork.SaveChangesAsync();
             var commentDto = comment.Adapt<CommentDto>();

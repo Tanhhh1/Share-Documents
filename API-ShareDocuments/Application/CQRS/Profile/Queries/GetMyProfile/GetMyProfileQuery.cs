@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.CQRS.Profile.Queries.GetByUserId
 {
-    public class GetByUserIdQuery : IRequest<ApiResult<ProfileDto>>
+    public class GetMyProfileQuery : IRequest<ApiResult<ProfileDto>>
     {
     }
 }

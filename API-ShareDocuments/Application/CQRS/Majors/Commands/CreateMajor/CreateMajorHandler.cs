@@ -17,8 +17,8 @@ namespace Application.CQRS.Majors.Commands.CreateMajor
         }
         public async Task<ApiResult<MajorDto>> Handle(CreateMajorCommand request, CancellationToken cancellationToken)
         {
-            var facultyId = await _unitOfWork.FacultyRepository.GetByIdAsync(request.FacultyId);
-            if (facultyId is null)
+            var faculty = await _unitOfWork.FacultyRepository.GetByIdAsync(request.FacultyId);
+            if (faculty is null)
                 return ApiResult<MajorDto>.Failure("Khoa không tồn tại");
 
             var existingMajor = await _unitOfWork.MajorRepository

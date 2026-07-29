@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.CQRS.DocumentGroups.Queries.GetByUserId
 {
-    public class GetGroupByUserIdQuery : IRequest<ApiResult<PageList<DocumentGroupDto>>>
+    public class GetMyGroupQuery : IRequest<ApiResult<PageList<DocumentGroupDto>>>
     {
         public string? Search { get; set; }
         public DocumentStatus? Status { get; set; }

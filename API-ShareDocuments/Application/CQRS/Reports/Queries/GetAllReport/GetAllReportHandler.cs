@@ -30,7 +30,7 @@ namespace Application.CQRS.Reports.Queries.GetAllReport
             if (request.UserId.HasValue)
                 reports = reports.Where(r => r.UserId == request.UserId.Value);
 
-            reports = reports.Include(r => r.Document).Include(r => r.User).OrderByDescending(r => r.CreatedAt);
+            reports = reports.OrderByDescending(r => r.CreatedAt);
 
             var pageList = await PageList<ReportDto>.ToPagedListAsync(
                 reports.ProjectToType<ReportDto>(),

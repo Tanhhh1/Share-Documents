@@ -20,9 +20,6 @@ namespace Application.CQRS.Reports.Commands.CreateReport
 
         public async Task<ApiResult<bool>> Handle(CreateReportCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<bool>.Failure("Người dùng chưa đăng nhập");
-
             var documentExists = await _unitOfWork.DocumentRepository
                 .GetByCondition(d => d.Id == request.DocumentId)
                 .AnyAsync(cancellationToken);
@@ -31,7 +28,7 @@ namespace Application.CQRS.Reports.Commands.CreateReport
                 return ApiResult<bool>.Failure("Tài liệu không tồn tại");
 
             var report = request.Adapt<Domain.Entities.Report>();
-            report.UserId = _currentUser.Id.Value;
+            report.UserId = _currentUser.Id!.Value;
 
             await _unitOfWork.ReportRepository.AddAsync(report);
             await _unitOfWork.SaveChangesAsync();

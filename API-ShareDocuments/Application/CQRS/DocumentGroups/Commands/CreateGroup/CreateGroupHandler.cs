@@ -21,18 +21,15 @@ namespace Application.CQRS.DocumentGroups.Commands.CreateGroup
 
         public async Task<ApiResult<DocumentGroupDto>> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<DocumentGroupDto>.Failure("Người dùng chưa đăng nhập");
-
             var documentGroup = request.Adapt<DocumentGroup>();
-            documentGroup.UserId = _currentUser.Id.Value;
+            documentGroup.UserId = _currentUser.Id!.Value;
             documentGroup.Status = DocumentStatus.Pending;
 
             await _unitOfWork.DocumentGroupRepository.AddAsync(documentGroup);
             await _unitOfWork.SaveChangesAsync();
 
-            var dto = documentGroup.Adapt<DocumentGroupDto>();
-            return ApiResult<DocumentGroupDto>.Success(dto);
+            var documentGroupDto = documentGroup.Adapt<DocumentGroupDto>();
+            return ApiResult<DocumentGroupDto>.Success(documentGroupDto);
         }
     }
 }

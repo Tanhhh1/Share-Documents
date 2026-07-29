@@ -19,7 +19,7 @@ namespace API_ShareDocuments.Controllers.V1.Admin
         [HttpGet]
         [ProducesResponseType(typeof(ApiResult<PageList<ListCommentDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<PageList<ListCommentDto>>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllcommentQuery query)
+        public async Task<IActionResult> GetAll([FromQuery] GetAllCommentQuery query)
         {
             var result = await _mediator.Send(query);
             if (!result.Succeeded)

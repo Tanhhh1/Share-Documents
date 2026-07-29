@@ -19,18 +19,18 @@ namespace Application.CQRS.DocumentGroups.Queries.GetPublishedGroup
 
         public async Task<ApiResult<PageList<DocumentGroupDto>>> Handle(GetPublishedGroupQuery request, CancellationToken cancellationToken)
         {
-            var query = _unitOfWork.DocumentGroupRepository.GetByCondition().AsNoTracking();
-            query = query.Where(g => g.Status == DocumentStatus.Published && !g.IsDeleted);
+            var documentGroups = _unitOfWork.DocumentGroupRepository.GetByCondition().AsNoTracking();
+            documentGroups = documentGroups.Where(g => g.Status == DocumentStatus.Published && !g.IsDeleted);
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var keyword = request.Search.Trim();
-                query = query.Where(g => g.Title.Contains(keyword));
+                documentGroups = documentGroups.Where(g => g.Title.Contains(keyword));
             }
-            query = query.OrderByDescending(g => g.Id);
+            documentGroups = documentGroups.OrderByDescending(g => g.Id);
 
             var pageList = await PageList<DocumentGroupDto>.ToPagedListAsync(
-                query.ProjectToType<DocumentGroupDto>(),
+                documentGroups.ProjectToType<DocumentGroupDto>(),
                 request.PageIndex,
                 request.PageSize,
                 cancellationToken

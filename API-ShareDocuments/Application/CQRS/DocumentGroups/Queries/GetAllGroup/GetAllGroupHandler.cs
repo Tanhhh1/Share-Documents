@@ -17,24 +17,24 @@ namespace Application.CQRS.DocumentGroups.Queries.GetAllGroup
 
         public async Task<ApiResult<PageList<DocumentGroupDto>>> Handle(GetAllGroupQuery request, CancellationToken cancellationToken)
         {
-            var query = _unitOfWork.DocumentGroupRepository.GetByCondition().AsNoTracking();
+            var documentGroups = _unitOfWork.DocumentGroupRepository.GetByCondition().AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var keyword = request.Search.Trim();
-                query = query.Where(g => g.Title.Contains(keyword));
+                documentGroups = documentGroups.Where(g => g.Title.Contains(keyword));
             }
 
             if (request.Status.HasValue)
-                query = query.Where(g => g.Status == request.Status.Value);
+                documentGroups = documentGroups.Where(g => g.Status == request.Status.Value);
 
             if (request.IsDeleted.HasValue)
-                query = query.Where(g => g.IsDeleted == request.IsDeleted.Value);
+                documentGroups = documentGroups.Where(g => g.IsDeleted == request.IsDeleted.Value);
 
-            query = query.OrderByDescending(g => g.Id);
+            documentGroups = documentGroups.OrderByDescending(g => g.Id);
 
             var pageList = await PageList<DocumentGroupDto>.ToPagedListAsync(
-                query.ProjectToType<DocumentGroupDto>(),
+                documentGroups.ProjectToType<DocumentGroupDto>(),
                 request.PageIndex,
                 request.PageSize,
                 cancellationToken

@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Documents\Queries\" />
+    <Folder Include="CQRS\Members\Queries\GetCurrentMember\" />
     <Folder Include="Exceptions\" />
   </ItemGroup>
 

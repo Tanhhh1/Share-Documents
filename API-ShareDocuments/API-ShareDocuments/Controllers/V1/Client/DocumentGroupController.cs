@@ -37,7 +37,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         [HttpGet("my/document-groups")]
         [ProducesResponseType(typeof(ApiResult<PageList<DocumentGroupDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<PageList<DocumentGroupDto>>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetMine([FromQuery] GetGroupByUserIdQuery query)
+        public async Task<IActionResult> GetMine([FromQuery] GetMyGroupQuery query)
         {
             var result = await _mediator.Send(query);
             if (!result.Succeeded)

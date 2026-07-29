@@ -19,9 +19,6 @@ namespace Application.CQRS.Comments.Commands.DeleteComment
 
         public async Task<ApiResult<bool>> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated || _currentUser.Id is null)
-                return ApiResult<bool>.Failure("Người dùng chưa đăng nhập");
-
             var comment = await _unitOfWork.CommentRepository
                 .GetByCondition(c => c.Id == request.Id)
                 .Include(c => c.Replies)
@@ -30,7 +27,7 @@ namespace Application.CQRS.Comments.Commands.DeleteComment
             if (comment is null)
                 return ApiResult<bool>.Failure("Không tìm thấy bình luận");
 
-            if (comment.UserId != _currentUser.Id.Value)
+            if (comment.UserId != _currentUser.Id!.Value)
                 return ApiResult<bool>.Failure("Bạn không có quyền xóa bình luận này");
 
             if (comment.Replies.Count > 0)
