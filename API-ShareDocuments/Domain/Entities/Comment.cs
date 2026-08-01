@@ -3,7 +3,7 @@ using Domain.Identity;
 
 namespace Domain.Entities
 {
-    public class Comment : BaseEntity
+    public class Comment : BaseDomainEntity
     {
         public int DocumentId { get; set; }
         public int UserId { get; set; }

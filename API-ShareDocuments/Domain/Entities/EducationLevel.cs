@@ -6,3 +6,4 @@ namespace Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
     }
+}

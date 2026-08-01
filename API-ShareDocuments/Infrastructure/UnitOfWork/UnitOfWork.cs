@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
+using Domain.Common;
 using Infrastructure.Persistences;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -10,6 +12,7 @@ namespace Infrastructure.Uow
     {
         private readonly DatabaseContext _dbContext;
         private IDbContextTransaction? _transaction;
+        private readonly IDomainEventDispatch _domainEventDispatch;
         private IRefreshTokenRepository? _refreshTokenRepository;
         private ITagRepository? _tagRepository;
         private IFacultyRepository? _facultyRepository;
@@ -22,9 +25,14 @@ namespace Infrastructure.Uow
         private IReportRepository? _reportRepository;
         private IDocumentGroupRepository? _documentGroupRepository;
         private IDocumentFileRepository? _documentFileRepository;
-        public UnitOfWork(DatabaseContext dbContext)
+        private IPaymentRepository? _paymentRepository;
+        private IMembershipRepository? _membershipRepository;
+        private INotificationRepository? _notificationRepository;
+        private IModerationLogRepository? _moderationLogRepository;
+        public UnitOfWork(DatabaseContext dbContext, IDomainEventDispatch domainEventDispatch)
         {
             _dbContext = dbContext;
+            _domainEventDispatch = domainEventDispatch;
         }
 
         public IRefreshTokenRepository RefreshTokenRepository => _refreshTokenRepository ??= new RefreshTokenRepository(_dbContext);
@@ -39,6 +47,10 @@ namespace Infrastructure.Uow
         public IReportRepository ReportRepository => _reportRepository ??= new ReportRepository(_dbContext);
         public IDocumentGroupRepository DocumentGroupRepository => _documentGroupRepository ??= new DocumentGroupRepository(_dbContext);
         public IDocumentFileRepository DocumentFileRepository => _documentFileRepository ??= new DocumentFileRepository(_dbContext);
+        public IPaymentRepository PaymentRepository => _paymentRepository ??= new PaymentRepository(_dbContext);
+        public IMembershipRepository MembershipRepository => _membershipRepository ??= new MembershipRepository(_dbContext);
+        public IModerationLogRepository ModerationLogRepository => _moderationLogRepository ??= new ModerationLogRepository(_dbContext);
+        public INotificationRepository NotificationRepository => _notificationRepository ??= new NotificationRepository(_dbContext);
 
         public async Task BeginTransactionAsync()
         {
@@ -53,7 +65,19 @@ namespace Infrastructure.Uow
             try
             {
                 await _dbContext.SaveChangesAsync();
-                if (_transaction is not null) await _transaction.CommitAsync();
+
+                var entities = _dbContext.ChangeTracker
+                    .Entries<BaseDomainEntity>()
+                    .Where(e => e.Entity.DomainEvents.Any())
+                    .Select(e => e.Entity)
+                    .ToList();
+
+                await _domainEventDispatch.DispatchEventsAsync(entities);
+
+                var changesAfterEvents = await _dbContext.SaveChangesAsync();
+
+                if (_transaction is not null)
+                    await _transaction.CommitAsync();
             }
             catch
             {

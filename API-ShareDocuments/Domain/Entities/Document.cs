@@ -4,7 +4,7 @@ using Domain.Identity;
 
 namespace Domain.Entities
 {
-    public class Document : BaseEntity
+    public class Document : BaseDomainEntity
     {
         public int? GroupId { get; set; }
         public string Title { get; set; } = string.Empty;

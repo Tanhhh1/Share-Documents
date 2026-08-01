@@ -20,5 +20,9 @@ namespace Application.Interfaces.UnitOfWork
         IReportRepository ReportRepository { get; }
         IDocumentGroupRepository DocumentGroupRepository { get; }
         IDocumentFileRepository DocumentFileRepository { get; }
+        IPaymentRepository PaymentRepository { get; }
+        IMembershipRepository MembershipRepository { get; }
+        INotificationRepository NotificationRepository { get; }
+        IModerationLogRepository ModerationLogRepository { get; }
     }
 }

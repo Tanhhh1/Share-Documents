@@ -26,9 +26,10 @@ namespace Infrastructure.Services
 
         public string Username
             => User?.FindFirstValue(JwtRegisteredClaimNames.UniqueName) ?? string.Empty;
-
         public string Fullname
             => User?.FindFirstValue(JwtRegisteredClaimNames.Name) ?? string.Empty;
+        public string Email
+            => User?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? string.Empty;
 
         public List<string> Roles
             => User?.Claims

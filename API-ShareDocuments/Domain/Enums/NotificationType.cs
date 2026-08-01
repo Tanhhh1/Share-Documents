@@ -7,6 +7,7 @@
         DocumentGroupApproved = 3,
         DocumentGroupRejected = 4,
         CommentNew = 5,
-        CommentReply = 6
+        CommentReply = 6,
+        CommentHidden = 7
     }
 }

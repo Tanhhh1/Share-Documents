@@ -12,6 +12,8 @@ namespace Domain.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public MembershipStatus Status { get; set; }
+        public int PaymentId { get; set; }
+        public Payment Payment { get; set; } = null!;
         public User User { get; set; } = null!;
     }
 }

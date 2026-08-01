@@ -6,6 +6,5 @@
         Reject = 2,
         Hide = 3,
         Unhide = 4,
-        Delete = 5
     }
 }
