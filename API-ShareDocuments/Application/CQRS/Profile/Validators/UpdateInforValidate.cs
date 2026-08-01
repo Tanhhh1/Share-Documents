@@ -15,9 +15,9 @@ namespace Application.CQRS.Profile.Validators
                 .NotEmpty().WithMessage("Họ tên không được để trống")
                 .Matches(@"^[\p{L}\s]+$").WithMessage("Họ tên chỉ được chứa chữ cái và khoảng trắng");
 
-            RuleFor(x => x.Phone)
+            RuleFor(x => x.PhoneNumber)
                 .Matches(@"^0[0-9]{9}$").WithMessage("Số điện thoại phải bắt đầu bằng 0, gồm 10 chữ số")
-                .When(x => !string.IsNullOrEmpty(x.Phone));
+                .When(x => !string.IsNullOrEmpty(x.PhoneNumber));
         }
     }
 }
