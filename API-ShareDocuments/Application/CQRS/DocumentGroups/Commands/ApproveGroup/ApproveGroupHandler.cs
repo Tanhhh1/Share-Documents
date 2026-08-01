@@ -1,7 +1,9 @@
 ﻿using Application.Common;
 using Application.CQRS.DocumentGroups.DTOs;
+using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
 using Domain.Enums;
+using Domain.Events;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +13,12 @@ namespace Application.CQRS.DocumentGroups.Commands.ApproveGroup
     public class ApproveGroupHandler : IRequestHandler<ApproveGroupCommand, ApiResult<DocumentGroupDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUser _currentUser;
 
-        public ApproveGroupHandler(IUnitOfWork unitOfWork)
+        public ApproveGroupHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
         {
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
 
         public async Task<ApiResult<DocumentGroupDto>> Handle(ApproveGroupCommand request, CancellationToken cancellationToken)
@@ -22,13 +26,15 @@ namespace Application.CQRS.DocumentGroups.Commands.ApproveGroup
             var documentGroup = await _unitOfWork.DocumentGroupRepository.GetByIdAsync(request.Id);
 
             if (documentGroup is null || documentGroup.IsDeleted)
-                return ApiResult<DocumentGroupDto>.Failure("Không tìm thấy nhóm chủ đề.");
+                return ApiResult<DocumentGroupDto>.Failure("Không tìm thấy nhóm chủ đề");
 
             if (documentGroup.Status != DocumentStatus.Pending)
-                return ApiResult<DocumentGroupDto>.Failure("Chỉ có thể duyệt nhóm chủ đề đang ở trạng thái chờ duyệt.");
+                return ApiResult<DocumentGroupDto>.Failure("Chỉ có thể duyệt nhóm chủ đề đang ở trạng thái chờ duyệt");
 
             documentGroup.Status = DocumentStatus.Published;
             _unitOfWork.DocumentGroupRepository.Update(documentGroup);
+            documentGroup.AddDomainEvent(new DocumentGroupModeratedEvent(
+                documentGroup.Id, documentGroup.UserId, _currentUser.Id!.Value, ModerationAction.Approve, null));
 
             var pendingDocuments = await _unitOfWork.DocumentRepository
                 .GetByCondition(d => d.GroupId == documentGroup.Id && d.Status == DocumentStatus.Pending && !d.IsDeleted)
@@ -37,7 +43,9 @@ namespace Application.CQRS.DocumentGroups.Commands.ApproveGroup
             foreach (var document in pendingDocuments)
             {
                 document.Status = DocumentStatus.Published;
-                _unitOfWork.DocumentRepository.Update(document);
+                _unitOfWork.DocumentRepository.Update(document); 
+                document.AddDomainEvent(new DocumentModeratedEvent(
+                    document.Id, document.UserId, _currentUser.Id!.Value, ModerationAction.Approve, null));
             }
 
             var documentGroupDto = documentGroup.Adapt<DocumentGroupDto>();

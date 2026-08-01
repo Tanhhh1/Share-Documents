@@ -2,6 +2,7 @@
 using Application.CQRS.Comments.DTOs;
 using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
+using Domain.Events;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ namespace Application.CQRS.Comments.Commands.CreateComment
             var comment = request.Adapt<Domain.Entities.Comment>();
             comment.UserId = _currentUser.Id!.Value;
             await _unitOfWork.CommentRepository.AddAsync(comment);
+            comment.AddDomainEvent(new CommentChangedEvent(
+                comment.Id, comment.DocumentId, comment.UserId, comment.ParentCommentId));
             await _unitOfWork.SaveChangesAsync();
             var commentDto = comment.Adapt<CommentDto>();
 

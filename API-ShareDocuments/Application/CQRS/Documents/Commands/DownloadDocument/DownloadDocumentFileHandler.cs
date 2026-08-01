@@ -1,0 +1,66 @@
+﻿using Application.Common;
+using Application.CQRS.Documents.DTOs;
+using Application.Interfaces.Services;
+using Application.Interfaces.UnitOfWork;
+using Domain.Enums;
+using MediatR;
+
+
+namespace Application.CQRS.Documents.Commands.DownloadDocument
+{
+    public class DownloadDocumentFileHandler : IRequestHandler<DownloadDocumentFileCommand, ApiResult<DocumentFileUrlDto>>
+    {
+        private const int SignedUrlExpiresInSeconds = 300;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUser _currentUser;
+        private readonly ISupabaseStorageService _storageService;
+        private readonly IMemberService _memberService;
+        public DownloadDocumentFileHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, ISupabaseStorageService storageService, IMemberService memberService)
+        {
+            _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
+            _storageService = storageService;
+            _memberService = memberService;
+        }
+        public async Task<ApiResult<DocumentFileUrlDto>> Handle(DownloadDocumentFileCommand request, CancellationToken cancellationToken)
+        {
+            var document = await _unitOfWork.DocumentRepository.GetByIdAsync(request.DocumentId);
+
+            if (document is null || document.IsDeleted)
+                return ApiResult<DocumentFileUrlDto>.Failure("Không tìm thấy tài liệu");
+
+            var isOwner = document.UserId == _currentUser.Id;
+            var isModerationBypass = _currentUser.IsAdmin || _currentUser.IsModerator;
+
+            if (document.Status != DocumentStatus.Published && !isOwner && !isModerationBypass)
+                return ApiResult<DocumentFileUrlDto>.Failure("Không tìm thấy tài liệu");
+
+            if (document.AccessLevel == AccessLevel.Premium && !isOwner && !isModerationBypass)
+            {
+                var isActiveMember = await _memberService.IsActiveMemberAsync(_currentUser.Id.Value, cancellationToken);
+                if (!isActiveMember)
+                    return ApiResult<DocumentFileUrlDto>.Failure("Tài liệu này chỉ dành cho thành viên Premium. Vui lòng nâng cấp tài khoản để tải xuống");
+            }
+
+            var file = await _unitOfWork.DocumentFileRepository.GetByIdAsync(request.FileId);
+            if (file is null || file.DocumentId != document.Id)
+                return ApiResult<DocumentFileUrlDto>.Failure("Không tìm thấy file trong tài liệu này");
+
+            var signedUrl = await _storageService.GenerateSignedDownloadUrlAsync(
+                file.S3Key, SignedUrlExpiresInSeconds, cancellationToken);
+
+            document.DownloadCount += 1;
+            _unitOfWork.DocumentRepository.Update(document);
+            await _unitOfWork.SaveChangesAsync();
+
+            var fileDto = new DocumentFileUrlDto
+            {
+                FileName = file.FileName,
+                SignedUrl = signedUrl,
+                ExpiresInSeconds = SignedUrlExpiresInSeconds
+            };
+
+            return ApiResult<DocumentFileUrlDto>.Success(fileDto);
+        }
+    }
+}

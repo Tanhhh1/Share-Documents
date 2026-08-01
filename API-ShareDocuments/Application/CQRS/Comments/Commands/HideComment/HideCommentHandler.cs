@@ -1,5 +1,8 @@
 ﻿using Application.Common;
+using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
+using Domain.Enums;
+using Domain.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +11,11 @@ namespace Application.CQRS.Comments.Commands.HideComment
     public class HideCommentHandler : IRequestHandler<HideCommentCommand, ApiResult<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public HideCommentHandler(IUnitOfWork unitOfWork)
+        private readonly ICurrentUser _currentUser;
+        public HideCommentHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
         {
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
 
         public async Task<ApiResult<bool>> Handle(HideCommentCommand request, CancellationToken cancellationToken)
@@ -28,6 +32,8 @@ namespace Application.CQRS.Comments.Commands.HideComment
 
             comment.IsDeleted = true;
             _unitOfWork.CommentRepository.Update(comment);
+            comment.AddDomainEvent(new CommentModeratedEvent(
+                comment.Id, comment.UserId, _currentUser.Id!.Value, ModerationAction.Hide, request.Reason ));
             return ApiResult<bool>.Success(true);
         }
     }

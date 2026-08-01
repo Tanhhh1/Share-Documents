@@ -1,7 +1,9 @@
 ﻿using Application.Common;
 using Application.CQRS.DocumentGroups.DTOs;
+using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
 using Domain.Enums;
+using Domain.Events;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +13,11 @@ namespace Application.CQRS.DocumentGroups.Commands.RejectGroup
     internal class RejectGroupHandler : IRequestHandler<RejectGroupCommand, ApiResult<DocumentGroupDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public RejectGroupHandler(IUnitOfWork unitOfWork)
+        private readonly ICurrentUser _currentUser;
+        public RejectGroupHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
         {
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
 
         public async Task<ApiResult<DocumentGroupDto>> Handle(RejectGroupCommand request, CancellationToken cancellationToken)
@@ -29,6 +32,8 @@ namespace Application.CQRS.DocumentGroups.Commands.RejectGroup
 
             documentGroup.Status = DocumentStatus.Rejected;
             _unitOfWork.DocumentGroupRepository.Update(documentGroup);
+            documentGroup.AddDomainEvent(new DocumentGroupModeratedEvent(
+                documentGroup.Id, documentGroup.UserId, _currentUser.Id!.Value, ModerationAction.Reject, request.Reason));
 
             var pendingDocuments = await _unitOfWork.DocumentRepository
                 .GetByCondition(d => d.GroupId == documentGroup.Id && d.Status == DocumentStatus.Pending && !d.IsDeleted)
@@ -38,10 +43,9 @@ namespace Application.CQRS.DocumentGroups.Commands.RejectGroup
             {
                 document.Status = DocumentStatus.Rejected;
                 _unitOfWork.DocumentRepository.Update(document);
+                document.AddDomainEvent(new DocumentModeratedEvent(
+                    document.Id, document.UserId, _currentUser.Id!.Value, ModerationAction.Reject, request.Reason));
             }
-
-            // TODO: Ghi ModerationLog (Action = Reject, Reason = request.Reason)
-            // TODO: Gửi Notification + Email cho chủ sở hữu nhóm + chủ sở hữu từng Document bị cascade
 
             var documentGroupDto = documentGroup.Adapt<DocumentGroupDto>();
             return ApiResult<DocumentGroupDto>.Success(documentGroupDto);
