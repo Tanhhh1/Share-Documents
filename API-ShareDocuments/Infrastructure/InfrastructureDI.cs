@@ -3,11 +3,13 @@ using Application.Interfaces.UnitOfWork;
 using Infrastructure.Configurations;
 using Infrastructure.Persistences;
 using Infrastructure.Services;
+using Infrastructure.Services.Email;
 using Infrastructure.Uow;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using PayOS;
 using System.Net.Http.Headers;
 
 namespace Infrastructure
@@ -29,6 +31,12 @@ namespace Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ICurrentUser, CurrentUser>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IPayOSService, PayOSService>();
+            services.AddScoped<IMemberService, MemberService>();
+            services.AddMemoryCache();
+            services.AddSingleton<IOtpService, OtpService>();
+            services.AddScoped<IDomainEventDispatch, DomainEventDispatch>();
 
             var supabaseSection = configuration.GetSection("Supabase");
             services.Configure<SupabaseOptions>(supabaseSection);
@@ -45,7 +53,19 @@ namespace Infrastructure
             });
 
             services.AddScoped<ISupabaseStorageService, SupabaseStorageService>();
+            services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+            services.Configure<PayOSSettings>(configuration.GetSection(nameof(PayOSSettings)));
 
+            services.AddSingleton(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<PayOSSettings>>().Value;
+                return new PayOSClient(new PayOSOptions
+                {
+                    ClientId = settings.ClientId,
+                    ApiKey = settings.ApiKey,
+                    ChecksumKey = settings.ChecksumKey
+                });
+            });
             return services;
         }
     }
