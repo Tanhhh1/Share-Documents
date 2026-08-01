@@ -12,8 +12,13 @@ namespace Infrastructure.Persistences.Configurations
 
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Price)
+            builder.Property(p => p.Amount)
                 .HasPrecision(18, 2)
+                .IsRequired();
+
+            builder.Property(p => p.Plan)
+                .HasConversion<string>()
+                .HasMaxLength(20)
                 .IsRequired();
 
             builder.Property(p => p.Status)
@@ -21,14 +26,19 @@ namespace Infrastructure.Persistences.Configurations
                 .HasMaxLength(20)
                 .IsRequired();
 
+            builder.Property(p => p.OrderCode)
+                .IsRequired();
+
+            builder.Property(p => p.TransactionId)
+                .HasMaxLength(100)
+                .IsRequired(false);
+
+            builder.Property(p => p.PaidAt)
+                .IsRequired(false);
+
             builder.HasOne(p => p.User)
                 .WithMany()
                 .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(p => p.Membership)
-                .WithMany()
-                .HasForeignKey(p => p.MembershipId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

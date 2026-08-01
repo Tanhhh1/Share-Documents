@@ -16,12 +16,12 @@ namespace Infrastructure.Persistences.Configurations
                 .HasPrecision(18, 2)
                 .IsRequired();
 
-            builder.Property(m => m.PlanCode)
+            builder.Property(ms => ms.PlanCode)
                 .HasConversion<string>()
                 .HasMaxLength(20)
                 .IsRequired();
 
-            builder.Property(m => m.Status)
+            builder.Property(ms => ms.Status)
                 .HasConversion<string>()
                 .HasMaxLength(20)
                 .IsRequired();
@@ -37,7 +37,12 @@ namespace Infrastructure.Persistences.Configurations
                 .HasForeignKey(ms => ms.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(m => new { m.UserId, m.Status });
+            builder.HasOne(ms => ms.Payment)
+                .WithOne()
+                .HasForeignKey<Membership>(ms => ms.PaymentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasIndex(ms => new { ms.UserId, ms.Status });
         }
     }
 }
