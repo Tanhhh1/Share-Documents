@@ -3,6 +3,7 @@ using Application.CQRS.Comments.DTOs;
 using Application.CQRS.Documents.Commands.CreateDocument;
 using Application.CQRS.Documents.DTOs;
 using Application.CQRS.Members.DTOs;
+using Application.CQRS.Notifications.DTOs;
 using Application.CQRS.Payments.DTOs;
 using Application.CQRS.Reports.DTOs;
 using Domain.Entities;
@@ -49,6 +50,8 @@ namespace Application.Mappers
                  .Map(dest => dest.HasPreview, src => src.PreviewPdfKey != null);
 
             config.NewConfig<Payment, PaymentDto>();
+
+            config.NewConfig<Notification, NotificationDto>();
 
             config.NewConfig<Membership, MembershipDto>()
                 .Map(dest => dest.IsActive,

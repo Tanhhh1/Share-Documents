@@ -13,8 +13,8 @@ namespace Domain.Entities
         public int UserId { get; set; }
         public DocumentStatus Status { get; set; }
         public AccessLevel AccessLevel { get; set; }
-        public int ViewCount { get; set; }
-        public int DownloadCount { get; set; }
+        public int ViewCount { get; private set; }
+        public int DownloadCount { get; private set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
         public DocumentGroup? Group { get; set; }
@@ -22,5 +22,15 @@ namespace Domain.Entities
         public Subject Subject { get; set; } = null!;
         public ICollection<DocumentFile> Files { get; set; } = new List<DocumentFile>();
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+
+        public void IncreaseView()
+        {
+            ViewCount += 1;
+        }
+
+        public void IncreaseDownload()
+        {
+            DownloadCount += 1;
+        }
     }
 }

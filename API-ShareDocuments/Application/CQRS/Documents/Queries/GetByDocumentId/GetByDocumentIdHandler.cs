@@ -16,12 +16,14 @@ namespace Application.CQRS.Documents.Queries.GetByDocumentId
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
         private readonly IMemberService _memberService;
+        private readonly IStatisticsService _statisticsService;
 
-        public GetByDocumentIdHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMemberService memberService)
+        public GetByDocumentIdHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, IMemberService memberService, IStatisticsService statisticsService)
         {
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
             _memberService = memberService;
+            _statisticsService = statisticsService;
         }
         public async Task<ApiResult<DocumentDetailDto>> Handle(GetByDocumentIdQuery request, CancellationToken cancellationToken)
         {
@@ -38,6 +40,9 @@ namespace Application.CQRS.Documents.Queries.GetByDocumentId
 
             if (document.Status != DocumentStatus.Published && !isOwner && !isModerationBypass)
                 return ApiResult<DocumentDetailDto>.Failure("Không tìm thấy tài liệu");
+
+            if (_currentUser.Id.HasValue)
+                await _statisticsService.IncrementViewAsync(document.Id, _currentUser.Id.Value, cancellationToken);
 
             if (document.AccessLevel == AccessLevel.Premium && !isOwner && !isModerationBypass)
             {

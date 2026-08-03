@@ -55,8 +55,6 @@ namespace Application.CQRS.Documents.Commands.CreateDocument
             document.UserId = _currentUser.Id!.Value;
             document.Status = status;
             document.AccessLevel = accessLevel;
-            document.ViewCount = 0;
-            document.DownloadCount = 0;
             document.IsDeleted = false;
             document.Tags = tags;
 

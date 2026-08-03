@@ -15,12 +15,15 @@ namespace Application.CQRS.Documents.Commands.DownloadDocument
         private readonly ICurrentUser _currentUser;
         private readonly ISupabaseStorageService _storageService;
         private readonly IMemberService _memberService;
-        public DownloadDocumentFileHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, ISupabaseStorageService storageService, IMemberService memberService)
+        private readonly IStatisticsService _statisticsService;
+        public DownloadDocumentFileHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, 
+            ISupabaseStorageService storageService, IMemberService memberService, IStatisticsService statisticsService)
         {
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
             _storageService = storageService;
             _memberService = memberService;
+            _statisticsService = statisticsService;
         }
         public async Task<ApiResult<DocumentFileUrlDto>> Handle(DownloadDocumentFileCommand request, CancellationToken cancellationToken)
         {
@@ -37,7 +40,7 @@ namespace Application.CQRS.Documents.Commands.DownloadDocument
 
             if (document.AccessLevel == AccessLevel.Premium && !isOwner && !isModerationBypass)
             {
-                var isActiveMember = await _memberService.IsActiveMemberAsync(_currentUser.Id.Value, cancellationToken);
+                var isActiveMember = await _memberService.IsActiveMemberAsync(_currentUser.Id!.Value, cancellationToken);
                 if (!isActiveMember)
                     return ApiResult<DocumentFileUrlDto>.Failure("Tài liệu này chỉ dành cho thành viên Premium. Vui lòng nâng cấp tài khoản để tải xuống");
             }
@@ -49,9 +52,9 @@ namespace Application.CQRS.Documents.Commands.DownloadDocument
             var signedUrl = await _storageService.GenerateSignedDownloadUrlAsync(
                 file.S3Key, SignedUrlExpiresInSeconds, cancellationToken);
 
-            document.DownloadCount += 1;
             _unitOfWork.DocumentRepository.Update(document);
             await _unitOfWork.SaveChangesAsync();
+            await _statisticsService.IncrementDownloadAsync(document.Id, _currentUser.Id!.Value, cancellationToken);
 
             var fileDto = new DocumentFileUrlDto
             {
