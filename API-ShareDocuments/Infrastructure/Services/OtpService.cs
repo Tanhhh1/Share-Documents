@@ -1,47 +1,42 @@
 ﻿using Application.Interfaces.Services;
-using Microsoft.Extensions.Caching.Memory;
 using System.Security.Cryptography;
 
 namespace Infrastructure.Services
 {
     public class OtpService : IOtpService
     {
-        private readonly IMemoryCache _cache;
+        private readonly IRedisService _redisService;
         private static readonly TimeSpan OtpExpiration = TimeSpan.FromMinutes(5);
         private const string CacheKeyPrefix = "otp:";
 
-        public OtpService(IMemoryCache cache)
+        public OtpService(IRedisService redisService)
         {
-            _cache = cache;
+            _redisService = redisService;
         }
 
-        public Task<string> GenerateOtpAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<string> GenerateOtpAsync(string email, CancellationToken cancellationToken = default)
         {
             var otp = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
             var cacheKey = GetCacheKey(email);
-
-            _cache.Set(cacheKey, otp, OtpExpiration);
-
-            return Task.FromResult(otp);
+            await _redisService.SetAsync(cacheKey, otp, OtpExpiration);
+            return otp;
         }
 
-        public Task<bool> VerifyOtpAsync(string email, string otp, CancellationToken cancellationToken = default)
+        public async Task<bool> VerifyOtpAsync(string email, string otp, CancellationToken cancellationToken = default)
         {
             var cacheKey = GetCacheKey(email);
-
-            if (_cache.TryGetValue(cacheKey, out string? cachedOtp) && cachedOtp == otp)
+            var cachedOtp = await _redisService.GetAsync(cacheKey);
+            if (cachedOtp != null && cachedOtp == otp)
             {
-                _cache.Remove(cacheKey);
-                return Task.FromResult(true);
+                await _redisService.RemoveAsync(cacheKey);
+                return true;
             }
-
-            return Task.FromResult(false);
+            return false;
         }
 
-        public Task RemoveOtpAsync(string email, CancellationToken cancellationToken = default)
+        public async Task RemoveOtpAsync(string email, CancellationToken cancellationToken = default)
         {
-            _cache.Remove(GetCacheKey(email));
-            return Task.CompletedTask;
+            await _redisService.RemoveAsync(GetCacheKey(email));
         }
 
         private static string GetCacheKey(string email) => $"{CacheKeyPrefix}{email.Trim().ToLowerInvariant()}";

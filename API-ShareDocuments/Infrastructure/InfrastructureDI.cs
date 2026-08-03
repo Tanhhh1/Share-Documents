@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
+using Infrastructure.BackgroundServices;
 using Infrastructure.Configurations;
 using Infrastructure.Persistences;
 using Infrastructure.Services;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PayOS;
+using StackExchange.Redis;
 using System.Net.Http.Headers;
 
 namespace Infrastructure
@@ -34,9 +36,15 @@ namespace Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IPayOSService, PayOSService>();
             services.AddScoped<IMemberService, MemberService>();
-            services.AddMemoryCache();
-            services.AddSingleton<IOtpService, OtpService>();
+            services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IDomainEventDispatch, DomainEventDispatch>();
+            services.AddScoped<IStatisticsService, StatisticsService>();
+            services.AddScoped<IDocumentCleanupService, DocumentCleanupService>();
+            services.AddScoped<IMembershipExpirationService, MembershipExpirationService>();
+            services.AddScoped<INotificationService, NotificationService>();
+
+            services.AddHostedService<MembershipExpirationBackgroundService>();
+            services.AddHostedService<DocumentCleanupBackgroundService>();
 
             var supabaseSection = configuration.GetSection("Supabase");
             services.Configure<SupabaseOptions>(supabaseSection);
@@ -66,6 +74,18 @@ namespace Infrastructure
                     ChecksumKey = settings.ChecksumKey
                 });
             });
+
+            services.Configure<RedisSettings>(configuration.GetSection(nameof(RedisSettings)));
+            var redisConfig = configuration.GetSection(nameof(RedisSettings)).Get<RedisSettings>();
+            if (redisConfig is null) throw new Exception("Redis configuration not found! Please check 'appsettings.json' file again.");
+
+            services.AddSingleton<IConnectionMultiplexer>(_ =>
+            {
+                var configOptions = ConfigurationOptions.Parse(redisConfig.ConnectionString);
+                configOptions.AbortOnConnectFail = false;
+                return ConnectionMultiplexer.Connect(configOptions);
+            });
+            services.AddScoped<IRedisService, RedisService>();
             return services;
         }
     }

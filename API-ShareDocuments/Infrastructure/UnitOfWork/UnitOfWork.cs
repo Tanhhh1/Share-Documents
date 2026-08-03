@@ -1,10 +1,15 @@
-﻿using Application.Interfaces.Repositories;
+﻿using Application.CQRS.Notifications.DTOs;
+using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
 using Domain.Common;
+using Domain.Entities;
 using Infrastructure.Persistences;
 using Infrastructure.Repositories;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Uow
 {
@@ -13,6 +18,8 @@ namespace Infrastructure.Uow
         private readonly DatabaseContext _dbContext;
         private IDbContextTransaction? _transaction;
         private readonly IDomainEventDispatch _domainEventDispatch;
+        private readonly INotificationService _notificationService;
+        private readonly ILogger<UnitOfWork> _logger;
         private IRefreshTokenRepository? _refreshTokenRepository;
         private ITagRepository? _tagRepository;
         private IFacultyRepository? _facultyRepository;
@@ -29,10 +36,12 @@ namespace Infrastructure.Uow
         private IMembershipRepository? _membershipRepository;
         private INotificationRepository? _notificationRepository;
         private IModerationLogRepository? _moderationLogRepository;
-        public UnitOfWork(DatabaseContext dbContext, IDomainEventDispatch domainEventDispatch)
+        public UnitOfWork(DatabaseContext dbContext, IDomainEventDispatch domainEventDispatch, INotificationService notificationService, ILogger<UnitOfWork> logger)
         {
             _dbContext = dbContext;
             _domainEventDispatch = domainEventDispatch;
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public IRefreshTokenRepository RefreshTokenRepository => _refreshTokenRepository ??= new RefreshTokenRepository(_dbContext);
@@ -74,10 +83,18 @@ namespace Infrastructure.Uow
 
                 await _domainEventDispatch.DispatchEventsAsync(entities);
 
-                var changesAfterEvents = await _dbContext.SaveChangesAsync();
+                var newNotifications = _dbContext.ChangeTracker
+                    .Entries<Notification>()
+                    .Where(e => e.State == EntityState.Added)
+                    .Select(e => e.Entity)
+                    .ToList();
+
+                await _dbContext.SaveChangesAsync();
 
                 if (_transaction is not null)
                     await _transaction.CommitAsync();
+
+                await TryNotifyRealtimeAsync(newNotifications);
             }
             catch
             {
@@ -117,6 +134,23 @@ namespace Infrastructure.Uow
         {
             _transaction?.Dispose();
             _dbContext.Dispose();
+        }
+
+        private async Task TryNotifyRealtimeAsync(List<Notification> notifications)
+        {
+            foreach (var notification in notifications)
+            {
+                try
+                {
+                    var dto = notification.Adapt<NotificationDto>();
+                    await _notificationService.NotifyUserAsync(notification.UserId, dto);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Gửi thông báo real-time thất bại cho UserId={UserId}, NotificationId={NotificationId}. Dữ liệu đã được lưu vào DB, chỉ push SignalR bị lỗi.",
+                        notification.UserId, notification.Id);
+                }
+            }
         }
     }
 }
