@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_ShareDocuments.Controllers.V1.Client
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class PaymentController : ApiController
     {
         private readonly IMediator _mediator;

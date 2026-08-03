@@ -1,6 +1,5 @@
 ﻿using API_ShareDocuments.Controllers.Common;
 using Application.Common;
-using Application.CQRS.DocumentGroups.Queries.GetPublishedGroup;
 using Application.CQRS.Documents.Commands.CreateDocument;
 using Application.CQRS.Documents.Commands.DeleteDocument;
 using Application.CQRS.Documents.Commands.DownloadDocument;
@@ -17,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_ShareDocuments.Controllers.V1.Client
 {
+    [Authorize]
     public class DocumentController : ApiController
     {
         private readonly IMediator _mediator;
@@ -109,6 +109,7 @@ namespace API_ShareDocuments.Controllers.V1.Client
         }
 
         [HttpGet("{id}/preview/{fileId}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ApiResult<DocumentFileUrlDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<DocumentFileUrlDto>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Preview(int id, int fileId)
