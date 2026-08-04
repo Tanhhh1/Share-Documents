@@ -6,6 +6,5 @@ namespace Application.CQRS.Comments.Commands.HideComment
     public class HideCommentCommand : IRequest<ApiResult<bool>>
     {
         public int Id { get; set; }
-        public string Reason { get; set; } = string.Empty;
     }
 }

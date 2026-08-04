@@ -20,13 +20,15 @@ namespace Infrastructure.BackgroundServices
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     using var scope = _serviceProvider.CreateScope();
                     var membershipExpirationService = scope.ServiceProvider.GetRequiredService<IMembershipExpirationService>();
-                    await membershipExpirationService.ProcessExpiredMembershipsAsync(stoppingToken);
+                    int updatedCount = await membershipExpirationService.ProcessExpiredMembershipsAsync(stoppingToken);
+                    _logger.LogInformation("Membership Expiration: Updated {count} expired memberships.", updatedCount);
                 }
                 catch (OperationCanceledException)
                 {
@@ -34,7 +36,7 @@ namespace Infrastructure.BackgroundServices
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred in Membership Expiration Background Service");
+                    _logger.LogError(ex, "An error occurred in Membership Expiration Background Service.");
                 }
 
                 await Task.Delay(_interval, stoppingToken);

@@ -20,13 +20,15 @@ namespace Infrastructure.BackgroundServices
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     using var scope = _serviceProvider.CreateScope();
                     var documentCleanupService = scope.ServiceProvider.GetRequiredService<IDocumentCleanupService>();
-                    await documentCleanupService.CleanupDeletedDocumentsAsync(stoppingToken);
+                    int cleanedCount = await documentCleanupService.CleanupDeletedDocumentsAsync(stoppingToken);
+                    _logger.LogInformation("Document Cleanup: Processed and cleaned up {count} documents.", cleanedCount);
                 }
                 catch (OperationCanceledException)
                 {
@@ -34,7 +36,7 @@ namespace Infrastructure.BackgroundServices
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred in Document Cleanup Background Service");
+                    _logger.LogError(ex, "An error occurred in Document Cleanup Background Service.");
                 }
 
                 await Task.Delay(_interval, stoppingToken);

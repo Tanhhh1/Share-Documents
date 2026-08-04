@@ -33,7 +33,7 @@ namespace Application.CQRS.Comments.Commands.HideComment
             comment.IsDeleted = true;
             _unitOfWork.CommentRepository.Update(comment);
             comment.AddDomainEvent(new CommentModeratedEvent(
-                comment.Id, comment.UserId, _currentUser.Id!.Value, ModerationAction.Hide, request.Reason ));
+                comment.Id, comment.UserId, _currentUser.Id!.Value, ModerationAction.Hide ));
             return ApiResult<bool>.Success(true);
         }
     }

@@ -9,15 +9,13 @@ namespace Domain.Events
         public int CommentOwnerId { get; }
         public int ModeratorId { get; }
         public ModerationAction Action { get; }
-        public string? Reason { get; }
 
-        public CommentModeratedEvent(int commentId, int commentOwnerId, int moderatorId, ModerationAction action, string? reason)
+        public CommentModeratedEvent(int commentId, int commentOwnerId, int moderatorId, ModerationAction action)
         {
             CommentId = commentId;
             CommentOwnerId = commentOwnerId;
             ModeratorId = moderatorId;
             Action = action;
-            Reason = reason;
         }
     }
 }

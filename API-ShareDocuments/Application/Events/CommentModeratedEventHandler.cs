@@ -23,7 +23,6 @@ namespace Application.Events
                 Type = EntityType.Comment,
                 TargetId = notification.CommentId,
                 Action = notification.Action,
-                Reason = notification.Reason
             });
 
             await _unitOfWork.NotificationRepository.AddAsync(new Notification
@@ -31,7 +30,7 @@ namespace Application.Events
                 UserId = notification.CommentOwnerId,
                 Type = NotificationType.CommentHidden,
                 Title = "Bình luận đã bị ẩn",
-                Content = $"Bình luận của bạn đã bị ẩn. Lý do: {notification.Reason}",
+                Content = $"Bình luận của bạn đã bị ẩn vì không phù hợp",
                 RelatedEntityType = EntityType.Comment,
                 RelatedEntityId = notification.CommentId,
                 IsRead = false
