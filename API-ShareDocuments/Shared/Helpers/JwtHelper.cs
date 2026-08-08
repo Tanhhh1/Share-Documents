@@ -21,6 +21,7 @@ namespace Shared.Helpers
                 new Claim(JwtRegisteredClaimNames.Name, user.Fullname),
             };
             claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r ?? "")));
+            claims.AddRange(roles.Select(r => new Claim("role", r ?? "")));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
