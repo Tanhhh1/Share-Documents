@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="260" viewBox="0 0 260 260">
+  <g fill="none" stroke="#1C2541" stroke-width="1.8" stroke-linecap="round" opacity="0.16">
+    <g transform="translate(30,30) rotate(-8)">
+      <rect x="0" y="0" width="46" height="58" rx="4"/>
+      <line x1="10" y1="16" x2="36" y2="16"/>
+      <line x1="10" y1="26" x2="36" y2="26"/>
+      <line x1="10" y1="36" x2="28" y2="36"/>
+    </g>
+    <g transform="translate(160,110) rotate(6)">
+      <rect x="0" y="0" width="46" height="58" rx="4"/>
+      <line x1="10" y1="16" x2="36" y2="16"/>
+      <line x1="10" y1="26" x2="36" y2="26"/>
+      <line x1="10" y1="36" x2="28" y2="36"/>
+    </g>
+    <path d="M78 55 C110 75, 130 90, 158 118" stroke="#B4483E" stroke-width="2" stroke-dasharray="2 6" opacity="1"/>
+    <g transform="translate(180,6) rotate(-14)">
+      <rect x="0" y="0" width="34" height="42" rx="3"/>
+      <line x1="7" y1="12" x2="27" y2="12"/>
+      <line x1="7" y1="20" x2="27" y2="20"/>
+    </g>
+    <g transform="translate(8,150) rotate(10)">
+      <path d="M0 8 h16 l6 8 h34 v34 h-56 z"/>
+    </g>
+  </g>
+  <circle cx="78" cy="55" r="4.5" fill="#B4483E" stroke="none"/>
+  <circle cx="158" cy="118" r="4.5" fill="#B4483E" stroke="none"/>
+</svg>

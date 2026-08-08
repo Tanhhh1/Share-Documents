@@ -1,0 +1,138 @@
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border-light);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+.table thead tr {
+    background-color: var(--color-bg-light);
+    border-bottom: 2px solid var(--color-border-light);
+}
+
+.table th {
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    white-space: nowrap;
+}
+
+.table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-bg-muted);
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: var(--color-bg-light);
+    transition: background-color 0.15s ease-in-out;
+}
+
+.table-state {
+    text-align: center;
+    padding: 24px;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.badge-active {
+    background-color: var(--color-success-badge-bg);
+    color: var(--color-success-badge-text);
+}
+
+.badge-locked {
+    background-color: var(--color-danger-badge-bg);
+    color: var(--color-danger-badge-text);
+}
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.table-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    padding: 0;
+}
+
+.table-action-btn i {
+    font-size: 18px;
+}
+
+.table-action-btn.edit {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+.table-action-btn.edit:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.table-action-btn.delete {
+    color: var(--color-danger-hover);
+    background-color: var(--color-danger-light);
+}
+.table-action-btn.delete:hover {
+    background-color: var(--color-danger-hover);
+    color: var(--color-white);
+}
+
+.table-action-btn.lock {
+    color: var(--color-warning-text);
+    background-color: var(--color-warning-light);
+}
+.table-action-btn.lock:hover {
+    background-color: var(--color-warning-text);
+    color: var(--color-white);
+}
+
+.table-action-btn.unlock {
+    color: var(--color-success-badge-text);
+    background-color: var(--color-success-light);
+}
+.table-action-btn.unlock:hover {
+    background-color: var(--color-success-badge-text);
+    color: var(--color-white);
+}
+
+.table-action-btn.hide,
+.table-action-btn.show {
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg-muted);
+}
+.table-action-btn.hide:hover,
+.table-action-btn.show:hover {
+    background-color: var(--color-text-secondary);
+    color: var(--color-white);
+}

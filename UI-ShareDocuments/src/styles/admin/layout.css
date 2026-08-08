@@ -1,0 +1,30 @@
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--color-black);
+    z-index: 40;
+    display: none;
+}
+
+.admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 20px 28px;
+}
+
+@media (max-width: 960px) {
+    .admin-overlay {
+        display: block;
+    }
+}
