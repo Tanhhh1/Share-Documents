@@ -28,7 +28,7 @@ namespace Application.CQRS.Faculties.Queries.GetAllFaculty
 
             var pageList = await PageList<FacultyDto>.ToPagedListAsync(
                 faculty.ProjectToType<FacultyDto>(),
-                request.PageNumber,
+                request.PageIndex,
                 request.PageSize,
                 cancellationToken
             );

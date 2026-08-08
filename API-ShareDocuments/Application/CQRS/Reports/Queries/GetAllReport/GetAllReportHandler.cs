@@ -25,16 +25,12 @@ namespace Application.CQRS.Reports.Queries.GetAllReport
                 var keyword = request.Keyword.Trim();
                 reports = reports.Where(r => r.Reason.Contains(keyword) || r.Content.Contains(keyword));
             }
-            if (request.DocumentId.HasValue)
-                reports = reports.Where(r => r.DocumentId == request.DocumentId.Value);
-            if (request.UserId.HasValue)
-                reports = reports.Where(r => r.UserId == request.UserId.Value);
 
             reports = reports.OrderByDescending(r => r.CreatedAt);
 
             var pageList = await PageList<ReportDto>.ToPagedListAsync(
                 reports.ProjectToType<ReportDto>(),
-                request.PageNumber,
+                request.PageIndex,
                 request.PageSize,
                 cancellationToken);
 

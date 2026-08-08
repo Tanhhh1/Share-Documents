@@ -25,7 +25,7 @@ namespace Application.CQRS.Payments.Queries.GetPaymentHistory
                 .ProjectToType<PaymentDto>();
 
             var pagedResult = await PageList<PaymentDto>.ToPagedListAsync(
-                query, request.PageNumber, request.PageSize, cancellationToken);
+                query, request.PageIndex, request.PageSize, cancellationToken);
 
             return ApiResult<PageList<PaymentDto>>.Success(pagedResult);
         }
