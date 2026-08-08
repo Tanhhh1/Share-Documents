@@ -26,8 +26,11 @@ namespace Application.CQRS.Comments.Queries.GetAllCmt
                 comments = comments.Where(c => c.Content.Contains(keyword));
             }
 
-            if (request.DocumentId.HasValue)
-                comments = comments.Where(c => c.DocumentId == request.DocumentId.Value);
+            if (request.FromDate.HasValue)
+                comments = comments.Where(c => c.CreatedAt >= request.FromDate.Value);
+
+            if (request.ToDate.HasValue)
+                comments = comments.Where(c => c.CreatedAt <= request.ToDate.Value);
 
             if (request.UserId.HasValue)
                 comments = comments.Where(c => c.UserId == request.UserId.Value);

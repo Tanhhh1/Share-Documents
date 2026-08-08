@@ -1,6 +1,7 @@
 ﻿using API_ShareDocuments.Controllers.Common;
 using Application.Common;
 using Application.CQRS.Comments.Commands.HideComment;
+using Application.CQRS.Comments.Commands.UnhideComment;
 using Application.CQRS.Comments.DTOs;
 using Application.CQRS.Comments.Queries.GetAllCmt;
 using MediatR;
@@ -33,6 +34,16 @@ namespace API_ShareDocuments.Controllers.V1.Admin
         public async Task<IActionResult> Hide(int id)
         {
             var result = await _mediator.Send(new HideCommentCommand { Id = id });
+            if (!result.Succeeded) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPatch("unhide/{id}")]
+        [ProducesResponseType(typeof(ApiResult<bool>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Unhide(int id)
+        {
+            var result = await _mediator.Send(new UnhideCommentCommand { Id = id });
             if (!result.Succeeded) return BadRequest(result);
             return Ok(result);
         }

@@ -10,7 +10,7 @@ using Application.CQRS.Tags.Queries.GetByTagId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API_ShareDocuments.Controllers.V1.Client
+namespace API_ShareDocuments.Controllers.V1.Admin
 {
     public class TagController : AdminApiController
     {
