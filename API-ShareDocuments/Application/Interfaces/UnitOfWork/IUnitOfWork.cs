@@ -13,7 +13,6 @@ namespace Application.Interfaces.UnitOfWork
         IFacultyRepository FacultyRepository { get; }
         IMajorRepository MajorRepository { get; }
         ISubjectRepository SubjectRepository { get; }
-        IEducationRepository EducationRepository { get; }
         IBookmarkRepository BookmarkRepository { get; }
         ICommentRepository CommentRepository { get; }
         IDocumentRepository DocumentRepository { get; }

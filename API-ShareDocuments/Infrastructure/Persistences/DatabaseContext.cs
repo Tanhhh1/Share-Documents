@@ -21,7 +21,6 @@ namespace Infrastructure.Persistences
         public DbSet<Document> Documents => Set<Document>();
         public DbSet<DocumentFile> DocumentFiles => Set<DocumentFile>();
         public DbSet<DocumentGroup> DocumentGroups => Set<DocumentGroup>();
-        public DbSet<EducationLevel> EducationLevels => Set<EducationLevel>();
         public DbSet<Faculty> Faculties => Set<Faculty>();
         public DbSet<Major> Majors => Set<Major>();
         public DbSet<Membership> Memberships => Set<Membership>();

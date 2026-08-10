@@ -30,7 +30,10 @@ namespace Application.Common
 
             var count = await source.CountAsync(cancellationToken);
 
-            var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken);
+            var items = await source
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
 
             return new PageList<T>(items, count, pageIndex, pageSize);
         }

@@ -25,7 +25,6 @@ namespace Infrastructure.Uow
         private IFacultyRepository? _facultyRepository;
         private IMajorRepository? _majorRepository;
         private ISubjectRepository? _subjectRepository;
-        private IEducationRepository? _educationRepository;
         private IBookmarkRepository? _bookmarkRepository;
         private ICommentRepository? _commentRepository;
         private IDocumentRepository? _documentRepository;
@@ -49,7 +48,6 @@ namespace Infrastructure.Uow
         public IFacultyRepository FacultyRepository => _facultyRepository ??= new FacultyRepository(_dbContext);
         public IMajorRepository MajorRepository => _majorRepository ??= new MajorRepository(_dbContext);
         public ISubjectRepository SubjectRepository => _subjectRepository ??= new SubjectRepository(_dbContext);
-        public IEducationRepository EducationRepository => _educationRepository ??= new EducationRepository(_dbContext);
         public IBookmarkRepository BookmarkRepository => _bookmarkRepository ??= new BookmarkRepository(_dbContext);
         public ICommentRepository CommentRepository => _commentRepository ??= new CommentRepository(_dbContext);
         public IDocumentRepository DocumentRepository => _documentRepository ??= new DocumentRepository(_dbContext);
