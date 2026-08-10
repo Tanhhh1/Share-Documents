@@ -7,7 +7,6 @@ import { CommentTable } from "@/features/comment/components/comment_table";
 import { CommentFilter } from "@/features/comment/components/comment_filter";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import "@/styles/admin/page.css";
 import type { ListCommentDto, CommentFilterParams } from "@/features/comment/types/comment_type";
 
 const DEFAULT_FILTERS: CommentFilterParams = {
@@ -75,7 +74,7 @@ export default function CommentPage() {
     return (
         <div className="page">
             <div className="page-header">
-                <h2>Quản lý bình luận</h2>
+                <h2>Quản Lý Bình Luận</h2>
             </div>
 
             <CommentFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />

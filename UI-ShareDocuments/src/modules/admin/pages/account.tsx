@@ -10,7 +10,6 @@ import { AccountFilter } from "@/features/account/components/account_filter";
 import { AccountFormModal } from "@/features/account/components/account_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import "@/styles/admin/page.css";
 import type { AccountDto, AccountFilterParams, CreateAccountRequest, UpdateAccountRequest } from "@/features/account/types/account_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
@@ -117,9 +116,9 @@ export default function AccountPage() {
     return (
         <div className="page">
             <div className="page-header">
-                <h2>Quản lý tài khoản</h2>
+                <h2>Quản Lý Tài Khoản</h2>
                 <button className="page-create" onClick={handleOpenCreate}>
-                    + Tạo tài khoản
+                    + Tạo Tài Khoản
                 </button>
             </div>
 
