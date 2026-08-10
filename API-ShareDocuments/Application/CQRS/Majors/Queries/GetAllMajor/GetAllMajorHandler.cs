@@ -31,8 +31,8 @@ namespace Application.CQRS.Majors.Queries.GetAllMajor
 
             var pageList = await PageList<MajorDto>.ToPagedListAsync(
                 major.ProjectToType<MajorDto>(),
-                request.PageSize,
                 request.PageIndex,
+                request.PageSize,
                 cancellationToken
             );
 
