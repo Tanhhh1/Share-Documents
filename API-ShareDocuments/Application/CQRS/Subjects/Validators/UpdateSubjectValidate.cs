@@ -13,9 +13,6 @@ namespace Application.CQRS.Subjects.Validators
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Tên môn học không được để trống")
                 .MaximumLength(100).WithMessage("Tên môn học không được vượt quá 100 ký tự");
-
-            RuleFor(x => x.EducationLevelId)
-                .GreaterThan(0).WithMessage("Mã cấp bậc giáo dục không hợp lệ");
         }
     }
 }

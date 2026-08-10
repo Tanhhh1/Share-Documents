@@ -23,10 +23,10 @@ namespace Infrastructure.Persistences.Configurations
             builder.HasIndex(s => s.Name)
                 .IsUnique();
 
-            builder.HasOne(s => s.EducationLevel)
-                .WithMany()
-                .HasForeignKey(s => s.EducationLevelId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(s => s.EducationLevel)
+                .HasConversion<string>()
+                .HasMaxLength(20)
+                .IsRequired();
 
             builder.HasOne(s => s.Major)
                 .WithMany()

@@ -23,9 +23,14 @@ namespace Application.CQRS.Subjects.Commands.CreateSubject
             if (existingSubject)
                 return ApiResult<SubjectDto>.Failure($"Môn học '{request.Name}' đã tồn tại");
 
-            var education = await _unitOfWork.EducationRepository.GetByIdAsync(request.EducationLevelId);
-            if (education is null)
-                return ApiResult<SubjectDto>.Failure("Cấp bậc giáo dục không tồn tại");
+            if (request.MajorId.HasValue)
+            {
+                var majorExists = await _unitOfWork.MajorRepository
+                    .GetByCondition(m => m.Id == request.MajorId.Value)
+                    .AnyAsync(cancellationToken);
+                if (!majorExists)
+                    return ApiResult<SubjectDto>.Failure("Ngành học không tồn tại");
+            }
 
             var subject = request.Adapt<Subject>();
             await _unitOfWork.SubjectRepository.AddAsync(subject);

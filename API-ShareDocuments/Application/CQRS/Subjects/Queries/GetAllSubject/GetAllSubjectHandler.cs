@@ -23,10 +23,10 @@ namespace Application.CQRS.Subjects.Queries.GetAllSubject
                 subject = subject.Where(s => s.Name.Contains(keywords));
             }
 
-            if(request.EducationLevelId.HasValue)
-                subject = subject.Where(s => s.EducationLevelId == request.EducationLevelId.Value);
+            if (request.EducationLevel.HasValue)
+                subject = subject.Where(s => s.EducationLevel == request.EducationLevel.Value);
 
-            if(request.MajorId.HasValue)
+            if (request.MajorId.HasValue)
                 subject = subject.Where(s => s.MajorId == request.MajorId.Value);
 
             if(request.IsActive.HasValue)

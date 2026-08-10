@@ -21,14 +21,19 @@ namespace Application.CQRS.Subjects.Commands.UpdateSubject
                 return ApiResult<SubjectDto>.Failure("Môn học không tồn tại");
 
             var existingSubject = await _unitOfWork.SubjectRepository
-                .GetByCondition(s => s.Name == request.Name)
+                .GetByCondition(s => s.Name == request.Name && s.EducationLevel == request.EducationLevel)
                 .AnyAsync(cancellationToken);
             if(existingSubject)
                 return ApiResult<SubjectDto>.Failure($"Môn học '{request.Name}' đã tồn tại");
 
-            var education = await _unitOfWork.EducationRepository.GetByIdAsync(request.EducationLevelId);
-            if (education is null)
-                return ApiResult<SubjectDto>.Failure("Cấp bậc giáo dục không tồn tại");
+            if (request.MajorId.HasValue)
+            {
+                var majorExists = await _unitOfWork.MajorRepository
+                    .GetByCondition(m => m.Id == request.MajorId.Value)
+                    .AnyAsync(cancellationToken);
+                if (!majorExists)
+                    return ApiResult<SubjectDto>.Failure("Ngành học không tồn tại");
+            }
 
             request.Adapt(subject);
             _unitOfWork.SubjectRepository.Update(subject);
