@@ -47,11 +47,13 @@ namespace Application.CQRS.Documents.Commands.UpdateDocument
             var tags = new List<Domain.Entities.Tag>();
             if (request.TagIds.Count > 0)
             {
+                var distinctTagIds = request.TagIds.Distinct().ToList();
+
                 tags = await _unitOfWork.TagRepository
-                    .GetByCondition(t => request.TagIds.Contains(t.Id) && !t.IsDeleted)
+                    .GetByCondition(t => distinctTagIds.Contains(t.Id) && !t.IsDeleted)
                     .ToListAsync(cancellationToken);
 
-                if (tags.Count != request.TagIds.Distinct().Count())
+                if (tags.Count != distinctTagIds.Count)
                     return ApiResult<DocumentDto>.Failure("Một hoặc nhiều tag không tồn tại");
             }
 
