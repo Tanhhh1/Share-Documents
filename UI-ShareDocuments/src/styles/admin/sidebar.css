@@ -15,7 +15,8 @@
 
 .admin-sidebar.is-collapsed .admin-sidebar-title,
 .admin-sidebar.is-collapsed .admin-sidebar-section-label,
-.admin-sidebar.is-collapsed .admin-menu-label {
+.admin-sidebar.is-collapsed .admin-menu-label,
+.admin-sidebar.is-collapsed .admin-menu-chevron {
     display: none;
 }
 
@@ -85,7 +86,8 @@
     cursor: pointer;
 }
 
-.admin-menu-item:hover {
+.admin-menu-item:hover,
+.admin-submenu-item:hover {
     background: rgba(255, 255, 255, 0.08);
     color: var(--color-paper);
 }
@@ -98,6 +100,29 @@
 .admin-menu-label {
     flex: 1;
     white-space: nowrap;
+}
+
+.admin-menu-chevron {
+    margin-left: auto;
+    font-size: 14px;
+    transition: transform 0.15s ease;
+}
+
+.admin-menu-chevron.expanded {
+    transform: rotate(180deg);
+}
+
+.admin-submenu {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-submenu-item {
+    padding: 8px 16px 8px 44px;
+    font-size: 13px;
+    color: var(--color-paper);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
 }
 
 @media (max-width: 960px) {

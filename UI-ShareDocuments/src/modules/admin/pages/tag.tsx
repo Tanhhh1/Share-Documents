@@ -10,7 +10,6 @@ import { TagFilter } from "@/features/tag/components/tag_filter";
 import { TagFormModal } from "@/features/tag/components/tag_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import "@/styles/admin/page.css";
 import type { TagDto, TagFilterParams, CreateTagRequest, UpdateTagRequest } from "@/features/tag/types/tag_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
@@ -117,9 +116,9 @@ export default function TagPage() {
     return (
         <div className="page">
             <div className="page-header">
-                <h2>Quản lý tag</h2>
+                <h2>Quản Lý Thẻ Phân Loại</h2>
                 <button className="page-create" onClick={handleOpenCreate}>
-                    + Tạo tag
+                    + Tạo Thẻ Phân Loại
                 </button>
             </div>
 

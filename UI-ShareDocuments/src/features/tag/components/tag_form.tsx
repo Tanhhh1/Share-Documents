@@ -67,13 +67,13 @@ export function TagFormModal({ isOpen, mode, initialValues, isLoading = false, a
     };
 
     return (
-        <Modal isOpen={isOpen} title={mode === "create" ? "Tạo tag" : "Cập nhật tag"} onClose={onClose}>
+        <Modal isOpen={isOpen} title={mode === "create" ? "Tạo thẻ phân loại" : "Cập nhật thẻ phân loại"} onClose={onClose}>
             <form className="page-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
                 <div className="form-group">
-                    <label className="form-label">Tên tag <span className="required">*</span></label>
+                    <label className="form-label">Tên thẻ phân loại <span className="required">*</span></label>
                     <Input
-                        placeholder="Nhập tên tag"
+                        placeholder="Nhập tên thẻ phân loại"
                         value={form.name}
                         onChange={handleChange}
                         error={errors.name}
@@ -82,7 +82,7 @@ export function TagFormModal({ isOpen, mode, initialValues, isLoading = false, a
 
                 <div className="page-form-actions">
                     <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Đang lưu..." : mode === "create" ? "Tạo tag" : "Cập nhật"}
+                        {isLoading ? "Đang lưu..." : mode === "create" ? "Tạo thẻ" : "Cập nhật thẻ"}
                     </Button>
                 </div>
             </form>

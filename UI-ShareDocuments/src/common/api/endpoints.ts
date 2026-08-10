@@ -29,4 +29,28 @@ export const endpoints = {
         delete: (id: number) => `/admin/tag/delete/${id}`,
         restore: (id: number) => `/admin/tag/restore/${id}`,
     },
+    faculty: {
+        list: "/admin/faculty",
+        detail: (id: number) => `/admin/faculty/${id}`,
+        create: "/admin/faculty",
+        update: (id: number) => `/admin/faculty/${id}`,
+        delete: (id: number) => `/admin/faculty/delete/${id}`,
+        restore: (id: number) => `/admin/faculty/restore/${id}`,
+    },
+    major: {
+        list: "/admin/major",
+        detail: (id: number) => `/admin/major/${id}`,
+        create: "/admin/major",
+        update: (id: number) => `/admin/major/${id}`,
+        delete: (id: number) => `/admin/major/delete/${id}`,
+        restore: (id: number) => `/admin/major/restore/${id}`,
+    },
+    subject: {
+        list: "/admin/subject",
+        detail: (id: number) => `/admin/subject/${id}`,
+        create: "/admin/subject",
+        update: (id: number) => `/admin/subject/${id}`,
+        delete: (id: number) => `/admin/subject/delete/${id}`,
+        restore: (id: number) => `/admin/subject/restore/${id}`,
+    },
 };  

@@ -16,10 +16,14 @@
 }
 
 .page-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 22px;
     font-weight: 700;
     color: var(--color-text-dark);
     margin: 0;
+    line-height: 1.3;
 }
 
 .page-create {
@@ -101,6 +105,26 @@
 .page-filter-clear:hover {
     background-color: var(--color-border-light);
     color: var(--color-text-dark);
+}
+
+.page-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.page-back:hover {
+    color: var(--color-primary);
+    background-color: rgba(37, 99, 235, 0.08);
 }
 
 .form-group {

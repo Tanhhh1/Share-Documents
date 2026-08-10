@@ -23,7 +23,7 @@ export function TagFilter({ filters, onChange, onClear }: TagFilterProps) {
             <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm theo tên tag..."
+                placeholder="Tìm theo tên thẻ phân loại..."
             />
 
             <select

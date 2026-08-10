@@ -63,7 +63,7 @@ export function TagTable({ pageData, isLoading, onEdit, onDelete, onRestore, onP
                 data={pageData?.items ?? []}
                 isLoading={isLoading}
                 getRowKey={(row) => row.id}
-                emptyMessage="Không có tag nào"
+                emptyMessage="Không có thẻ phân loại nào"
             />
             {pageData && (
                 <Pagination
