@@ -41,7 +41,7 @@ namespace Application.CQRS.Documents.Queries.GetByDocumentId
             if (document.Status != DocumentStatus.Published && !isOwner && !isModerationBypass)
                 return ApiResult<DocumentDetailDto>.Failure("Không tìm thấy tài liệu");
 
-            if (_currentUser.Id.HasValue)
+            if (_currentUser.Id.HasValue && !_currentUser.IsAdmin && !_currentUser.IsModerator)
                 await _statisticsService.IncrementViewAsync(document.Id, _currentUser.Id.Value, cancellationToken);
 
             if (document.AccessLevel == AccessLevel.Premium && !isOwner && !isModerationBypass)

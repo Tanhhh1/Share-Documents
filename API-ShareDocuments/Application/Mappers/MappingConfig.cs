@@ -1,6 +1,7 @@
 ﻿using Application.CQRS.Account.DTOs;
 using Application.CQRS.Bookmarks.DTOs;
 using Application.CQRS.Comments.DTOs;
+using Application.CQRS.DocumentGroups.DTOs;
 using Application.CQRS.Documents.Commands.CreateDocument;
 using Application.CQRS.Documents.DTOs;
 using Application.CQRS.Members.DTOs;
@@ -48,6 +49,9 @@ namespace Application.Mappers
 
             config.NewConfig<Document, DocumentDetailDto>()
                 .Map(dest => dest.SubjectName, src => src.Subject.Name)
+                .Map(dest => dest.UserName, src => src.User.UserName);
+
+            config.NewConfig<DocumentGroup, DocumentGroupDto>()
                 .Map(dest => dest.UserName, src => src.User.UserName);
 
             config.NewConfig<Tag, DocumentTagDto>();

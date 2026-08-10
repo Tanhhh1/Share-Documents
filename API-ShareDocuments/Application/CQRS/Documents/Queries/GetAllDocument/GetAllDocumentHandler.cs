@@ -4,7 +4,6 @@ using Application.Interfaces.UnitOfWork;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.CQRS.Documents.Queries.GetAllDocument
 {

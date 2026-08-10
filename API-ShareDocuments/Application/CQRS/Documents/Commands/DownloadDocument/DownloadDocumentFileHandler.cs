@@ -54,7 +54,8 @@ namespace Application.CQRS.Documents.Commands.DownloadDocument
 
             _unitOfWork.DocumentRepository.Update(document);
             await _unitOfWork.SaveChangesAsync();
-            await _statisticsService.IncrementDownloadAsync(document.Id, _currentUser.Id!.Value, cancellationToken);
+            if (_currentUser.Id.HasValue && !_currentUser.IsAdmin && !_currentUser.IsModerator)
+                await _statisticsService.IncrementDownloadAsync(document.Id, _currentUser.Id!.Value, cancellationToken);
 
             var fileDto = new DocumentFileUrlDto
             {
