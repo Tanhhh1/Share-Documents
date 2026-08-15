@@ -45,23 +45,18 @@ namespace Application.CQRS.Documents.Commands.DownloadDocument
                     return ApiResult<DocumentFileUrlDto>.Failure("Tài liệu này chỉ dành cho thành viên Premium. Vui lòng nâng cấp tài khoản để tải xuống");
             }
 
-            var file = await _unitOfWork.DocumentFileRepository.GetByIdAsync(request.FileId);
-            if (file is null || file.DocumentId != document.Id)
-                return ApiResult<DocumentFileUrlDto>.Failure("Không tìm thấy file trong tài liệu này");
-
             var signedUrl = await _storageService.GenerateSignedDownloadUrlAsync(
-                file.S3Key, SignedUrlExpiresInSeconds, cancellationToken);
+                document.S3Key, SignedUrlExpiresInSeconds, cancellationToken);
 
-            _unitOfWork.DocumentRepository.Update(document);
-            await _unitOfWork.SaveChangesAsync();
             if (_currentUser.Id.HasValue && !_currentUser.IsAdmin && !_currentUser.IsModerator)
                 await _statisticsService.IncrementDownloadAsync(document.Id, _currentUser.Id!.Value, cancellationToken);
 
             var fileDto = new DocumentFileUrlDto
             {
-                FileName = file.FileName,
+                FileName = document.FileName,
                 SignedUrl = signedUrl,
-                ExpiresInSeconds = SignedUrlExpiresInSeconds
+                ExpiresInSeconds = SignedUrlExpiresInSeconds,
+                ConversionStatus = FileConversionStatus.Completed
             };
 
             return ApiResult<DocumentFileUrlDto>.Success(fileDto);

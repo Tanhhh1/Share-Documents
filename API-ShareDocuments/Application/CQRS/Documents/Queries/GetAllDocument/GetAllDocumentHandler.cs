@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.CQRS.Documents.DTOs;
+using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
 using Mapster;
 using MediatR;
@@ -10,10 +11,12 @@ namespace Application.CQRS.Documents.Queries.GetAllDocument
     internal class GetAllDocumentHandler : IRequestHandler<GetAllDocumentQuery, ApiResult<PageList<DocumentDto>>>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ISupabaseStorageService _storageService;
 
-        public GetAllDocumentHandler(IUnitOfWork unitOfWork)
+        public GetAllDocumentHandler(IUnitOfWork unitOfWork, ISupabaseStorageService storageService)
         {
             _unitOfWork = unitOfWork;
+            _storageService = storageService;
         }
 
         public async Task<ApiResult<PageList<DocumentDto>>> Handle(GetAllDocumentQuery request, CancellationToken cancellationToken)
@@ -28,16 +31,25 @@ namespace Application.CQRS.Documents.Queries.GetAllDocument
 
             if (request.SubjectId.HasValue)
                 documents = documents.Where(d => d.SubjectId == request.SubjectId.Value);
-            if (request.TagId.HasValue)
-                documents = documents.Where(d => d.Tags.Any(t => t.Id == request.TagId.Value));
+
+            if (request.TagIds != null && request.TagIds.Any())
+            {
+                var distinctTagIds = request.TagIds.Distinct().ToList();
+                documents = documents.Where(d => d.Tags.Any(t => distinctTagIds.Contains(t.Id)));
+            }
+
             if (request.GroupId.HasValue)
                 documents = documents.Where(d => d.GroupId == request.GroupId.Value);
+
             if (request.Status.HasValue)
                 documents = documents.Where(d => d.Status == request.Status.Value);
+
             if (request.IsDeleted.HasValue)
                 documents = documents.Where(d => d.IsDeleted == request.IsDeleted.Value);
+
             if (request.AccessLevel.HasValue)
                 documents = documents.Where(d => d.AccessLevel == request.AccessLevel.Value);
+
             documents = documents.OrderByDescending(d => d.CreatedAt);
 
             var pageList = await PageList<DocumentDto>.ToPagedListAsync(
@@ -46,6 +58,12 @@ namespace Application.CQRS.Documents.Queries.GetAllDocument
                 request.PageSize,
                 cancellationToken
             );
+
+            foreach (var item in pageList.Items)
+            {
+                if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                    item.ThumbnailUrl = _storageService.GetPublicUrl(item.ThumbnailUrl);
+            }
 
             return ApiResult<PageList<DocumentDto>>.Success(pageList);
         }

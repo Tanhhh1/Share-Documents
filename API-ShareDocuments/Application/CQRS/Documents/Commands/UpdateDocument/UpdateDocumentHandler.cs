@@ -2,14 +2,13 @@
 using Application.CQRS.Documents.DTOs;
 using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
-using Domain.Enums;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Documents.Commands.UpdateDocument
 {
-    internal class UpdateDocumentHandler : IRequestHandler<UpdateDocumentCommand, ApiResult<DocumentDto>>
+    public class UpdateDocumentHandler : IRequestHandler<UpdateDocumentCommand, ApiResult<DocumentDetailDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
@@ -20,7 +19,7 @@ namespace Application.CQRS.Documents.Commands.UpdateDocument
             _currentUser = currentUser;
         }
 
-        public async Task<ApiResult<DocumentDto>> Handle(UpdateDocumentCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResult<DocumentDetailDto>> Handle(UpdateDocumentCommand request, CancellationToken cancellationToken)
         {
             var document = await _unitOfWork.DocumentRepository
                 .GetByCondition(d => d.Id == request.Id)
@@ -28,20 +27,20 @@ namespace Application.CQRS.Documents.Commands.UpdateDocument
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (document is null || document.IsDeleted)
-                return ApiResult<DocumentDto>.Failure("Không tìm thấy tài liệu");
+                return ApiResult<DocumentDetailDto>.Failure("Không tìm thấy tài liệu");
 
             if (document.UserId != _currentUser.Id!.Value)
-                return ApiResult<DocumentDto>.Failure("Bạn không có quyền chỉnh sửa tài liệu này");
+                return ApiResult<DocumentDetailDto>.Failure("Bạn không có quyền chỉnh sửa tài liệu này");
 
             var subject = await _unitOfWork.SubjectRepository.GetByIdAsync(request.SubjectId);
             if (subject is null)
-                return ApiResult<DocumentDto>.Failure("Môn học không tồn tại");
+                return ApiResult<DocumentDetailDto>.Failure("Môn học không tồn tại");
 
             if (request.GroupId.HasValue)
             {
                 var group = await _unitOfWork.DocumentGroupRepository.GetByIdAsync(request.GroupId.Value);
                 if (group is null || group.IsDeleted)
-                    return ApiResult<DocumentDto>.Failure("Nhóm chủ đề không tồn tại");
+                    return ApiResult<DocumentDetailDto>.Failure("Nhóm chủ đề không tồn tại");
             }
 
             var tags = new List<Domain.Entities.Tag>();
@@ -54,7 +53,7 @@ namespace Application.CQRS.Documents.Commands.UpdateDocument
                     .ToListAsync(cancellationToken);
 
                 if (tags.Count != distinctTagIds.Count)
-                    return ApiResult<DocumentDto>.Failure("Một hoặc nhiều tag không tồn tại");
+                    return ApiResult<DocumentDetailDto>.Failure("Một hoặc nhiều tag không tồn tại");
             }
 
             request.Adapt(document);
@@ -64,8 +63,8 @@ namespace Application.CQRS.Documents.Commands.UpdateDocument
             await _unitOfWork.SaveChangesAsync();
 
             document.Subject = subject;
-            var documentDto = document.Adapt<DocumentDto>();
-            return ApiResult<DocumentDto>.Success(documentDto);
+            var documentDto = document.Adapt<DocumentDetailDto>();
+            return ApiResult<DocumentDetailDto>.Success(documentDto);
         }
     }
 }

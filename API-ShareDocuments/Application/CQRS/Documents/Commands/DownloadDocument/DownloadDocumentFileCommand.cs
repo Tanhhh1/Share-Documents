@@ -7,6 +7,5 @@ namespace Application.CQRS.Documents.Commands.DownloadDocument
     public class DownloadDocumentFileCommand : IRequest<ApiResult<DocumentFileUrlDto>>
     {
         public int DocumentId { get; set; }
-        public int FileId { get; set; }
     }
 }

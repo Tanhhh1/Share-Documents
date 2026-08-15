@@ -3,10 +3,8 @@ using Application.CQRS.Documents.DTOs;
 using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
 using Domain.Enums;
-using Domain.Identity;
 using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Documents.Queries.GetByDocumentId

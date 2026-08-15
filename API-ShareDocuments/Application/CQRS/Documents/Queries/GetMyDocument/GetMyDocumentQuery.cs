@@ -8,11 +8,11 @@ namespace Application.CQRS.Documents.Queries.GetMyDocument
     {
         public string? Keyword { get; set; }
         public int? SubjectId { get; set; }
-        public int? TagId { get; set; }
+        public List<int> TagIds { get; set; } = new(); 
         public int? GroupId { get; set; }
         public DocumentStatus? Status { get; set; }
         public bool? IsDeleted { get; set; }
-        public int PageIndex { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
     }
 }

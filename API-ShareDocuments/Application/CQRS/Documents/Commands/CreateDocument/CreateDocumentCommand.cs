@@ -14,6 +14,6 @@ namespace Application.CQRS.Documents.Commands.CreateDocument
         public int? GroupId { get; set; }
         public AccessLevel AccessLevel { get; set; } = AccessLevel.Free;
         public List<int> TagIds { get; set; } = new();
-        public List<IFormFile> Files { get; set; } = new();
+        public IFormFile File { get; set; } = null!;
     }
 }

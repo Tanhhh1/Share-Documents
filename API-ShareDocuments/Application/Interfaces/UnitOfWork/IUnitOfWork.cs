@@ -16,9 +16,7 @@ namespace Application.Interfaces.UnitOfWork
         IBookmarkRepository BookmarkRepository { get; }
         ICommentRepository CommentRepository { get; }
         IDocumentRepository DocumentRepository { get; }
-        IReportRepository ReportRepository { get; }
         IDocumentGroupRepository DocumentGroupRepository { get; }
-        IDocumentFileRepository DocumentFileRepository { get; }
         IPaymentRepository PaymentRepository { get; }
         IMembershipRepository MembershipRepository { get; }
         INotificationRepository NotificationRepository { get; }

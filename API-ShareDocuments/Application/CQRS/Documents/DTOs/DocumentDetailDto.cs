@@ -17,8 +17,16 @@ namespace Application.CQRS.Documents.DTOs
         public int? GroupId { get; set; }
         public int UserId { get; set; }
         public string UserName { get; set; } = string.Empty;
+
+        public string FileName { get; set; } = string.Empty;
+        public string FileType { get; set; } = string.Empty;
+        public long FileSizeBytes { get; set; }
+        public string S3Key { get; set; } = string.Empty;
+        public string? PreviewPdfKey { get; set; }
+        public string? ThumbnailKey { get; set; }
+        public FileConversionStatus ConversionStatus { get; set; }
+
         public List<DocumentTagDto> Tags { get; set; } = new();
-        public List<DocumentFileDto> Files { get; set; } = new();
     }
 
     public class DocumentTagDto

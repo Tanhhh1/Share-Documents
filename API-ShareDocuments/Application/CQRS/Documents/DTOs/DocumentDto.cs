@@ -16,6 +16,13 @@ namespace Application.CQRS.Documents.DTOs
         public AccessLevel AccessLevel { get; set; }
         public int ViewCount { get; set; }
         public int DownloadCount { get; set; }
+        public bool IsDeleted { get; set; }
+
+        public string FileName { get; set; } = string.Empty;
+        public string FileType { get; set; } = string.Empty;
+        public long FileSizeBytes { get; set; }
+        public string? ThumbnailUrl { get; set; }
+
         public List<string> Tags { get; set; } = new();
         public DateTime CreatedAt { get; set; }
     }

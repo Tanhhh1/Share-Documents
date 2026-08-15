@@ -9,7 +9,7 @@ namespace Application.CQRS.Documents.Queries.GetAllDocument
     {
         public string? Keyword { get; set; }
         public int? SubjectId { get; set; }
-        public int? TagId { get; set; }
+        public List<int> TagIds { get; set; } = new();
         public int? GroupId { get; set; }
         public DocumentStatus? Status { get; set; }
         public AccessLevel? AccessLevel { get; set; }

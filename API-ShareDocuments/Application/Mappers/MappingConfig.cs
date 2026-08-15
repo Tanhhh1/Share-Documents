@@ -7,7 +7,6 @@ using Application.CQRS.Documents.DTOs;
 using Application.CQRS.Members.DTOs;
 using Application.CQRS.Notifications.DTOs;
 using Application.CQRS.Payments.DTOs;
-using Application.CQRS.Reports.DTOs;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Identity;
@@ -24,7 +23,6 @@ namespace Application.Mappers
                      src => src.UserRoles.Select(ur => ur.Role.Name!).ToList());
 
             config.NewConfig<CreateDocumentCommand, Document>()
-                .Ignore(dest => dest.Files)
                 .Ignore(dest => dest.Tags);
 
             config.NewConfig<Bookmark, BookmarkDto>()
@@ -38,14 +36,11 @@ namespace Application.Mappers
                 .Map(dest => dest.DocumentTitle, src => src.Document.Title)
                 .Map(dest => dest.UserName, src => src.User.UserName);
 
-            config.NewConfig<Report, ReportDto>()
-                .Map(dest => dest.DocumentTitle, src => src.Document.Title)
-                .Map(dest => dest.UserName, src => src.User.UserName);
-
             config.NewConfig<Document, DocumentDto>()
                 .Map(dest => dest.SubjectName, src => src.Subject.Name)
                 .Map(dest => dest.UserName, src => src.User.UserName)
-                .Map(dest => dest.Tags, src => src.Tags.Select(t => t.Name).ToList());
+                .Map(dest => dest.Tags, src => src.Tags.Select(t => t.Name).ToList())
+                .Map(dest => dest.ThumbnailUrl, src => src.ThumbnailKey);
 
             config.NewConfig<Document, DocumentDetailDto>()
                 .Map(dest => dest.SubjectName, src => src.Subject.Name)
@@ -55,9 +50,6 @@ namespace Application.Mappers
                 .Map(dest => dest.UserName, src => src.User.UserName);
 
             config.NewConfig<Tag, DocumentTagDto>();
-
-            config.NewConfig<DocumentFile, DocumentFileDto>()
-                 .Map(dest => dest.HasPreview, src => src.PreviewPdfKey != null);
 
             config.NewConfig<Payment, PaymentDto>();
 

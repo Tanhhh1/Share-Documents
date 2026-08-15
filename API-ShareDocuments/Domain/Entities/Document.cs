@@ -17,10 +17,18 @@ namespace Domain.Entities
         public int DownloadCount { get; private set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
+
+        public string FileName { get; set; } = string.Empty;
+        public string FileType { get; set; } = string.Empty;
+        public long FileSizeBytes { get; set; }
+        public string S3Key { get; set; } = string.Empty;
+        public string? PreviewPdfKey { get; set; }
+        public string? ThumbnailKey { get; set; }
+        public FileConversionStatus ConversionStatus { get; set; } = FileConversionStatus.Pending;
+
         public DocumentGroup? Group { get; set; }
         public User User { get; set; } = null!;
         public Subject Subject { get; set; } = null!;
-        public ICollection<DocumentFile> Files { get; set; } = new List<DocumentFile>();
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 
         public void IncreaseView()

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.CQRS.Documents.Commands.UpdateDocument
 {
-    public class UpdateDocumentCommand : IRequest<ApiResult<DocumentDto>>
+    public class UpdateDocumentCommand : IRequest<ApiResult<DocumentDetailDto>>
     {
         public int Id { get; set; }
         public string Title { get; set; } = null!;

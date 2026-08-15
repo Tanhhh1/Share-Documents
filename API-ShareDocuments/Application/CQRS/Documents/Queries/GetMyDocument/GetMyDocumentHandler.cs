@@ -4,6 +4,7 @@ using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
 using Mapster;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS.Documents.Queries.GetMyDocument
 {
@@ -11,48 +12,61 @@ namespace Application.CQRS.Documents.Queries.GetMyDocument
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
+        private readonly ISupabaseStorageService _storageService;
 
-        public GetMyDocumentHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
+        public GetMyDocumentHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, ISupabaseStorageService storageService)
         {
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
+            _storageService = storageService;
         }
 
         public async Task<ApiResult<PageList<DocumentDto>>> Handle(GetMyDocumentQuery request, CancellationToken cancellationToken)
         {
-            var query = _unitOfWork.DocumentRepository.GetByCondition();
+            var documents = _unitOfWork.DocumentRepository
+                .GetByCondition()
+                .AsNoTracking();
 
-            query = query.Where(d => d.UserId == _currentUser.Id);
+            documents = documents.Where(d => d.UserId == _currentUser.Id);
 
             if (!string.IsNullOrWhiteSpace(request.Keyword))
             {
                 var keyword = request.Keyword.Trim();
-                query = query.Where(d => d.Title.Contains(keyword));
+                documents = documents.Where(d => d.Title.Contains(keyword));
             }
 
             if (request.SubjectId.HasValue)
-                query = query.Where(d => d.SubjectId == request.SubjectId.Value);
+                documents = documents.Where(d => d.SubjectId == request.SubjectId.Value);
 
-            if (request.TagId.HasValue)
-                query = query.Where(d => d.Tags.Any(t => t.Id == request.TagId.Value));
+            if (request.TagIds != null && request.TagIds.Any())
+            {
+                var distinctTagIds = request.TagIds.Distinct().ToList();
+                documents = documents.Where(d => d.Tags.Any(t => distinctTagIds.Contains(t.Id)));
+            }
 
             if (request.GroupId.HasValue)
-                query = query.Where(d => d.GroupId == request.GroupId.Value);
+                documents = documents.Where(d => d.GroupId == request.GroupId.Value);
 
             if (request.Status.HasValue)
-                query = query.Where(d => d.Status == request.Status.Value);
+                documents = documents.Where(d => d.Status == request.Status.Value);
 
             if (request.IsDeleted.HasValue)
-                query = query.Where(d => d.IsDeleted == request.IsDeleted.Value);
+                documents = documents.Where(d => d.IsDeleted == request.IsDeleted.Value);
 
-            query = query.OrderByDescending(d => d.CreatedAt);
+            documents = documents.OrderByDescending(d => d.CreatedAt);
 
             var pageList = await PageList<DocumentDto>.ToPagedListAsync(
-                query.ProjectToType<DocumentDto>(),
+                documents.ProjectToType<DocumentDto>(),
                 request.PageIndex,
                 request.PageSize,
                 cancellationToken
             );
+
+            foreach (var item in pageList.Items)
+            {
+                if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                    item.ThumbnailUrl = _storageService.GetPublicUrl(item.ThumbnailUrl);
+            }
 
             return ApiResult<PageList<DocumentDto>>.Success(pageList);
         }

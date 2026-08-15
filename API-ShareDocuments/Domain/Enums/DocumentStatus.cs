@@ -8,6 +8,5 @@ namespace Domain.Enums
         Pending = 1,
         Published = 2, 
         Rejected = 3,
-        Hidden = 4
     }
 }

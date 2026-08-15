@@ -15,12 +15,15 @@ namespace Application.CQRS.Documents.Commands.CreateDocument
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
         private readonly ISupabaseStorageService _storageService;
+        private readonly IDocumentConvertService _convertService;
 
-        public CreateDocumentHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, ISupabaseStorageService storageService)
+        private static readonly HashSet<string> ConvertibleFileTypes = new(StringComparer.OrdinalIgnoreCase){ "docx", "pptx" };
+        public CreateDocumentHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser, ISupabaseStorageService storageService, IDocumentConvertService convertService)
         {
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
             _storageService = storageService;
+            _convertService = convertService;
         }
 
         public async Task<ApiResult<DocumentDetailDto>> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
@@ -49,58 +52,101 @@ namespace Application.CQRS.Documents.Commands.CreateDocument
                     return ApiResult<DocumentDetailDto>.Failure("Một hoặc nhiều tag không tồn tại");
             }
 
+            var file = request.File;
+            var extension = Path.GetExtension(file.FileName).TrimStart('.').ToLowerInvariant();
             var isModerationBypass = _currentUser.IsAdmin || _currentUser.IsModerator;
-            var status = isModerationBypass ? DocumentStatus.Published : DocumentStatus.Pending;
-            var accessLevel = isModerationBypass ? request.AccessLevel : AccessLevel.Free;
 
             var document = request.Adapt<Document>();
             document.UserId = _currentUser.Id!.Value;
-            document.Status = status;
-            document.AccessLevel = accessLevel;
+            document.Status = isModerationBypass ? DocumentStatus.Published : DocumentStatus.Pending;
+            document.AccessLevel = isModerationBypass ? request.AccessLevel : AccessLevel.Free;
             document.IsDeleted = false;
             document.Tags = tags;
+            document.FileName = file.FileName;
+            document.FileType = extension;
+            document.FileSizeBytes = file.Length;
+            document.S3Key = string.Empty;
+            document.ConversionStatus = FileConversionStatus.Pending;
 
             await _unitOfWork.DocumentRepository.AddAsync(document);
             await _unitOfWork.SaveChangesAsync();
 
-            var uploadedKeys = new List<string>();
-            var documentFiles = new List<DocumentFile>();
+            var folder = $"documents/{document.Id}";
+            var originalKey = $"{folder}/original.{extension}";
+
+            using var fileMemory = new MemoryStream();
+            await using (var readStream = file.OpenReadStream())
+            {
+                await readStream.CopyToAsync(fileMemory, cancellationToken);
+            }
 
             try
             {
-                foreach (var file in request.Files)
+                fileMemory.Position = 0;
+                await _storageService.UploadAsync(fileMemory, originalKey, file.ContentType, cancellationToken);
+            }
+            catch
+            {
+                _unitOfWork.DocumentRepository.Delete(document);
+                await _unitOfWork.SaveChangesAsync();
+                return ApiResult<DocumentDetailDto>.Failure("Tải file lên hệ thống thất bại. Vui lòng thử lại");
+            }
+
+            document.S3Key = originalKey;
+
+            var conversionStatus = FileConversionStatus.Failed;
+            string? previewPdfKey = null;
+            string? thumbnailKey = null;
+
+            try
+            {
+                Stream pdfStream;
+
+                if (extension == "pdf")
                 {
-                    var extension = Path.GetExtension(file.FileName);
-                    var storageKey = $"documents/{document.Id}/{Guid.NewGuid()}{extension}";
+                    previewPdfKey = originalKey;
+                    fileMemory.Position = 0;
+                    pdfStream = fileMemory;
+                }
+                else if (ConvertibleFileTypes.Contains(extension))
+                {
+                    fileMemory.Position = 0;
+                    pdfStream = await _convertService.ConvertPdfAsync(fileMemory, file.FileName, cancellationToken);
 
-                    await using var stream = file.OpenReadStream();
-                    await _storageService.UploadAsync(stream, storageKey, file.ContentType, cancellationToken);
-                    uploadedKeys.Add(storageKey);
+                    previewPdfKey = $"{folder}/converted.pdf";
+                    pdfStream.Position = 0;
+                    await _storageService.UploadAsync(pdfStream, previewPdfKey, "application/pdf", cancellationToken);
+                }
+                else
+                {
+                    pdfStream = Stream.Null;
+                }
 
-                    documentFiles.Add(new DocumentFile
-                    {
-                        DocumentId = document.Id,
-                        FileName = file.FileName,
-                        FileType = extension.TrimStart('.').ToLowerInvariant(),
-                        FileSizeBytes = file.Length,
-                        S3Key = storageKey
-                    });
+                if (pdfStream != Stream.Null)
+                {
+                    pdfStream.Position = 0;
+                    await using var thumbnailStream = await _convertService.GenerateThumbnailAsync(pdfStream, cancellationToken);
+
+                    thumbnailKey = $"{folder}/thumbnail.jpg";
+                    thumbnailStream.Position = 0;
+                    await _storageService.UploadAsync(thumbnailStream, thumbnailKey, "image/jpeg", cancellationToken);
+
+                    conversionStatus = FileConversionStatus.Completed;
                 }
             }
             catch
             {
-                foreach (var key in uploadedKeys)
-                    await _storageService.DeleteAsync(key, cancellationToken);
-                throw;
+                conversionStatus = FileConversionStatus.Failed;
             }
 
-            foreach (var documentFile in documentFiles)
-                await _unitOfWork.DocumentFileRepository.AddAsync(documentFile);
+            document.PreviewPdfKey = previewPdfKey;
+            document.ThumbnailKey = thumbnailKey;
+            document.ConversionStatus = conversionStatus;
 
+            _unitOfWork.DocumentRepository.Update(document);
             await _unitOfWork.SaveChangesAsync();
 
             document.Subject = subject;
-            document.Files = documentFiles;
 
             var documentDto = document.Adapt<DocumentDetailDto>();
             return ApiResult<DocumentDetailDto>.Success(documentDto);

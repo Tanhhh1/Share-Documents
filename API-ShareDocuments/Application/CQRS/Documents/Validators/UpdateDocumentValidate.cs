@@ -5,6 +5,9 @@ namespace Application.CQRS.Documents.Validators
 {
     public class UpdateDocumentValidate : AbstractValidator<UpdateDocumentCommand>
     {
+        private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".ppt", ".pptx" };
+        private const long MaxFileSizeBytes = 20 * 1024 * 1024; // 20MB
+
         public UpdateDocumentValidate()
         {
             RuleFor(x => x.Id)
@@ -21,8 +24,9 @@ namespace Application.CQRS.Documents.Validators
                 .GreaterThan(0).WithMessage("Môn học không được để trống");
 
             RuleFor(x => x.TagIds)
-                .Must(tagIds => tagIds.Distinct().Count() == tagIds.Count)
+                .Must(tagIds => tagIds == null || tagIds.Distinct().Count() == tagIds.Count)
                 .WithMessage("Danh sách thẻ không được trùng lặp");
         }
     }
 }
+
