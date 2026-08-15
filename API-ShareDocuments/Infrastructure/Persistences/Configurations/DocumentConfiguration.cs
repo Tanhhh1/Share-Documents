@@ -42,6 +42,33 @@ namespace Infrastructure.Persistences.Configurations
                 .HasDefaultValue(false)
                 .IsRequired();
 
+            builder.Property(d => d.FileName)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            builder.Property(d => d.FileType)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            builder.Property(d => d.FileSizeBytes)
+                .IsRequired();
+
+            builder.Property(d => d.S3Key)
+                .HasMaxLength(1000)
+                .IsRequired();
+
+            builder.Property(d => d.PreviewPdfKey)
+                .HasMaxLength(1000)
+                .IsRequired(false);
+
+            builder.Property(d => d.ConversionStatus)
+                .HasConversion<string>()
+                .HasMaxLength(20)
+                .IsRequired();
+
+            builder.HasIndex(d => d.S3Key)
+                .IsUnique();
+
             builder.HasOne(d => d.User)
                 .WithMany()
                 .HasForeignKey(d => d.UserId)
@@ -57,11 +84,6 @@ namespace Infrastructure.Persistences.Configurations
                 .WithMany()
                 .HasForeignKey(d => d.SubjectId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(d => d.Files)
-                .WithOne(f => f.Document)
-                .HasForeignKey(f => f.DocumentId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(d => d.Tags)
                 .WithMany()

@@ -19,14 +19,12 @@ namespace Infrastructure.Persistences
         public DbSet<Bookmark> Bookmarks => Set<Bookmark>();
         public DbSet<Comment> Comments => Set<Comment>();
         public DbSet<Document> Documents => Set<Document>();
-        public DbSet<DocumentFile> DocumentFiles => Set<DocumentFile>();
         public DbSet<DocumentGroup> DocumentGroups => Set<DocumentGroup>();
         public DbSet<Faculty> Faculties => Set<Faculty>();
         public DbSet<Major> Majors => Set<Major>();
         public DbSet<Membership> Memberships => Set<Membership>();
         public DbSet<ModerationLog> ModerationLogs => Set<ModerationLog>();
         public DbSet<Notification> Notifications => Set<Notification>();
-        public DbSet<Report> Reports => Set<Report>();
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<Subject> Subjects => Set<Subject>();
         public DbSet<Tag> Tags => Set<Tag>();

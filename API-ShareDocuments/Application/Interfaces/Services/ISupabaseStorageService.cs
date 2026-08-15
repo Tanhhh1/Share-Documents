@@ -8,5 +8,6 @@
         Task<(Stream Stream, string ContentType)> DownloadAsync(string filePath, CancellationToken cancellationToken = default);
         Task<bool> ExistsAsync(string filePath, CancellationToken cancellationToken = default);
         Task<string> GenerateSignedDownloadUrlAsync(string filePath, int expiresInSeconds, CancellationToken cancellationToken = default);
+        string GetPublicUrl(string filePath);
     }
 }

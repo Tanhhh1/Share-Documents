@@ -27,7 +27,6 @@ namespace Infrastructure.Services
 
                 var documentsToDelete = await _unitOfWork.DocumentRepository
                     .GetByCondition(d => d.IsDeleted && d.DeletedAt <= cutoffDate)
-                    .Include(d => d.Files)
                     .ToListAsync(cancellationToken);
 
                 var groupsToDelete = await _unitOfWork.DocumentGroupRepository
@@ -39,22 +38,22 @@ namespace Infrastructure.Services
 
                 foreach (var document in documentsToDelete)
                 {
-                    foreach (var file in document.Files)
+                    try
                     {
-                        try
-                        {
-                            await _storageService.DeleteAsync(file.S3Key, cancellationToken);
+                        if (!string.IsNullOrEmpty(document.S3Key))
+                            await _storageService.DeleteAsync(document.S3Key, cancellationToken);
 
-                            if (!string.IsNullOrEmpty(file.PreviewPdfKey))
-                            {
-                                await _storageService.DeleteAsync(file.PreviewPdfKey, cancellationToken);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Failed to delete storage file for DocumentId {DocumentId}", document.Id);
-                        }
+                        if (!string.IsNullOrEmpty(document.PreviewPdfKey))
+                            await _storageService.DeleteAsync(document.PreviewPdfKey, cancellationToken);
+
+                        if (!string.IsNullOrEmpty(document.ThumbnailKey))
+                            await _storageService.DeleteAsync(document.ThumbnailKey, cancellationToken);
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to delete storage files for DocumentId {DocumentId}", document.Id);
+                    }
+
                     _unitOfWork.DocumentRepository.Delete(document);
                 }
 

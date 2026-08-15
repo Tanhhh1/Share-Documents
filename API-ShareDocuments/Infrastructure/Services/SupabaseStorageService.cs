@@ -20,7 +20,7 @@ namespace Infrastructure.Services
 
         public async Task<string> UploadAsync(Stream fileStream, string filePath, string contentType, CancellationToken cancellationToken = default)
         {
-            using var content = new StreamContent(fileStream);
+            var content = new StreamContent(fileStream);
             content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
             var response = await _httpClient.PostAsync($"object/{_options.Bucket}/{filePath}", content, cancellationToken);
 
@@ -35,7 +35,7 @@ namespace Infrastructure.Services
 
         public async Task<string> UpdateAsync(Stream fileStream, string filePath, string contentType, CancellationToken cancellationToken = default)
         {
-            using var content = new StreamContent(fileStream);
+            var content = new StreamContent(fileStream);
             content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
             var response = await _httpClient.PutAsync($"object/{_options.Bucket}/{filePath}", content, cancellationToken);
 

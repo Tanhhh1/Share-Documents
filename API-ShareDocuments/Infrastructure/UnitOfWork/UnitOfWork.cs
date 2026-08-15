@@ -28,9 +28,7 @@ namespace Infrastructure.Uow
         private IBookmarkRepository? _bookmarkRepository;
         private ICommentRepository? _commentRepository;
         private IDocumentRepository? _documentRepository;
-        private IReportRepository? _reportRepository;
         private IDocumentGroupRepository? _documentGroupRepository;
-        private IDocumentFileRepository? _documentFileRepository;
         private IPaymentRepository? _paymentRepository;
         private IMembershipRepository? _membershipRepository;
         private INotificationRepository? _notificationRepository;
@@ -51,9 +49,7 @@ namespace Infrastructure.Uow
         public IBookmarkRepository BookmarkRepository => _bookmarkRepository ??= new BookmarkRepository(_dbContext);
         public ICommentRepository CommentRepository => _commentRepository ??= new CommentRepository(_dbContext);
         public IDocumentRepository DocumentRepository => _documentRepository ??= new DocumentRepository(_dbContext);
-        public IReportRepository ReportRepository => _reportRepository ??= new ReportRepository(_dbContext);
         public IDocumentGroupRepository DocumentGroupRepository => _documentGroupRepository ??= new DocumentGroupRepository(_dbContext);
-        public IDocumentFileRepository DocumentFileRepository => _documentFileRepository ??= new DocumentFileRepository(_dbContext);
         public IPaymentRepository PaymentRepository => _paymentRepository ??= new PaymentRepository(_dbContext);
         public IMembershipRepository MembershipRepository => _membershipRepository ??= new MembershipRepository(_dbContext);
         public IModerationLogRepository ModerationLogRepository => _moderationLogRepository ??= new ModerationLogRepository(_dbContext);
