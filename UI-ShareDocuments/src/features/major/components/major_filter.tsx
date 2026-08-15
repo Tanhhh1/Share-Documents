@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
 import { useDebounce } from "@/common/hooks/use_debounce";
-import type { MajorFilterParams } from "../types/major_type";
+import type { MajorFilterParams } from "../major_type";
 
 interface MajorFilterProps {
     filters: MajorFilterParams;

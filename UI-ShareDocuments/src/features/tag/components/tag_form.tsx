@@ -5,7 +5,7 @@ import { Button } from "@/common/components/button";
 import { ErrorAlert } from "@/common/components/error_alert";
 import { mapFieldErrors, getGeneralErrors } from "@/common/utils/api_error";
 import type { FieldError } from "@/common/types/api_result_type";
-import type { TagDto, CreateTagRequest, UpdateTagRequest } from "../types/tag_type";
+import type { TagDto, CreateTagRequest, UpdateTagRequest } from "../tag_type";
 
 type TagFormMode = "create" | "update";
 

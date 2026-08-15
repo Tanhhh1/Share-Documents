@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
 import { useDebounce } from "@/common/hooks/use_debounce";
-import type { FacultyFilterParams } from "../types/faculty_type";
+import type { FacultyFilterParams } from "../faculty_type";
 
 interface FacultyFilterProps {
     filters: FacultyFilterParams;

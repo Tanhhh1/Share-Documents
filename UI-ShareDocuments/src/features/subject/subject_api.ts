@@ -2,7 +2,7 @@ import { api } from "@/common/api/axios";
 import { endpoints } from "@/common/api/endpoints";
 import type { ApiResult } from "@/common/types/api_result_type";
 import type { PageList } from "@/common/types/page_list_type";
-import type { SubjectDto, SubjectFilterParams, CreateSubjectRequest, UpdateSubjectRequest } from "./types/subject_type";
+import type { SubjectDto, SubjectFilterParams, CreateSubjectRequest, UpdateSubjectRequest } from "./subject_type";
 
 export const subjectApi = {
     getAll: async (params: SubjectFilterParams) => {

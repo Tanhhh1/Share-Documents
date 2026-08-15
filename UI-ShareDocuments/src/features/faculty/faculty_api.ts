@@ -2,7 +2,7 @@ import { api } from "@/common/api/axios";
 import { endpoints } from "@/common/api/endpoints";
 import type { ApiResult } from "@/common/types/api_result_type";
 import type { PageList } from "@/common/types/page_list_type";
-import type { FacultyDto, FacultyFilterParams, CreateFacultyRequest, UpdateFacultyRequest } from "./types/faculty_type";
+import type { FacultyDto, FacultyFilterParams, CreateFacultyRequest, UpdateFacultyRequest } from "./faculty_type";
 
 export const facultyApi = {
     getAll: async (params: FacultyFilterParams) => {

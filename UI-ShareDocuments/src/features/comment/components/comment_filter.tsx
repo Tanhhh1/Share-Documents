@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
 import { useDebounce } from "@/common/hooks/use_debounce";
-import type { CommentFilterParams } from "../types/comment_type";
+import type { CommentFilterParams } from "../comment_type";
 
 interface CommentFilterProps {
     filters: CommentFilterParams;

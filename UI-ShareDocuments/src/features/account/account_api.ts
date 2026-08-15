@@ -2,7 +2,7 @@ import { api } from "@/common/api/axios";
 import { endpoints } from "@/common/api/endpoints";
 import type { ApiResult } from "@/common/types/api_result_type";
 import type { PageList } from "@/common/types/page_list_type";
-import type { AccountDto, AccountFilterParams, CreateAccountRequest, UpdateAccountRequest } from "./types/account_type";
+import type { AccountDto, AccountFilterParams, CreateAccountRequest, UpdateAccountRequest } from "./account_type";
 
 export const accountApi = {
     getAll: async (params: AccountFilterParams) => {

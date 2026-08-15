@@ -6,7 +6,7 @@ import { ErrorAlert } from "@/common/components/error_alert";
 import { mapFieldErrors, getGeneralErrors } from "@/common/utils/api_error";
 import { EDUCATION_LEVEL_LABEL, GENERAL_EDUCATION_LEVELS, type EducationLevel } from "@/common/constants/education_level";
 import type { FieldError } from "@/common/types/api_result_type";
-import type { SubjectDto, CreateSubjectRequest, UpdateSubjectRequest } from "../types/subject_type";
+import type { SubjectDto, CreateSubjectRequest, UpdateSubjectRequest } from "../subject_type";
 
 type SubjectFormMode = "create" | "update";
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
 import { useDebounce } from "@/common/hooks/use_debounce";
-import type { AccountFilterParams } from "../types/account_type";
+import type { AccountFilterParams } from "../account_type";
 
 interface AccountFilterProps {
     filters: AccountFilterParams;

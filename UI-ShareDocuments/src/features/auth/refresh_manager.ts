@@ -1,7 +1,7 @@
 import { authApi } from "./auth_api";
 import { store } from "@/app/store/store";
 import { setCredentials, logout } from "./auth_slice";
-import { decodeAccessToken } from "./utils/jwt";
+import { decodeAccessToken } from "./jwt";
 
 let refreshPromise: Promise<string | null> | null = null;
 const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("auth-sync") : null;

@@ -5,7 +5,7 @@ import { Button } from "@/common/components/button";
 import { ErrorAlert } from "@/common/components/error_alert";
 import { mapFieldErrors, getGeneralErrors } from "@/common/utils/api_error";
 import type { FieldError } from "@/common/types/api_result_type";
-import type { MajorDto, CreateMajorRequest, UpdateMajorRequest } from "../types/major_type";
+import type { MajorDto, CreateMajorRequest, UpdateMajorRequest } from "../major_type";
 
 type MajorFormMode = "create" | "update";
 

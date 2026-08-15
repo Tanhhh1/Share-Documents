@@ -2,7 +2,7 @@ import { api } from "@/common/api/axios";
 import { endpoints } from "@/common/api/endpoints";
 import type { ApiResult } from "@/common/types/api_result_type";
 import type { PageList } from "@/common/types/page_list_type";
-import type { MajorDto, MajorFilterParams, CreateMajorRequest, UpdateMajorRequest } from "./types/major_type";
+import type { MajorDto, MajorFilterParams, CreateMajorRequest, UpdateMajorRequest } from "./major_type";
 
 export const majorApi = {
     getAll: async (params: MajorFilterParams) => {

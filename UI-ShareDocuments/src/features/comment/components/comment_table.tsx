@@ -1,6 +1,6 @@
 import { Table, type TableColumn } from "@/common/components/table";
 import { Pagination } from "@/common/components/pagination";
-import type { ListCommentDto } from "../types/comment_type";
+import type { ListCommentDto } from "../comment_type";
 import type { PageList } from "@/common/types/page_list_type";
 
 interface CommentTableProps {

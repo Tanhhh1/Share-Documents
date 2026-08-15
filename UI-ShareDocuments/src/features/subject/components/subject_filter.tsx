@@ -3,7 +3,7 @@ import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
 import { useDebounce } from "@/common/hooks/use_debounce";
 import { EDUCATION_LEVEL_LABEL, GENERAL_EDUCATION_LEVELS, type EducationLevel } from "@/common/constants/education_level";
-import type { SubjectFilterParams } from "../types/subject_type";
+import type { SubjectFilterParams } from "../subject_type";
 
 interface SubjectFilterProps {
     filters: SubjectFilterParams;

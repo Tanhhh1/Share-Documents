@@ -1,6 +1,6 @@
 import { Table, type TableColumn } from "@/common/components/table";
 import { Pagination } from "@/common/components/pagination";
-import type { TagDto } from "../types/tag_type";
+import type { TagDto } from "../tag_type";
 import type { PageList } from "@/common/types/page_list_type";
 
 interface TagTableProps {
@@ -31,7 +31,6 @@ export function TagTable({ pageData, isLoading, onEdit, onDelete, onRestore, onP
             ),
         },
         { key: "createdAt", header: "Ngày tạo", render: (row) => formatDate(row.createdAt) },
-        { key: "updatedAt", header: "Cập nhật", render: (row) => formatDate(row.updatedAt) },
         {
             key: "actions",
             header: "Hành động",

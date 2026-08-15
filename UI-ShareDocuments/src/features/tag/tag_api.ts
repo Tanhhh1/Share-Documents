@@ -2,7 +2,7 @@ import { api } from "@/common/api/axios";
 import { endpoints } from "@/common/api/endpoints";
 import type { ApiResult } from "@/common/types/api_result_type";
 import type { PageList } from "@/common/types/page_list_type";
-import type { TagDto, TagFilterParams, CreateTagRequest, UpdateTagRequest } from "./types/tag_type";
+import type { TagDto, TagFilterParams, CreateTagRequest, UpdateTagRequest } from "./tag_type";
 
 export const tagApi = {
     getAll: async (params: TagFilterParams) => {

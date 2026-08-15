@@ -5,7 +5,7 @@ import { Button } from "@/common/components/button";
 import { ErrorAlert } from "@/common/components/error_alert";
 import { mapFieldErrors, getGeneralErrors } from "@/common/utils/api_error";
 import type { FieldError } from "@/common/types/api_result_type";
-import type { FacultyDto, CreateFacultyRequest, UpdateFacultyRequest } from "../types/faculty_type";
+import type { FacultyDto, CreateFacultyRequest, UpdateFacultyRequest } from "../faculty_type";
 
 type FacultyFormMode = "create" | "update";
 
