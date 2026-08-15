@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
-import { useSignUp } from "@/features/auth/hooks/use_signup";
+import { useSignUp } from "@/features/auth/use_auth";
 import type { ApiResult } from "@/common/types/api_result_type";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";

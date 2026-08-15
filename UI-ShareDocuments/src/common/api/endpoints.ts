@@ -4,6 +4,9 @@ export const endpoints = {
         signUp: "/auth/sign-up",
         refresh: "/auth/refresh",
         revoke: "/auth/revoke",
+        forgot: "/auth/forgot-password",
+        reset: "/auth/reset-password",
+        verify: "/auth/verify-otp",
     },
     account: {
         list: "/admin/account",
@@ -12,6 +15,11 @@ export const endpoints = {
         update: (id: number) => `/admin/account/${id}`,
         lock: (id: number) => `/admin/account/lock/${id}`,
         unlock: (id: number) => `/admin/account/unlock/${id}`,
+    },
+    profile: {
+        get: "/profile",
+        updateInfo: "/profile/update-information",
+        updatePassword: "/profile/update-password",
     },
     report: {
         list: "/admin/report",
@@ -52,5 +60,22 @@ export const endpoints = {
         update: (id: number) => `/admin/subject/${id}`,
         delete: (id: number) => `/admin/subject/delete/${id}`,
         restore: (id: number) => `/admin/subject/restore/${id}`,
+    },
+    group: {
+        list: "/admin/documentgroup",
+        approve: (id: number) => `/admin/documentgroup/approve/${id}`,
+        reject: (id: number) => `/admin/documentgroup/reject/${id}`,
+    },
+    document: {
+        list: "/admin/document",
+        myList: "/document/my/documents",
+        create: "/document",
+        delete: (id: number) => `/document/delete/${id}`,
+        restore: (id: number) => `/document/restore/${id}`,
+        approve: (id: number) => `/admin/document/approve/${id}`,
+        reject: (id: number) => `/admin/document/reject/${id}`,
+        detail: (id: number) => `/document/${id}`,
+        preview: (id: number) => `/document/preview/${id}`,
+        download: (id: number) => `/document/download/${id}`,
     },
 };  

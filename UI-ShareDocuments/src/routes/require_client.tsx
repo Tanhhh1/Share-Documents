@@ -12,7 +12,7 @@ export default function RequireClient() {
 
     const isPrivileged = user?.isAdmin || user?.isModerator;
     if (isPrivileged) {
-        return <Navigate to="/admin/dashboard" replace />;
+        return <Navigate to="/admin/document" replace />;
     }
 
     return <Outlet />;

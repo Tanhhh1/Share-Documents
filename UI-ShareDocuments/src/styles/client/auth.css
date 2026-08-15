@@ -45,6 +45,12 @@
     letter-spacing: 0.2px;
 }
 
+.auth-noti{
+    margin-bottom: 16px;
+    font-size: 14;
+    color: var(--color-text-muted);
+}
+
 .auth-form {
     display: flex;
     flex-direction: column;
@@ -92,7 +98,9 @@
 }
 
 .auth-footer-text {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 13.5px;
     color: var(--color-text-muted);
     margin-top: 24px;
@@ -111,13 +119,11 @@
 
 i.bxl-google {
     font-size: 18;
-    ;
     color: #EA4335;
 }
 
 i.bxl-facebook-circle {
     font-size: 18;
-    ;
     color: #1877F2;
 }
 
