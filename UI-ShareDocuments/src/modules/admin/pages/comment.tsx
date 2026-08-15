@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useComments } from "@/features/comment/hooks/use_comment";
-import { useHideComment } from "@/features/comment/hooks/use_hide_comment";
-import { useUnhideComment } from "@/features/comment/hooks/use_unhide_comment";
+import { useComments } from "@/features/comment/use_comment";
+import { useHideComment } from "@/features/comment/use_comment";
+import { useUnhideComment } from "@/features/comment/use_comment";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
 import { CommentTable } from "@/features/comment/components/comment_table";
 import { CommentFilter } from "@/features/comment/components/comment_filter";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import type { ListCommentDto, CommentFilterParams } from "@/features/comment/types/comment_type";
+import type { ListCommentDto, CommentFilterParams } from "@/features/comment/comment_type";
 
 const DEFAULT_FILTERS: CommentFilterParams = {
     pageIndex: 1,

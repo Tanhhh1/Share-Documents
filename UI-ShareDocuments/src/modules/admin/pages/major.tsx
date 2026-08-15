@@ -2,19 +2,15 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { facultyApi } from "@/features/faculty/faculty_api";
-import { useMajors } from "@/features/major/hooks/use_major";
-import { useCreateMajor } from "@/features/major/hooks/use_create_major";
-import { useUpdateMajor } from "@/features/major/hooks/use_update_major";
-import { useDeleteMajor } from "@/features/major/hooks/use_delete_major";
-import { useRestoreMajor } from "@/features/major/hooks/use_restore_major";
+import { useMajors } from "@/features/major/use_major";
+import { useCreateMajor, useUpdateMajor, useDeleteMajor, useRestoreMajor} from "@/features/major/use_major";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
-import { CardItem } from "@/common/components/card_item";
-import { Pagination } from "@/common/components/pagination";
 import { MajorFilter } from "@/features/major/components/major_filter";
+import { MajorList } from "@/features/major/components/major_list";
 import { MajorFormModal } from "@/features/major/components/major_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import type { MajorDto, MajorFilterParams, CreateMajorRequest, UpdateMajorRequest } from "@/features/major/types/major_type";
+import type { MajorDto, MajorFilterParams, CreateMajorRequest, UpdateMajorRequest } from "@/features/major/major_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
 type FormMode = "create" | "update";
@@ -142,34 +138,14 @@ export default function MajorPage() {
 
             <MajorFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
 
-            <div className="card-grid">
-                {data?.result?.items.map((major) => (
-                    <CardItem
-                        key={major.id}
-                        variant="crud"
-                        name={major.name}
-                        createdAt={major.createdAt}
-                        isDeleted={!major.isActive}
-                        onEdit={() => handleOpenEdit(major)}
-                        onDelete={() => handleOpenDelete(major)}
-                        onRestore={() => handleOpenRestore(major)}
-                        onClick={() => navigate(`/admin/major/${major.id}/subject`)}
-                    />
-                ))}
-                {!isLoading && data?.result?.items.length === 0 && (
-                    <p className="card-empty">Không có ngành nào</p>
-                )}
-            </div>
-
-            {data?.result && (
-                <Pagination
-                    pageIndex={data.result.pageIndex}
-                    totalPages={data.result.totalPages}
-                    hasPrevious={data.result.hasPrevious}
-                    hasNext={data.result.hasNext}
-                    onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
-                />
-            )}
+            <MajorList
+                pageData={data?.result ?? undefined}
+                isLoading={isLoading}
+                onEdit={handleOpenEdit}
+                onDelete={handleOpenDelete}
+                onRestore={handleOpenRestore}
+                onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
+            />
 
             <MajorFormModal
                 isOpen={formModal.isOpen}

@@ -1,18 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useFaculties } from "@/features/faculty/hooks/use_faculty";
-import { useCreateFaculty } from "@/features/faculty/hooks/use_create_faculty";
-import { useUpdateFaculty } from "@/features/faculty/hooks/use_update_faculty";
-import { useDeleteFaculty } from "@/features/faculty/hooks/use_delete_faculty";
-import { useRestoreFaculty } from "@/features/faculty/hooks/use_restore_faculty";
+import { useFaculties } from "@/features/faculty/use_faculty";
+import { useCreateFaculty, useUpdateFaculty, useDeleteFaculty, useRestoreFaculty } from "@/features/faculty/use_faculty";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
-import { CardItem } from "@/common/components/card_item";
-import { Pagination } from "@/common/components/pagination";
 import { FacultyFilter } from "@/features/faculty/components/faculty_filter";
+import { FacultyList } from "@/features/faculty/components/faculty_list";
 import { FacultyFormModal } from "@/features/faculty/components/faculty_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import type { FacultyDto, FacultyFilterParams, CreateFacultyRequest, UpdateFacultyRequest } from "@/features/faculty/types/faculty_type";
+import type { FacultyDto, FacultyFilterParams, CreateFacultyRequest, UpdateFacultyRequest } from "@/features/faculty/faculty_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
 type FormMode = "create" | "update";
@@ -23,7 +18,6 @@ const DEFAULT_FILTERS: FacultyFilterParams = {
 };
 
 export default function FacultyPage() {
-    const navigate = useNavigate();
     const [filters, setFilters] = useState<FacultyFilterParams>(DEFAULT_FILTERS);
     const [selectedFaculty, setSelectedFaculty] = useState<FacultyDto | null>(null);
     const [formMode, setFormMode] = useState<FormMode>("create");
@@ -127,34 +121,14 @@ export default function FacultyPage() {
 
             <FacultyFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
 
-            <div className="card-grid">
-                {data?.result?.items.map((faculty) => (
-                    <CardItem
-                        key={faculty.id}
-                        variant="crud"
-                        name={faculty.name}
-                        createdAt={faculty.createdAt}
-                        isDeleted={!faculty.isActive}
-                        onEdit={() => handleOpenEdit(faculty)}
-                        onDelete={() => handleOpenDelete(faculty)}
-                        onRestore={() => handleOpenRestore(faculty)}
-                        onClick={() => navigate(`/admin/faculty/${faculty.id}/major`)}
-                    />
-                ))}
-                {!isLoading && data?.result?.items.length === 0 && (
-                    <p className="card-empty">Không có khoa nào</p>
-                )}
-            </div>
-
-            {data?.result && (
-                <Pagination
-                    pageIndex={data.result.pageIndex}
-                    totalPages={data.result.totalPages}
-                    hasPrevious={data.result.hasPrevious}
-                    hasNext={data.result.hasNext}
-                    onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
-                />
-            )}
+            <FacultyList
+                pageData={data?.result ?? undefined}
+                isLoading={isLoading}
+                onEdit={handleOpenEdit}
+                onDelete={handleOpenDelete}
+                onRestore={handleOpenRestore}
+                onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
+            />
 
             <FacultyFormModal
                 isOpen={formModal.isOpen}

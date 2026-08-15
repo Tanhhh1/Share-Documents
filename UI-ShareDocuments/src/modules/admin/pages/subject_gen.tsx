@@ -1,18 +1,14 @@
 import { useState } from "react";
-import { useSubjects } from "@/features/subject/hooks/use_subject";
-import { useCreateSubject } from "@/features/subject/hooks/use_create_subject";
-import { useUpdateSubject } from "@/features/subject/hooks/use_update_subject";
-import { useDeleteSubject } from "@/features/subject/hooks/use_delete_subject";
-import { useRestoreSubject } from "@/features/subject/hooks/use_restore_subject";
+import { useSubjects } from "@/features/subject/use_subject";
+import { useCreateSubject, useUpdateSubject, useDeleteSubject, useRestoreSubject } from "@/features/subject/use_subject";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
-import { CardItem } from "@/common/components/card_item";
-import { Pagination } from "@/common/components/pagination";
 import { SubjectFilter } from "@/features/subject/components/subject_filter";
+import { SubjectList } from "@/features/subject/components/subject_list";
 import { SubjectFormModal } from "@/features/subject/components/subject_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
 import { EducationLevel } from "@/common/constants/education_level";
-import type { SubjectDto, SubjectFilterParams, CreateSubjectRequest, UpdateSubjectRequest } from "@/features/subject/types/subject_type";
+import type { SubjectDto, SubjectFilterParams, CreateSubjectRequest, UpdateSubjectRequest } from "@/features/subject/subject_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
 type FormMode = "create" | "update";
@@ -23,7 +19,7 @@ const DEFAULT_FILTERS: SubjectFilterParams = {
     educationLevel: EducationLevel.TieuHoc,
 };
 
-export default function GeneralSubjectPage() {
+export default function GenSubjectPage() {
     const [filters, setFilters] = useState<SubjectFilterParams>(DEFAULT_FILTERS);
 
     const [selectedSubject, setSelectedSubject] = useState<SubjectDto | null>(null);
@@ -128,33 +124,14 @@ export default function GeneralSubjectPage() {
 
             <SubjectFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
 
-            <div className="card-grid">
-                {data?.result?.items.map((subject) => (
-                    <CardItem
-                        key={subject.id}
-                        variant="crud"
-                        name={subject.name}
-                        createdAt={subject.createdAt}
-                        isDeleted={!subject.isActive}
-                        onEdit={() => handleOpenEdit(subject)}
-                        onDelete={() => handleOpenDelete(subject)}
-                        onRestore={() => handleOpenRestore(subject)}
-                    />
-                ))}
-                {!isLoading && data?.result?.items.length === 0 && (
-                    <p className="card-empty">Không có môn học nào</p>
-                )}
-            </div>
-
-            {data?.result && (
-                <Pagination
-                    pageIndex={data.result.pageIndex}
-                    totalPages={data.result.totalPages}
-                    hasPrevious={data.result.hasPrevious}
-                    hasNext={data.result.hasNext}
-                    onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
-                />
-            )}
+            <SubjectList
+                pageData={data?.result ?? undefined}
+                isLoading={isLoading}
+                onEdit={handleOpenEdit}
+                onDelete={handleOpenDelete}
+                onRestore={handleOpenRestore}
+                onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
+            />
 
             <SubjectFormModal
                 isOpen={formModal.isOpen}

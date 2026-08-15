@@ -1,16 +1,13 @@
 import { useState } from "react";
-import { useTags } from "@/features/tag/hooks/use_tag";
-import { useCreateTag } from "@/features/tag/hooks/use_create_tag";
-import { useUpdateTag } from "@/features/tag/hooks/use_update_tag";
-import { useDeleteTag } from "@/features/tag/hooks/use_delete_tag";
-import { useRestoreTag } from "@/features/tag/hooks/use_restore_tag";
+import { useTags } from "@/features/tag/use_tag";
+import { useCreateTag, useUpdateTag, useDeleteTag, useRestoreTag } from "@/features/tag/use_tag";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
 import { TagTable } from "@/features/tag/components/tag_table";
 import { TagFilter } from "@/features/tag/components/tag_filter";
 import { TagFormModal } from "@/features/tag/components/tag_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import type { TagDto, TagFilterParams, CreateTagRequest, UpdateTagRequest } from "@/features/tag/types/tag_type";
+import type { TagDto, TagFilterParams, CreateTagRequest, UpdateTagRequest } from "@/features/tag/tag_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
 type FormMode = "create" | "update";

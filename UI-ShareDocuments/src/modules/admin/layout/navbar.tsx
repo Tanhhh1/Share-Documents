@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/app/store/store";
-import { useLogout } from "@/features/auth/hooks/use_logout";
+import { useLogout } from "@/features/auth/use_auth";
 import "@/styles/admin/navbar.css";
 
 interface NavbarProps {
@@ -12,6 +13,7 @@ interface NavbarProps {
 export function Navbar({ onToggleSidebar, onToggleCollapse }: NavbarProps) {
     const user = useSelector((state: RootState) => state.auth.user);
     const logout = useLogout();
+    const navigate = useNavigate();
     const [isMenuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -24,6 +26,16 @@ export function Navbar({ onToggleSidebar, onToggleCollapse }: NavbarProps) {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const handleNavigateProfile = () => {
+        setMenuOpen(false);
+        navigate("/admin/profile");
+    };
+
+    const handleNavigateMyDocument = () => {
+        setMenuOpen(false);
+        navigate("/admin/my-document");
+    };
 
     return (
         <header className="admin-navbar">
@@ -48,9 +60,13 @@ export function Navbar({ onToggleSidebar, onToggleCollapse }: NavbarProps) {
 
                 {isMenuOpen && (
                     <div className="admin-navbar-dropdown">
-                        <button type="button" className="admin-navbar-dropdown-item">
+                        <button type="button" className="admin-navbar-dropdown-item" onClick={handleNavigateProfile}>
                             <i className="bx bx-user"></i>
                             Hồ sơ của tôi
+                        </button>
+                        <button type="button" className="admin-navbar-dropdown-item" onClick={handleNavigateMyDocument}>
+                            <i className="bx bx-file"></i>
+                            Tài liệu của tôi
                         </button>
                         <button type="button" className="admin-navbar-dropdown-item admin-navbar-logout" onClick={() => logout.mutate()}>
                             <i className="bx bx-log-out"></i>

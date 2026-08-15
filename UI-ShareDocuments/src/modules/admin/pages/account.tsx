@@ -1,16 +1,12 @@
 import { useState } from "react";
-import { useAccounts } from "@/features/account/hooks/use_account";
-import { useCreateAccount } from "@/features/account/hooks/use_create_account";
-import { useUpdateAccount } from "@/features/account/hooks/use_update_account";
-import { useLockAccount } from "@/features/account/hooks/use_lock_account";
-import { useUnlockAccount } from "@/features/account/hooks/use_unlock_account";
+import { useAccounts, useCreateAccount, useUpdateAccount, useLockAccount, useUnlockAccount } from "@/features/account/use_account";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
 import { AccountTable } from "@/features/account/components/account_table";
 import { AccountFilter } from "@/features/account/components/account_filter";
 import { AccountFormModal } from "@/features/account/components/account_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import type { AccountDto, AccountFilterParams, CreateAccountRequest, UpdateAccountRequest } from "@/features/account/types/account_type";
+import type { AccountDto, AccountFilterParams, CreateAccountRequest, UpdateAccountRequest } from "@/features/account/account_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
 type FormMode = "create" | "update";

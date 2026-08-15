@@ -36,13 +36,13 @@ const MENU: MenuItem[] = [
         key: "documents",
         label: "Quản lý Tài liệu",
         icon: "bx-file",
-        path: "/admin/documents",
+        path: "/admin/document",
     },
     {
         key: "document-groups",
         label: "Quản lý Nhóm tài liệu",
         icon: "bx-folder",
-        path: "/admin/document-groups",
+        path: "/admin/document-group",
     },
     {
         key: "tags",
@@ -55,12 +55,6 @@ const MENU: MenuItem[] = [
         label: "Quản lý Bình luận",
         icon: "bx-comment-detail",
         path: "/admin/comment",
-    },
-    {
-        key: "reports",
-        label: "Quản lý Báo cáo",
-        icon: "bx-flag",
-        path: "/admin/report",
     },
 ];
 
