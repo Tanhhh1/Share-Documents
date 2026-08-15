@@ -19,6 +19,8 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />
     <PackageReference Include="payOS" Version="2.1.0" />
+    <PackageReference Include="PDFtoImage" Version="5.2.1" />
+    <PackageReference Include="SkiaSharp" Version="4.150.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
   </ItemGroup>
 

@@ -42,6 +42,9 @@ namespace Infrastructure
             services.AddScoped<IDocumentCleanupService, DocumentCleanupService>();
             services.AddScoped<IMembershipExpirationService, MembershipExpirationService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<ISupabaseStorageService, SupabaseStorageService>();
+            services.AddScoped<IRedisService, RedisService>();
+            services.AddScoped<IDocumentConvertService, GotenbergConvertService>();
 
             services.AddHostedService<MembershipExpirationBackgroundService>();
             services.AddHostedService<DocumentCleanupBackgroundService>();
@@ -50,7 +53,6 @@ namespace Infrastructure
             services.Configure<SupabaseOptions>(supabaseSection);
             var supabaseConfig = supabaseSection.Get<SupabaseOptions>();
             if (supabaseConfig is null) throw new Exception("Supabase configuration not found! Please check 'appsettings.json' file again.");
-
             services.AddHttpClient("SupabaseStorage", (sp, client) =>
             {
                 var options = sp.GetRequiredService<IOptions<SupabaseOptions>>().Value;
@@ -60,9 +62,23 @@ namespace Infrastructure
                     new AuthenticationHeaderValue("Bearer", options.SecretKey);
             });
 
-            services.AddScoped<ISupabaseStorageService, SupabaseStorageService>();
+            var gotenbergSection = configuration.GetSection("Gotenberg");
+            services.Configure<GotenbergOptions>(gotenbergSection);
+            var gotenbergConfig = gotenbergSection.Get<GotenbergOptions>();
+            if (gotenbergConfig is null) throw new Exception("Gotenberg configuration not found! Please check 'appsettings.json' file again.");
+
+            services.AddHttpClient("Gotenberg", (sp, client) =>
+            {
+                var options = sp.GetRequiredService<IOptions<GotenbergOptions>>().Value;
+                client.BaseAddress = new Uri(options.BaseUrl);
+                client.Timeout = TimeSpan.FromMinutes(2);
+            });
+
             services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
             services.Configure<PayOSSettings>(configuration.GetSection(nameof(PayOSSettings)));
+            services.Configure<RedisSettings>(configuration.GetSection(nameof(RedisSettings)));
+            var redisConfig = configuration.GetSection(nameof(RedisSettings)).Get<RedisSettings>();
+            if (redisConfig is null) throw new Exception("Redis configuration not found! Please check 'appsettings.json' file again.");
 
             services.AddSingleton(sp =>
             {
@@ -74,18 +90,12 @@ namespace Infrastructure
                     ChecksumKey = settings.ChecksumKey
                 });
             });
-
-            services.Configure<RedisSettings>(configuration.GetSection(nameof(RedisSettings)));
-            var redisConfig = configuration.GetSection(nameof(RedisSettings)).Get<RedisSettings>();
-            if (redisConfig is null) throw new Exception("Redis configuration not found! Please check 'appsettings.json' file again.");
-
             services.AddSingleton<IConnectionMultiplexer>(_ =>
             {
                 var configOptions = ConfigurationOptions.Parse(redisConfig.ConnectionString);
                 configOptions.AbortOnConnectFail = false;
                 return ConnectionMultiplexer.Connect(configOptions);
             });
-            services.AddScoped<IRedisService, RedisService>();
             return services;
         }
     }
