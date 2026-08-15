@@ -27,7 +27,7 @@ namespace Application.CQRS.Profile.Commands.UpdateInformation
 
             var existingByEmail = await _userManager.FindByEmailAsync(request.Email!);
             if (existingByEmail is not null && existingByEmail.Id != _currentUser.Id)
-                return ApiResult<ProfileDto>.Failure("Email đã được sử dụng bởi tài khoản khác");
+                return ApiResult<ProfileDto>.Failure([new FieldError("Email", "Email đã tồn tại trong hệ thống")]);
 
             request.Adapt(user);
 

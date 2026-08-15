@@ -73,12 +73,12 @@ namespace API_ShareDocuments.Controllers.V1.Client
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(ApiResult<DocumentDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResult<DocumentDto>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResult<DocumentDetailDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResult<DocumentDetailDto>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateDocumentCommand command)
         {
             if (id != command.Id)
-                return BadRequest(ApiResult<DocumentDto>.Failure("Mã tài liệu không khớp"));
+                return BadRequest(ApiResult<DocumentDetailDto>.Failure("Mã tài liệu không khớp"));
 
             var result = await _mediator.Send(command);
             if (!result.Succeeded)
@@ -108,24 +108,24 @@ namespace API_ShareDocuments.Controllers.V1.Client
             return Ok(result);
         }
 
-        [HttpGet("{id}/preview/{fileId}")]
+        [HttpGet("preview/{id}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(ApiResult<DocumentFileUrlDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<DocumentFileUrlDto>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Preview(int id, int fileId)
+        public async Task<IActionResult> Preview(int id)
         {
-            var result = await _mediator.Send(new GetDocumentPreviewQuery { DocumentId = id, FileId = fileId });
+            var result = await _mediator.Send(new GetDocumentPreviewQuery { DocumentId = id });
             if (!result.Succeeded)
                 return BadRequest(result);
             return Ok(result);
         }
 
-        [HttpGet("{id}/download/{fileId}")]
+        [HttpGet("download/{id}")]
         [ProducesResponseType(typeof(ApiResult<DocumentFileUrlDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<DocumentFileUrlDto>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Download(int id, int fileId)
+        public async Task<IActionResult> Download(int id)
         {
-            var result = await _mediator.Send(new DownloadDocumentFileCommand { DocumentId = id, FileId = fileId });
+            var result = await _mediator.Send(new DownloadDocumentFileCommand { DocumentId = id });
             if (!result.Succeeded)
                 return BadRequest(result);
             return Ok(result);

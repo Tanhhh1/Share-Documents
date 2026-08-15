@@ -26,6 +26,8 @@ namespace Application.CQRS.Tags.Queries.GetAllTag
             if (request.IsDeleted.HasValue)
                 tag = tag.Where(t => t.IsDeleted == request.IsDeleted.Value);
 
+            tag = tag.OrderByDescending(d => d.Id);
+
             var pageList = await PageList<TagDto>.ToPagedListAsync(
                 tag.ProjectToType<TagDto>(),
                 request.PageIndex,

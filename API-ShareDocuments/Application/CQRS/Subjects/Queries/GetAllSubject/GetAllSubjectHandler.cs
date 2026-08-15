@@ -32,6 +32,8 @@ namespace Application.CQRS.Subjects.Queries.GetAllSubject
             if(request.IsActive.HasValue)
                 subject = subject.Where(s => s.IsActive == request.IsActive.Value);
 
+            subject = subject.OrderByDescending(s => s.Id);
+
             var pageList = await PageList<SubjectDto>.ToPagedListAsync(
                 subject.ProjectToType<SubjectDto>(),
                 request.PageIndex,

@@ -26,6 +26,8 @@ namespace Application.CQRS.Faculties.Queries.GetAllFaculty
             if(request.IsActive.HasValue)
                 faculty = faculty.Where(f => f.IsActive == request.IsActive.Value);
 
+            faculty = faculty.OrderByDescending(f => f.Id);
+
             var pageList = await PageList<FacultyDto>.ToPagedListAsync(
                 faculty.ProjectToType<FacultyDto>(),
                 request.PageIndex,

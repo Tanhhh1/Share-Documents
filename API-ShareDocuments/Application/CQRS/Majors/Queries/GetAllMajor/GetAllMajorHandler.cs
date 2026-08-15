@@ -29,6 +29,8 @@ namespace Application.CQRS.Majors.Queries.GetAllMajor
             if(request.IsActive.HasValue)
                 major = major.Where(m => m.IsActive == request.IsActive.Value);
 
+            major = major.OrderByDescending(m => m.Id);
+
             var pageList = await PageList<MajorDto>.ToPagedListAsync(
                 major.ProjectToType<MajorDto>(),
                 request.PageIndex,
