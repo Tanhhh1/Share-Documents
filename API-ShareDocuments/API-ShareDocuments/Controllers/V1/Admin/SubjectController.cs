@@ -8,6 +8,7 @@ using Application.CQRS.Subjects.DTOs;
 using Application.CQRS.Subjects.Queries.GetAllSubject;
 using Application.CQRS.Subjects.Queries.GetBySubjectId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_ShareDocuments.Controllers.V1.Admin
@@ -21,6 +22,7 @@ namespace API_ShareDocuments.Controllers.V1.Admin
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ApiResult<PageList<SubjectDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<PageList<SubjectDto>>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllSubjectQuery query)

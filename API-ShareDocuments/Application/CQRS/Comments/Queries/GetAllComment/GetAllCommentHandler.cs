@@ -22,8 +22,8 @@ namespace Application.CQRS.Comments.Queries.GetAllCmt
 
             if (!string.IsNullOrEmpty(request.Keyword))
             {
-                var keyword = request.Keyword.Trim();
-                comments = comments.Where(c => c.Content.Contains(keyword));
+                var keyword = request.Keyword.Trim().ToLower();
+                comments = comments.Where(c => c.Content.ToLower().Contains(keyword));
             }
 
             if (request.FromDate.HasValue)

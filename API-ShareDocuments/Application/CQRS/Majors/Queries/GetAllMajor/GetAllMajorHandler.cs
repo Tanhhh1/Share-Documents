@@ -19,8 +19,8 @@ namespace Application.CQRS.Majors.Queries.GetAllMajor
             var major = _unitOfWork.MajorRepository.GetByCondition().AsNoTracking();
             if (!string.IsNullOrEmpty(request.Search))
             {
-                var keywords = request.Search.Trim();
-                major = major.Where(m => m.Name.Contains(keywords));
+                var keywords = request.Search.Trim().ToLower();
+                major = major.Where(m => m.Name.ToLower().Contains(keywords));
             }
 
             if(request.FacultyId.HasValue)

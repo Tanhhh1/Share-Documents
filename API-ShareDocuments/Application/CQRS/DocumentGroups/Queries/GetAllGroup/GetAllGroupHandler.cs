@@ -21,8 +21,8 @@ namespace Application.CQRS.DocumentGroups.Queries.GetAllGroup
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                var keyword = request.Search.Trim();
-                documentGroups = documentGroups.Where(g => g.Title.Contains(keyword));
+                var keyword = request.Search.Trim().ToLower();
+                documentGroups = documentGroups.Where(g => g.Title.ToLower().Contains(keyword));
             }
 
             if (request.Status.HasValue)

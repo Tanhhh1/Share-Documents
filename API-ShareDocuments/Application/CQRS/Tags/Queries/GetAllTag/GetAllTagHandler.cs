@@ -19,8 +19,8 @@ namespace Application.CQRS.Tags.Queries.GetAllTag
             var tag = _unitOfWork.TagRepository.GetByCondition().AsNoTracking();
             if (!string.IsNullOrEmpty(request.Search))
             {
-                var keywords = request.Search.Trim();
-                tag = tag.Where(t => t.Name.Contains(keywords));
+                var keywords = request.Search.Trim().ToLower();
+                tag = tag.Where(t => t.Name.ToLower().Contains(keywords));
             }
 
             if (request.IsDeleted.HasValue)

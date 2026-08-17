@@ -19,8 +19,8 @@ namespace Application.CQRS.Faculties.Queries.GetAllFaculty
             var faculty = _unitOfWork.FacultyRepository.GetByCondition().AsNoTracking();
             if(!string.IsNullOrEmpty(request.Search))
             {
-                var keywords = request.Search.Trim();
-                faculty = faculty.Where(f => f.Name.Contains(keywords));
+                var keywords = request.Search.Trim().ToLower();
+                faculty = faculty.Where(f => f.Name.ToLower().Contains(keywords));
             }
 
             if(request.IsActive.HasValue)

@@ -19,8 +19,8 @@ namespace Application.CQRS.Subjects.Queries.GetAllSubject
             var subject = _unitOfWork.SubjectRepository.GetByCondition().AsNoTracking();
             if (!string.IsNullOrEmpty(request.Search))
             {
-                var keywords = request.Search.Trim();
-                subject = subject.Where(s => s.Name.Contains(keywords));
+                var keywords = request.Search.Trim().ToLower();
+                subject = subject.Where(s => s.Name.ToLower().Contains(keywords));
             }
 
             if (request.EducationLevel.HasValue)
