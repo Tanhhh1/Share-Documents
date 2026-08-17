@@ -25,8 +25,8 @@ namespace Application.CQRS.Documents.Queries.GetAllDocument
 
             if (!string.IsNullOrWhiteSpace(request.Keyword))
             {
-                var keyword = request.Keyword.Trim();
-                documents = documents.Where(d => d.Title.Contains(keyword));
+                var keyword = request.Keyword.Trim().ToLower();
+                documents = documents.Where(d => d.Title.ToLower().Contains(keyword));
             }
 
             if (request.SubjectId.HasValue)

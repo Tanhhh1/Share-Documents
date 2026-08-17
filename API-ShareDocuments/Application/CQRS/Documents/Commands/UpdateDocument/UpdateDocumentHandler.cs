@@ -55,9 +55,11 @@ namespace Application.CQRS.Documents.Commands.UpdateDocument
                 if (tags.Count != distinctTagIds.Count)
                     return ApiResult<DocumentDetailDto>.Failure("Một hoặc nhiều tag không tồn tại");
             }
+            var isModerationBypass = _currentUser.IsAdmin || _currentUser.IsModerator;
 
             request.Adapt(document);
             document.Tags = tags;
+            document.AccessLevel = isModerationBypass ? request.AccessLevel : document.AccessLevel;
 
             _unitOfWork.DocumentRepository.Update(document);
             await _unitOfWork.SaveChangesAsync();

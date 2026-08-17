@@ -26,9 +26,6 @@ namespace Application.CQRS.Documents.Queries.GetDocumentPreview
         {
             var document = await _unitOfWork.DocumentRepository.GetByIdAsync(request.DocumentId);
 
-            if (document is null || document.IsDeleted)
-                return ApiResult<DocumentFileUrlDto>.Failure("Không tìm thấy tài liệu");
-
             var isOwner = _currentUser.Id.HasValue && document.UserId == _currentUser.Id.Value;
             var isModerationBypass = _currentUser.IsAdmin || _currentUser.IsModerator;
 

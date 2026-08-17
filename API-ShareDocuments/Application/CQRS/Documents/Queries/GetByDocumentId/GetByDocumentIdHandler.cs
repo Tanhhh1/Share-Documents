@@ -26,7 +26,7 @@ namespace Application.CQRS.Documents.Queries.GetByDocumentId
         public async Task<ApiResult<DocumentDetailDto>> Handle(GetByDocumentIdQuery request, CancellationToken cancellationToken)
         {
             var document = await _unitOfWork.DocumentRepository
-                 .GetByCondition(d => d.Id == request.Id && !d.IsDeleted)
+                 .GetByCondition(d => d.Id == request.Id)
                  .ProjectToType<DocumentDetailDto>()
                  .FirstOrDefaultAsync(cancellationToken);
 
@@ -36,8 +36,14 @@ namespace Application.CQRS.Documents.Queries.GetByDocumentId
             var isOwner = document.UserId == _currentUser.Id;
             var isModerationBypass = _currentUser.IsAdmin || _currentUser.IsModerator;
 
+            if (document.IsDeleted && !isOwner && !isModerationBypass)
+                return ApiResult<DocumentDetailDto>.Failure("Không tìm thấy tài liệu");
+
             if (document.Status != DocumentStatus.Published && !isOwner && !isModerationBypass)
                 return ApiResult<DocumentDetailDto>.Failure("Không tìm thấy tài liệu");
+
+            if (!document.IsDeleted && _currentUser.Id.HasValue && !_currentUser.IsAdmin && !_currentUser.IsModerator)
+                await _statisticsService.IncrementViewAsync(document.Id, _currentUser.Id.Value, cancellationToken);
 
             if (_currentUser.Id.HasValue && !_currentUser.IsAdmin && !_currentUser.IsModerator)
                 await _statisticsService.IncrementViewAsync(document.Id, _currentUser.Id.Value, cancellationToken);
