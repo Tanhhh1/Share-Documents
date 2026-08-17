@@ -16,6 +16,5 @@ export interface CommentFilterParams extends PageListParams {
     keyword?: string;
     userId?: number;
     isDeleted?: boolean;
-    fromDate?: string; 
-    toDate?: string;
+    createdDate?: string;
 }

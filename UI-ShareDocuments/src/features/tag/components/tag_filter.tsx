@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/common/components/input";
-import { Button } from "@/common/components/button";
 import { useDebounce } from "@/common/hooks/use_debounce";
 import type { TagFilterParams } from "../tag_type";
 
 interface TagFilterProps {
     filters: TagFilterParams;
     onChange: (filters: TagFilterParams) => void;
-    onClear: () => void;
 }
 
-export function TagFilter({ filters, onChange, onClear }: TagFilterProps) {
+export function TagFilter({ filters, onChange }: TagFilterProps) {
     const [search, setSearch] = useState(filters.search ?? "");
     const debouncedSearch = useDebounce(search, 500);
 
@@ -26,19 +24,15 @@ export function TagFilter({ filters, onChange, onClear }: TagFilterProps) {
                 placeholder="Tìm theo tên thẻ phân loại..."
             />
 
-            <select
-                className="page-filter-status"
-                value={filters.isDeleted === undefined ? "" : String(filters.isDeleted)}
-                onChange={(e) => onChange({ ...filters, isDeleted: e.target.value === "" ? undefined : e.target.value === "true", pageIndex: 1 })}
-            >
-                <option value="">Tất cả trạng thái</option>
-                <option value="false">Hoạt động</option>
-                <option value="true">Đã xóa</option>
-            </select>
-
-            <Button className="page-filter-clear" onClick={onClear}>
-                Xóa lọc
-            </Button>
+            <div className="page-select">
+                <select className="page-filter-status" value={filters.isDeleted === undefined ? "" : String(filters.isDeleted)}
+                    onChange={(e) => onChange({ ...filters, isDeleted: e.target.value === "" ? undefined : e.target.value === "true", pageIndex: 1 })}
+                >
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="false">Hoạt động</option>
+                    <option value="true">Đã xóa</option>
+                </select>
+            </div>
         </div>
     );
 }
