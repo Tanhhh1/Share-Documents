@@ -1,7 +1,7 @@
 import { DOCUMENT_STATUS_LABEL } from "@/common/constants/document_status";
 import type { DocumentDetailDto } from "../document_type";
 
-interface DocumentInfoSummaryProps {
+interface DocumentInfoProps {
     document: DocumentDetailDto;
 }
 
@@ -9,7 +9,7 @@ function formatDate(value: string): string {
     return new Date(value).toLocaleString("vi-VN");
 }
 
-export function DocumentInfoSummary({ document }: DocumentInfoSummaryProps) {
+export function DocumentInfo({ document }: DocumentInfoProps) {
     return (
         <div className="info-summary">
             <div className="info-row">

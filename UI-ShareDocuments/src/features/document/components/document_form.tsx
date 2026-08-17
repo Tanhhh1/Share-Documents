@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef, type FormEvent, type DragEvent } from "react";
-import { Modal } from "@/common/components/modal";
-import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
 import { ErrorAlert } from "@/common/components/error_alert";
 import { mapFieldErrors, getGeneralErrors } from "@/common/utils/api_error";
@@ -8,8 +6,19 @@ import type { FieldError } from "@/common/types/api_result_type";
 import { AccessLevel, ACCESS_LEVELS, ACCESS_LEVEL_LABEL } from "@/common/constants/access_level";
 import { SubjectSelect } from "@/features/subject/components/subject_select";
 import { TagMultiSelect } from "@/features/tag/components/tag_select";
-import type { CreateDocumentRequest } from "../document_type";
+import type { CreateDocumentRequest, UpdateDocumentRequest, DocumentDetailDto } from "../document_type";
 import "@/styles/admin/form.css";
+
+export type DocumentFormMode = "create" | "update";
+
+interface DocumentFormProps {
+    mode: DocumentFormMode;
+    initialValues?: DocumentDetailDto;
+    isLoading?: boolean;
+    apiErrors?: FieldError[] | null;
+    onSubmit: (payload: CreateDocumentRequest | UpdateDocumentRequest) => void;
+    hideAccessLevel?: boolean;
+}
 
 interface FormState {
     title: string;
@@ -22,15 +31,6 @@ interface FormState {
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
 
-const INITIAL_FORM: FormState = {
-    title: "",
-    description: "",
-    subjectId: undefined,
-    accessLevel: AccessLevel.Free,
-    tagIds: [],
-    file: null,
-};
-
 function formatFileSize(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -41,18 +41,48 @@ function getFileExtension(fileName: string): string {
     return fileName.split(".").pop()?.toLowerCase() ?? "";
 }
 
-interface DocumentFormProps {
-    isLoading?: boolean;
-    apiErrors?: FieldError[] | null;
-    onSubmit: (payload: CreateDocumentRequest) => void;
-    submitLabel?: string;
+function getFileBoxiconClass(ext: string): string {
+    switch (ext) {
+        case "pdf": return "bxs-file-pdf";
+        case "doc":
+        case "docx": return "bxs-file-doc";
+        case "ppt":
+        case "pptx": return "bxs-file-txt";
+        default: return "bxs-file";
+    }
 }
 
-export function DocumentForm({ isLoading = false, apiErrors, onSubmit, submitLabel = "Tạo tài liệu" }: DocumentFormProps) {
-    const [form, setForm] = useState<FormState>(INITIAL_FORM);
+export function DocumentForm({
+    mode,
+    initialValues,
+    isLoading = false,
+    apiErrors,
+    onSubmit,
+    hideAccessLevel = false,
+}: DocumentFormProps) {
+    const [form, setForm] = useState<FormState>({
+        title: "",
+        description: "",
+        subjectId: undefined,
+        accessLevel: AccessLevel.Free,
+        tagIds: [],
+        file: null,
+    });
     const [errors, setErrors] = useState<FormErrors>({});
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        setForm({
+            title: initialValues?.title ?? "",
+            description: initialValues?.description ?? "",
+            subjectId: initialValues?.subjectId ?? undefined,
+            accessLevel: initialValues?.accessLevel ?? AccessLevel.Free,
+            tagIds: initialValues?.tags ? initialValues.tags.map((t) => t.id) : [],
+            file: null,
+        });
+        setErrors({});
+    }, [initialValues]);
 
     useEffect(() => {
         if (apiErrors && apiErrors.length > 0) {
@@ -60,7 +90,7 @@ export function DocumentForm({ isLoading = false, apiErrors, onSubmit, submitLab
         }
     }, [apiErrors]);
 
-    const handleFileSelect = (file: File | null) => {
+    const setFile = (file: File | null) => {
         setForm((prev) => ({ ...prev, file }));
         setErrors((prev) => ({ ...prev, file: undefined }));
     };
@@ -69,14 +99,15 @@ export function DocumentForm({ isLoading = false, apiErrors, onSubmit, submitLab
         e.preventDefault();
         setIsDragging(false);
         const file = e.dataTransfer.files?.[0];
-        if (file) handleFileSelect(file);
+        if (file) setFile(file);
     };
 
     const validate = (): boolean => {
         const newErrors: FormErrors = {};
+
         if (!form.title.trim()) newErrors.title = "Vui lòng nhập tiêu đề";
         if (!form.subjectId) newErrors.subjectId = "Vui lòng chọn môn học";
-        if (!form.file) newErrors.file = "Vui lòng chọn tệp tài liệu";
+        if (mode === "create" && !form.file) newErrors.file = "Vui lòng chọn tệp tài liệu";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -86,141 +117,145 @@ export function DocumentForm({ isLoading = false, apiErrors, onSubmit, submitLab
         e.preventDefault();
         if (!validate()) return;
 
-        onSubmit({
-            title: form.title,
-            description: form.description || undefined,
-            subjectId: form.subjectId!,
-            accessLevel: form.accessLevel,
-            tagIds: form.tagIds,
-            file: form.file!,
-        });
+        if (mode === "create") {
+            const payload: CreateDocumentRequest = {
+                title: form.title,
+                description: form.description || undefined,
+                subjectId: form.subjectId!,
+                accessLevel: hideAccessLevel ? AccessLevel.Free : form.accessLevel,
+                tagIds: form.tagIds,
+                file: form.file!,
+            };
+            onSubmit(payload);
+        } else {
+            const payload: UpdateDocumentRequest = {
+                id: initialValues!.id,
+                title: form.title,
+                description: form.description || undefined,
+                subjectId: form.subjectId!,
+                accessLevel: hideAccessLevel ? AccessLevel.Free : form.accessLevel,
+                tagIds: form.tagIds,
+            };
+            onSubmit(payload);
+        }
     };
 
-    const fileExtension = form.file ? getFileExtension(form.file.name) : "";
+    const displayFileName = mode === "update" ? initialValues?.fileName : form.file?.name;
+    const displayFileSize = mode === "update" ? initialValues?.fileSizeBytes : form.file?.size;
+    const fileExt = displayFileName ? getFileExtension(displayFileName) : "";
 
     return (
-        <form className="doc-form" onSubmit={handleSubmit}>
+        <form className="doc-upload-layout" onSubmit={handleSubmit}>
             <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
-            <div className="doc-form-section">
-                <p className="doc-form-section-title">Thông tin cơ bản</p>
-
-                <div className="form-group">
-                    <label className="form-label">
-                        Tiêu đề <span className="required">*</span>
-                    </label>
-                    <Input
-                        placeholder="Nhập tiêu đề tài liệu"
-                        value={form.title}
-                        onChange={(e) => { setForm((prev) => ({ ...prev, title: e.target.value })); setErrors((prev) => ({ ...prev, title: undefined })); }}
-                        error={errors.title}
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label className="form-label">Mô tả</label>
-                    <textarea
-                        className="doc-form-textarea"
-                        placeholder="Mô tả ngắn về nội dung tài liệu..."
-                        rows={3}
-                        value={form.description}
-                        onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
-                    />
-                </div>
-            </div>
-
-            <div className="doc-form-section">
-                <p className="doc-form-section-title">Phân loại</p>
-
-                <div className="doc-form-row">
-                    <div className="form-group">
-                        <label className="form-label">
-                            Môn học <span className="required">*</span>
-                        </label>
-                        <SubjectSelect
-                            value={form.subjectId}
-                            onChange={(subjectId) => { setForm((prev) => ({ ...prev, subjectId })); setErrors((prev) => ({ ...prev, subjectId: undefined })); }}
-                        />
-                        {errors.subjectId && <p className="input-error-message">{errors.subjectId}</p>}
-                    </div>
-
-                    <div className="form-group">
-                        <label className="form-label">
-                            Quyền truy cập <span className="required">*</span>
-                        </label>
-                        <select className="custom-input" value={form.accessLevel} onChange={(e) => setForm((prev) => ({ ...prev, accessLevel: e.target.value as AccessLevel }))}>
-                            {ACCESS_LEVELS.map((level) => (
-                                <option key={level} value={level}>
-                                    {ACCESS_LEVEL_LABEL[level]}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="form-group">
-                    <label className="form-label">Thẻ phân loại</label>
-                    <TagMultiSelect
-                        value={form.tagIds}
-                        onChange={(tagIds) => setForm((prev) => ({ ...prev, tagIds: tagIds ?? [] }))}
-                    />
-                </div>
-            </div>
-
-            <div className="doc-form-section">
-                <p className="doc-form-section-title">
-                    Tệp tài liệu <span className="required">*</span>
-                </p>
-                {!form.file ? (
-                    <div
-                        className={`doc-form-dropzone ${isDragging ? "dragging" : ""} ${errors.file ? "has-error" : ""}`}
-                        onClick={() => fileInputRef.current?.click()}
-                        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                        onDragLeave={() => setIsDragging(false)}
-                        onDrop={handleDrop}
-                    >
-                        <p className="doc-form-dropzone-title">Kéo thả tệp vào đây hoặc bấm để chọn</p>
-                        <p className="doc-form-dropzone-hint">Hỗ trợ định dạng PDF, DOCX, PPTX</p>
-                        <input ref={fileInputRef} type="file" accept=".pdf,.docx,.pptx" hidden onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)}/>
-                    </div>
-                ) : (
-                    <div className="doc-form-file-card">
-                        <span className={`doc-form-file-badge ext-${fileExtension}`}>
-                            {fileExtension.toUpperCase()}
-                        </span>
-                        <div className="doc-form-file-info">
-                            <p className="doc-form-file-name">{form.file.name}</p>
-                            <p className="doc-form-file-size">{formatFileSize(form.file.size)}</p>
+            <div className="doc-upload-container">
+                <div className="doc-preview-column">
+                    {mode === "create" && !form.file ? (
+                        <div className={`doc-dropzone-box ${isDragging ? "dragging" : ""} ${errors.file ? "has-error" : ""}`}
+                            onClick={() => fileInputRef.current?.click()} onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                            onDragLeave={() => setIsDragging(false)} onDrop={handleDrop}
+                        >
+                            <i className="bx bx-cloud-upload dropzone-icon"></i>
+                            <p className="dropzone-title">Tải tệp lên</p>
+                            <p className="dropzone-sub">Kéo thả hoặc bấm để chọn (PDF, DOCX, PPTX)</p>
+                            <input ref={fileInputRef} type="file" accept=".pdf,.docx,.pptx" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)}/>
                         </div>
-                        <button type="button" className="doc-form-file-remove" onClick={() => handleFileSelect(null)}>
-                            ×
-                        </button>
-                    </div>
-                )}
-                {errors.file && <p className="input-error-message">{errors.file}</p>}
-            </div>
+                    ) : (
+                        <div className="doc-preview-card">
+                            <div className="doc-preview-header">
+                                <span className={`doc-ext-badge ext-${fileExt}`}>
+                                    {fileExt.toUpperCase()}
+                                </span>
+                                {mode === "create" && (
+                                    <button type="button" className="doc-remove-btn" onClick={() => setFile(null)}>
+                                        <i className="bx bx-x"></i>
+                                    </button>
+                                )}
+                            </div>
 
-            <div className="page-form-actions">
-                <Button type="submit" disabled={isLoading}>
-                    {isLoading ? "Đang tạo..." : submitLabel}
-                </Button>
+                            <div className="doc-preview-body">
+                                <i className={`bx ${getFileBoxiconClass(fileExt)} doc-boxicon-file ext-${fileExt}`}></i>
+                            </div>
+
+                            <div className="doc-preview-footer">
+                                <p className="doc-file-name" title={displayFileName}>{displayFileName}</p>
+                                {displayFileSize && <p className="doc-file-size">{formatFileSize(displayFileSize)}</p>}
+                            </div>
+                        </div>
+                    )}
+                    {errors.file && <p className="input-error-message text-center">{errors.file}</p>}
+                </div>
+
+                <div className="doc-fields-column">
+                    <div className="doc-field-group">
+                        <label className="doc-field-label">
+                            Tiêu đề <span className="label-required">*</span>
+                        </label>
+                        <div className={`doc-input-wrapper ${errors.title ? "has-error" : ""}`}>
+                            <input type="text" className="doc-custom-input" placeholder="Nhập tiêu đề tài liệu..." value={form.title}
+                                onChange={(e) => { setForm((prev) => ({ ...prev, title: e.target.value })); setErrors((prev) => ({ ...prev, title: undefined }))}}
+                            />
+                        </div>
+                        {errors.title && <p className="input-error-message">{errors.title}</p>}
+                    </div>
+
+                    <div className="doc-field-row">
+                        <div className="doc-field-group">
+                            <label className="doc-field-label">
+                                Môn học <span className="label-required">*</span>
+                            </label>
+                            <SubjectSelect
+                                value={form.subjectId}
+                                onChange={(subjectId) => {
+                                    setForm((prev) => ({ ...prev, subjectId }));
+                                    setErrors((prev) => ({ ...prev, subjectId: undefined }));
+                                }}
+                            />
+                            {errors.subjectId && <p className="input-error-message">{errors.subjectId}</p>}
+                        </div>
+
+                        {!hideAccessLevel && (
+                            <div className="doc-field-group">
+                                <label className="doc-field-label">
+                                    Quyền truy cập <span className="label-required">*</span>
+                                </label>
+                                <select className="doc-custom-select" value={form.accessLevel}
+                                    onChange={(e) => setForm((prev) => ({ ...prev, accessLevel: e.target.value as AccessLevel }))}
+                                >
+                                    {ACCESS_LEVELS.map((level) => (
+                                        <option key={level} value={level}>
+                                            {ACCESS_LEVEL_LABEL[level]}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="doc-field-group">
+                        <label className="doc-field-label">Thẻ phân loại</label>
+                        <TagMultiSelect
+                            value={form.tagIds}
+                            onChange={(tagIds) => setForm((prev) => ({ ...prev, tagIds: tagIds ?? [] }))}
+                        />
+                    </div>
+
+                    <div className="doc-field-group">
+                        <label className="doc-field-label">Mô tả</label>
+                        <div className="doc-input-wrapper">
+                            <textarea className="doc-custom-textarea" placeholder="Nhập mô tả ngắn về tài liệu..."
+                                rows={8} value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="doc-form-submit-row">
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? "Đang lưu..." : mode === "create" ? "Tạo tài liệu" : "Cập nhật"}
+                        </Button>
+                    </div>
+                </div>
             </div>
         </form>
-    );
-}
-
-interface DocumentFormModalProps {
-    isOpen: boolean;
-    isLoading?: boolean;
-    apiErrors?: FieldError[] | null;
-    onClose: () => void;
-    onSubmit: (payload: CreateDocumentRequest) => void;
-}
-
-export function DocumentFormModal({ isOpen, isLoading, apiErrors, onClose, onSubmit }: DocumentFormModalProps) {
-    return (
-        <Modal isOpen={isOpen} title="Tạo tài liệu" onClose={onClose}>
-            <DocumentForm isLoading={isLoading} apiErrors={apiErrors} onSubmit={onSubmit} />
-        </Modal>
     );
 }

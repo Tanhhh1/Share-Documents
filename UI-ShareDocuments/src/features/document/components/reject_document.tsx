@@ -3,7 +3,7 @@ import { Modal } from "@/common/components/modal";
 import { Button } from "@/common/components/button";
 import { ErrorAlert } from "@/common/components/error_alert";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import { DocumentInfoSummary } from "./document_info";
+import { DocumentInfo } from "./document_info";
 import type { DocumentDetailDto } from "../document_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
@@ -50,7 +50,7 @@ export function RejectDocumentDialog({
             <form className="page-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
-                <DocumentInfoSummary document={document} />
+                <DocumentInfo document={document} />
 
                 <div className="form-group" style={{ marginTop: "16px" }}>
                     <label className="form-label">

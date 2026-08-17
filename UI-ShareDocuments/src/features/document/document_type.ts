@@ -24,7 +24,7 @@ export interface DocumentDto {
     viewCount: number;
     downloadCount: number;
     isDeleted: boolean;
-    
+
     fileName: string;
     fileType: string;
     fileSizeBytes: number;
@@ -54,7 +54,8 @@ export interface DocumentDetailDto {
     groupId: number | null;
     userId: number;
     userName: string;
-
+    isDeleted: boolean;
+    
     fileName: string;
     fileType: string;
     fileSizeBytes: number;
@@ -89,4 +90,24 @@ export interface CreateDocumentRequest {
 export interface RejectDocumentRequest {
     id: number;
     reason: string;
+}
+
+export interface PublishedDocumentFilterParams {
+    keyword?: string;
+    subjectId?: number;
+    tagIds?: number[];
+    groupId?: number;
+    accessLevel?: AccessLevel;
+    pageIndex: number;
+    pageSize: number;
+}
+
+export interface UpdateDocumentRequest {
+    id: number;
+    title: string;
+    description?: string;
+    subjectId: number;
+    groupId?: number;
+    accessLevel: AccessLevel;
+    tagIds: number[];
 }

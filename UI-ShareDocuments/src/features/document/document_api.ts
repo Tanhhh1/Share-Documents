@@ -2,7 +2,9 @@ import { api } from "@/common/api/axios";
 import { endpoints } from "@/common/api/endpoints";
 import type { ApiResult } from "@/common/types/api_result_type";
 import type { PageList } from "@/common/types/page_list_type";
-import type { DocumentDto, DocumentDetailDto, DocumentFileUrlDto, DocumentFilterParams, CreateDocumentRequest, RejectDocumentRequest } from "./document_type";
+import type { DocumentDto, DocumentDetailDto, DocumentFileUrlDto, DocumentFilterParams,
+    CreateDocumentRequest, RejectDocumentRequest, PublishedDocumentFilterParams, UpdateDocumentRequest
+} from "./document_type";
 
 export const documentApi = {
     getAll: async (params: DocumentFilterParams) => {
@@ -64,6 +66,16 @@ export const documentApi = {
         const { data } = await api.post<ApiResult<DocumentDetailDto>>(endpoints.document.create, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
+        return data;
+    },
+
+    getPublished: async (params: PublishedDocumentFilterParams) => {
+        const { data } = await api.get<ApiResult<PageList<DocumentDto>>>(endpoints.document.published, { params });
+        return data;
+    },
+
+    update: async (payload: UpdateDocumentRequest) => {
+        const { data } = await api.put<ApiResult<DocumentDetailDto>>(endpoints.document.detail(payload.id), payload);
         return data;
     },
 };

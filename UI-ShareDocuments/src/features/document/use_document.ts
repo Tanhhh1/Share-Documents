@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { documentApi } from "./document_api";
-import type { DocumentFilterParams } from "./document_type";
+import type { DocumentFilterParams, PublishedDocumentFilterParams } from "./document_type";
 
 export function useDocuments(filters: DocumentFilterParams) {
     return useQuery({
@@ -77,24 +77,46 @@ export function useMyDocuments(filters: DocumentFilterParams) {
 
 export function useDeleteDocument() {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: documentApi.delete,
-        onSuccess: (data) => {
+        onSuccess: (data, id) => {
             if (!data.succeeded) return;
             queryClient.invalidateQueries({ queryKey: ["my-documents"] });
+            queryClient.invalidateQueries({ queryKey: ["document", id] });
         },
     });
 }
 
 export function useRestoreDocument() {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: documentApi.restore,
-        onSuccess: (data) => {
+        onSuccess: (data, id) => {
             if (!data.succeeded) return;
             queryClient.invalidateQueries({ queryKey: ["my-documents"] });
+            queryClient.invalidateQueries({ queryKey: ["document", id] });
+        },
+    });
+}
+
+export function usePublishedDocuments(filters: PublishedDocumentFilterParams) {
+    return useQuery({
+        queryKey: ["documents-published", filters],
+        queryFn: () => documentApi.getPublished(filters),
+        placeholderData: (prev) => prev,
+    });
+}
+
+export function useUpdateDocument() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: documentApi.update,
+        onSuccess: (data, variables) => {
+            if (!data.succeeded) return;
+            queryClient.invalidateQueries({ queryKey: ["documents"] });
+            queryClient.invalidateQueries({ queryKey: ["my-documents"] });
+            queryClient.invalidateQueries({ queryKey: ["document", variables.id] });
         },
     });
 }

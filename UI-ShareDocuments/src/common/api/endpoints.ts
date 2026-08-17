@@ -70,6 +70,7 @@ export const endpoints = {
         list: "/admin/document",
         myList: "/document/my/documents",
         create: "/document",
+        published: "/document",
         delete: (id: number) => `/document/delete/${id}`,
         restore: (id: number) => `/document/restore/${id}`,
         approve: (id: number) => `/admin/document/approve/${id}`,
