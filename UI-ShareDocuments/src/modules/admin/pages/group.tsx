@@ -81,17 +81,13 @@ export default function DocumentGroupPage() {
         );
     };
 
-    const handleClearFilter = () => {
-        setFilters(DEFAULT_FILTERS);
-    };
-
     return (
         <div className="page">
             <div className="page-header">
                 <h2>Quản lý nhóm chủ đề</h2>
             </div>
 
-            <DocumentGroupFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
+            <DocumentGroupFilter filters={filters} onChange={setFilters} />
 
             <DocumentGroupList
                 pageData={data?.result ?? undefined}

@@ -27,10 +27,6 @@ export default function GroupDocumentPage() {
 
     const { data, isLoading } = useDocuments(filters);
 
-    const handleClearFilter = () => {
-        setFilters({ pageIndex: 1, pageSize: 12, groupId: parsedGroupId });
-    };
-
     return (
         <div className="page">
             <div className="page-header">
@@ -44,12 +40,13 @@ export default function GroupDocumentPage() {
                 </div>
             </div>
 
-            <DocumentFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
+            <DocumentFilter filters={filters} onChange={setFilters} />
 
             <DocumentList
                 pageData={data?.result ?? undefined}
                 isLoading={isLoading}
                 onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
+                getDetailPath={(id) => `/admin/document/${id}`}
             />
         </div>
     );

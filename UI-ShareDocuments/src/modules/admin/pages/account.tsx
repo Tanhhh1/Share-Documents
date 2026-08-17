@@ -105,10 +105,6 @@ export default function AccountPage() {
         });
     };
 
-    const handleClearFilter = () => {
-        setFilters(DEFAULT_FILTERS);
-    };
-
     return (
         <div className="page">
             <div className="page-header">
@@ -118,7 +114,7 @@ export default function AccountPage() {
                 </button>
             </div>
 
-            <AccountFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
+            <AccountFilter filters={filters} onChange={setFilters} />
 
             <AccountTable
                 pageData={data?.result ?? undefined}

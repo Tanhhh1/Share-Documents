@@ -66,18 +66,13 @@ export default function CommentPage() {
             },
         });
     };
-
-    const handleClearFilter = () => {
-        setFilters(DEFAULT_FILTERS);
-    };
-
     return (
         <div className="page">
             <div className="page-header">
                 <h2>Quản Lý Bình Luận</h2>
             </div>
 
-            <CommentFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
+            <CommentFilter filters={filters} onChange={setFilters} />
 
             <CommentTable
                 pageData={data?.result ?? undefined}

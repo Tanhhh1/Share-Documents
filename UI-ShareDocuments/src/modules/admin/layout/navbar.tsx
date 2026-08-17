@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/app/store/store";
 import { useLogout } from "@/features/auth/use_auth";
-import "@/styles/admin/navbar.css";
 
 interface NavbarProps {
     onToggleSidebar: () => void;

@@ -106,10 +106,6 @@ export default function TagPage() {
         });
     };
 
-    const handleClearFilter = () => {
-        setFilters(DEFAULT_FILTERS);
-    };
-
     return (
         <div className="page">
             <div className="page-header">
@@ -119,7 +115,7 @@ export default function TagPage() {
                 </button>
             </div>
 
-            <TagFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
+            <TagFilter filters={filters} onChange={setFilters}/>
 
             <TagTable
                 pageData={data?.result ?? undefined}

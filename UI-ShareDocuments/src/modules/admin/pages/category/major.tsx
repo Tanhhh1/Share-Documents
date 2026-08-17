@@ -1,35 +1,29 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { majorApi } from "@/features/major/major_api";
-import { useSubjects } from "@/features/subject/use_subject";
-import { useCreateSubject, useUpdateSubject, useDeleteSubject, useRestoreSubject } from "@/features/subject/use_subject";
+import { facultyApi } from "@/features/faculty/faculty_api";
+import { useMajors } from "@/features/major/use_major";
+import { useCreateMajor, useUpdateMajor, useDeleteMajor, useRestoreMajor} from "@/features/major/use_major";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
-import { SubjectFilter } from "@/features/subject/components/subject_filter";
-import { SubjectList } from "@/features/subject/components/subject_list";
-import { SubjectFormModal } from "@/features/subject/components/subject_form";
+import { MajorFilter } from "@/features/major/components/major_filter";
+import { MajorList } from "@/features/major/components/major_list";
+import { MajorFormModal } from "@/features/major/components/major_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import { EducationLevel } from "@/common/constants/education_level";
-import type { SubjectDto, SubjectFilterParams, CreateSubjectRequest, UpdateSubjectRequest } from "@/features/subject/subject_type";
+import type { MajorDto, MajorFilterParams, CreateMajorRequest, UpdateMajorRequest } from "@/features/major/major_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
 type FormMode = "create" | "update";
 
-export default function UniSubjectPage() {
-    const { majorId: majorIdParam } = useParams<{ majorId: string }>();
-    const majorId = Number(majorIdParam);
+export default function MajorPage() {
+    const { facultyId: facultyIdParam } = useParams<{ facultyId: string }>();
+    const facultyId = Number(facultyIdParam);
     const navigate = useNavigate();
 
-    const DEFAULT_FILTERS: SubjectFilterParams = {
-        pageIndex: 1,
-        pageSize: 10,
-        educationLevel: EducationLevel.DaiHoc,
-        majorId,
-    };
+    const DEFAULT_FILTERS: MajorFilterParams = { pageIndex: 1, pageSize: 10, facultyId };
 
-    const [filters, setFilters] = useState<SubjectFilterParams>(DEFAULT_FILTERS);
-    const [selectedSubject, setSelectedSubject] = useState<SubjectDto | null>(null);
+    const [filters, setFilters] = useState<MajorFilterParams>(DEFAULT_FILTERS);
+    const [selectedMajor, setSelectedMajor] = useState<MajorDto | null>(null);
     const [formMode, setFormMode] = useState<FormMode>("create");
     const [formErrors, setFormErrors] = useState<FieldError[] | null>(null);
     const [deleteError, setDeleteError] = useState<string | undefined>();
@@ -39,33 +33,33 @@ export default function UniSubjectPage() {
     const deleteDialog = useDisclosure();
     const restoreDialog = useDisclosure();
 
-    const { data: majorData } = useQuery({
-        queryKey: ["major", majorId],
-        queryFn: () => majorApi.getById(majorId),
-        enabled: !!majorId,
+    const { data: facultyData } = useQuery({
+        queryKey: ["faculty", facultyId],
+        queryFn: () => facultyApi.getById(facultyId),
+        enabled: !!facultyId,
     });
 
-    const { data, isLoading } = useSubjects(filters);
-    const createMutation = useCreateSubject();
-    const updateMutation = useUpdateSubject();
-    const deleteMutation = useDeleteSubject();
-    const restoreMutation = useRestoreSubject();
+    const { data, isLoading } = useMajors(filters);
+    const createMutation = useCreateMajor();
+    const updateMutation = useUpdateMajor();
+    const deleteMutation = useDeleteMajor();
+    const restoreMutation = useRestoreMajor();
 
     const handleOpenCreate = () => {
         setFormMode("create");
-        setSelectedSubject(null);
+        setSelectedMajor(null);
         setFormErrors(null);
         formModal.open();
     };
 
-    const handleOpenEdit = (subject: SubjectDto) => {
+    const handleOpenEdit = (major: MajorDto) => {
         setFormMode("update");
-        setSelectedSubject(subject);
+        setSelectedMajor(major);
         setFormErrors(null);
         formModal.open();
     };
 
-    const handleSubmitForm = (payload: CreateSubjectRequest | UpdateSubjectRequest) => {
+    const handleSubmitForm = (payload: CreateMajorRequest | UpdateMajorRequest) => {
         setFormErrors(null);
         const onSettled = (result: { succeeded: boolean; errors?: FieldError[] }) => {
             if (result.succeeded) {
@@ -76,28 +70,28 @@ export default function UniSubjectPage() {
         };
 
         if (formMode === "create") {
-            createMutation.mutate(payload as CreateSubjectRequest, { onSuccess: onSettled });
+            createMutation.mutate(payload as CreateMajorRequest, { onSuccess: onSettled });
         } else {
-            updateMutation.mutate(payload as UpdateSubjectRequest, { onSuccess: onSettled });
+            updateMutation.mutate(payload as UpdateMajorRequest, { onSuccess: onSettled });
         }
     };
 
-    const handleOpenDelete = (subject: SubjectDto) => {
-        setSelectedSubject(subject);
+    const handleOpenDelete = (major: MajorDto) => {
+        setSelectedMajor(major);
         setDeleteError(undefined);
         deleteDialog.open();
     };
 
-    const handleOpenRestore = (subject: SubjectDto) => {
-        setSelectedSubject(subject);
+    const handleOpenRestore = (major: MajorDto) => {
+        setSelectedMajor(major);
         setRestoreError(undefined);
         restoreDialog.open();
     };
 
     const handleConfirmDelete = () => {
-        if (!selectedSubject) return;
+        if (!selectedMajor) return;
         setDeleteError(undefined);
-        deleteMutation.mutate(selectedSubject.id, {
+        deleteMutation.mutate(selectedMajor.id, {
             onSuccess: (result) => {
                 if (result.succeeded) {
                     deleteDialog.close();
@@ -109,9 +103,9 @@ export default function UniSubjectPage() {
     };
 
     const handleConfirmRestore = () => {
-        if (!selectedSubject) return;
+        if (!selectedMajor) return;
         setRestoreError(undefined);
-        restoreMutation.mutate(selectedSubject.id, {
+        restoreMutation.mutate(selectedMajor.id, {
             onSuccess: (result) => {
                 if (result.succeeded) {
                     restoreDialog.close();
@@ -122,29 +116,25 @@ export default function UniSubjectPage() {
         });
     };
 
-    const handleClearFilter = () => {
-        setFilters(DEFAULT_FILTERS);
-    };
-
     return (
         <div className="page">
             <div className="page-header">
                 <div>
                     <h2>
-                        <a className="page-back" onClick={() => navigate(`/admin/faculty/${majorData?.result?.facultyId}/major`)}>
+                        <a className="page-back" onClick={() => navigate("/admin/faculty")}>
                             <i className="bx bx-chevrons-left" />
                         </a>
-                        Môn Học Thuộc Ngành: {majorData?.result?.name ?? "..."}
+                        Ngành Thuộc Khoa: {facultyData?.result?.name ?? "..."}
                     </h2>
                 </div>
                 <button className="page-create" onClick={handleOpenCreate}>
-                    + Tạo Môn Học
+                    + Tạo Ngành Học
                 </button>
             </div>
 
-            <SubjectFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
+            <MajorFilter filters={filters} onChange={setFilters}/>
 
-            <SubjectList
+            <MajorList
                 pageData={data?.result ?? undefined}
                 isLoading={isLoading}
                 onEdit={handleOpenEdit}
@@ -153,12 +143,11 @@ export default function UniSubjectPage() {
                 onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
             />
 
-            <SubjectFormModal
+            <MajorFormModal
                 isOpen={formModal.isOpen}
                 mode={formMode}
-                educationLevel={EducationLevel.DaiHoc}
-                majorId={majorId}
-                initialValues={selectedSubject ?? undefined}
+                facultyId={facultyId}
+                initialValues={selectedMajor ?? undefined}
                 isLoading={formMode === "create" ? createMutation.isPending : updateMutation.isPending}
                 apiErrors={formErrors}
                 onClose={formModal.close}
@@ -167,8 +156,8 @@ export default function UniSubjectPage() {
 
             <ConfirmDialog
                 isOpen={deleteDialog.isOpen}
-                title="Xóa môn học"
-                message={`Bạn có chắc muốn xóa môn học "${selectedSubject?.name}"?`}
+                title="Xóa ngành"
+                message={`Bạn có chắc muốn xóa ngành "${selectedMajor?.name}"?`}
                 error={deleteError}
                 isLoading={deleteMutation.isPending}
                 onConfirm={handleConfirmDelete}
@@ -177,8 +166,8 @@ export default function UniSubjectPage() {
 
             <ConfirmDialog
                 isOpen={restoreDialog.isOpen}
-                title="Khôi phục môn học"
-                message={`Bạn có chắc muốn khôi phục môn học "${selectedSubject?.name}"?`}
+                title="Khôi phục ngành"
+                message={`Bạn có chắc muốn khôi phục ngành "${selectedMajor?.name}"?`}
                 error={restoreError}
                 isLoading={restoreMutation.isPending}
                 onConfirm={handleConfirmRestore}

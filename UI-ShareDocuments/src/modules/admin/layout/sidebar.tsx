@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import "@/styles/admin/sidebar.css";
 
 interface MenuChildItem {
     key: string;

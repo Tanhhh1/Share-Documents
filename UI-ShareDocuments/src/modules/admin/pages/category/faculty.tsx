@@ -1,28 +1,25 @@
 import { useState } from "react";
-import { useSubjects } from "@/features/subject/use_subject";
-import { useCreateSubject, useUpdateSubject, useDeleteSubject, useRestoreSubject } from "@/features/subject/use_subject";
+import { useFaculties } from "@/features/faculty/use_faculty";
+import { useCreateFaculty, useUpdateFaculty, useDeleteFaculty, useRestoreFaculty } from "@/features/faculty/use_faculty";
 import { useDisclosure } from "@/common/hooks/use_disclosure";
-import { SubjectFilter } from "@/features/subject/components/subject_filter";
-import { SubjectList } from "@/features/subject/components/subject_list";
-import { SubjectFormModal } from "@/features/subject/components/subject_form";
+import { FacultyFilter } from "@/features/faculty/components/faculty_filter";
+import { FacultyList } from "@/features/faculty/components/faculty_list";
+import { FacultyFormModal } from "@/features/faculty/components/faculty_form";
 import { ConfirmDialog } from "@/common/components/confirm";
 import { getGeneralErrors } from "@/common/utils/api_error";
-import { EducationLevel } from "@/common/constants/education_level";
-import type { SubjectDto, SubjectFilterParams, CreateSubjectRequest, UpdateSubjectRequest } from "@/features/subject/subject_type";
+import type { FacultyDto, FacultyFilterParams, CreateFacultyRequest, UpdateFacultyRequest } from "@/features/faculty/faculty_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
 type FormMode = "create" | "update";
 
-const DEFAULT_FILTERS: SubjectFilterParams = {
+const DEFAULT_FILTERS: FacultyFilterParams = {
     pageIndex: 1,
     pageSize: 10,
-    educationLevel: EducationLevel.TieuHoc,
 };
 
-export default function GenSubjectPage() {
-    const [filters, setFilters] = useState<SubjectFilterParams>(DEFAULT_FILTERS);
-
-    const [selectedSubject, setSelectedSubject] = useState<SubjectDto | null>(null);
+export default function FacultyPage() {
+    const [filters, setFilters] = useState<FacultyFilterParams>(DEFAULT_FILTERS);
+    const [selectedFaculty, setSelectedFaculty] = useState<FacultyDto | null>(null);
     const [formMode, setFormMode] = useState<FormMode>("create");
     const [formErrors, setFormErrors] = useState<FieldError[] | null>(null);
     const [deleteError, setDeleteError] = useState<string | undefined>();
@@ -32,27 +29,27 @@ export default function GenSubjectPage() {
     const deleteDialog = useDisclosure();
     const restoreDialog = useDisclosure();
 
-    const { data, isLoading } = useSubjects(filters);
-    const createMutation = useCreateSubject();
-    const updateMutation = useUpdateSubject();
-    const deleteMutation = useDeleteSubject();
-    const restoreMutation = useRestoreSubject();
+    const { data, isLoading } = useFaculties(filters);
+    const createMutation = useCreateFaculty();
+    const updateMutation = useUpdateFaculty();
+    const deleteMutation = useDeleteFaculty();
+    const restoreMutation = useRestoreFaculty();
 
     const handleOpenCreate = () => {
         setFormMode("create");
-        setSelectedSubject(null);
+        setSelectedFaculty(null);
         setFormErrors(null);
         formModal.open();
     };
 
-    const handleOpenEdit = (subject: SubjectDto) => {
+    const handleOpenEdit = (faculty: FacultyDto) => {
         setFormMode("update");
-        setSelectedSubject(subject);
+        setSelectedFaculty(faculty);
         setFormErrors(null);
         formModal.open();
     };
 
-    const handleSubmitForm = (payload: CreateSubjectRequest | UpdateSubjectRequest) => {
+    const handleSubmitForm = (payload: CreateFacultyRequest | UpdateFacultyRequest) => {
         setFormErrors(null);
         const onSettled = (result: { succeeded: boolean; errors?: FieldError[] }) => {
             if (result.succeeded) {
@@ -63,28 +60,28 @@ export default function GenSubjectPage() {
         };
 
         if (formMode === "create") {
-            createMutation.mutate(payload as CreateSubjectRequest, { onSuccess: onSettled });
+            createMutation.mutate(payload as CreateFacultyRequest, { onSuccess: onSettled });
         } else {
-            updateMutation.mutate(payload as UpdateSubjectRequest, { onSuccess: onSettled });
+            updateMutation.mutate(payload as UpdateFacultyRequest, { onSuccess: onSettled });
         }
     };
 
-    const handleOpenDelete = (subject: SubjectDto) => {
-        setSelectedSubject(subject);
+    const handleOpenDelete = (faculty: FacultyDto) => {
+        setSelectedFaculty(faculty);
         setDeleteError(undefined);
         deleteDialog.open();
     };
 
-    const handleOpenRestore = (subject: SubjectDto) => {
-        setSelectedSubject(subject);
+    const handleOpenRestore = (faculty: FacultyDto) => {
+        setSelectedFaculty(faculty);
         setRestoreError(undefined);
         restoreDialog.open();
     };
 
     const handleConfirmDelete = () => {
-        if (!selectedSubject) return;
+        if (!selectedFaculty) return;
         setDeleteError(undefined);
-        deleteMutation.mutate(selectedSubject.id, {
+        deleteMutation.mutate(selectedFaculty.id, {
             onSuccess: (result) => {
                 if (result.succeeded) {
                     deleteDialog.close();
@@ -96,9 +93,9 @@ export default function GenSubjectPage() {
     };
 
     const handleConfirmRestore = () => {
-        if (!selectedSubject) return;
+        if (!selectedFaculty) return;
         setRestoreError(undefined);
-        restoreMutation.mutate(selectedSubject.id, {
+        restoreMutation.mutate(selectedFaculty.id, {
             onSuccess: (result) => {
                 if (result.succeeded) {
                     restoreDialog.close();
@@ -109,22 +106,18 @@ export default function GenSubjectPage() {
         });
     };
 
-    const handleClearFilter = () => {
-        setFilters(DEFAULT_FILTERS);
-    };
-
     return (
         <div className="page">
             <div className="page-header">
-                <h2>Môn Học Phổ Thông</h2>
+                <h2>Quản Lý Khoa</h2>
                 <button className="page-create" onClick={handleOpenCreate}>
-                    + Tạo Môn Học
+                    + Tạo Khoa
                 </button>
             </div>
 
-            <SubjectFilter filters={filters} onChange={setFilters} onClear={handleClearFilter} />
+            <FacultyFilter filters={filters} onChange={setFilters}/>
 
-            <SubjectList
+            <FacultyList
                 pageData={data?.result ?? undefined}
                 isLoading={isLoading}
                 onEdit={handleOpenEdit}
@@ -133,11 +126,10 @@ export default function GenSubjectPage() {
                 onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
             />
 
-            <SubjectFormModal
+            <FacultyFormModal
                 isOpen={formModal.isOpen}
                 mode={formMode}
-                educationLevel={filters.educationLevel ?? EducationLevel.TieuHoc}
-                initialValues={selectedSubject ?? undefined}
+                initialValues={selectedFaculty ?? undefined}
                 isLoading={formMode === "create" ? createMutation.isPending : updateMutation.isPending}
                 apiErrors={formErrors}
                 onClose={formModal.close}
@@ -146,8 +138,8 @@ export default function GenSubjectPage() {
 
             <ConfirmDialog
                 isOpen={deleteDialog.isOpen}
-                title="Xóa môn học"
-                message={`Bạn có chắc muốn xóa môn học "${selectedSubject?.name}"?`}
+                title="Xóa khoa"
+                message={`Bạn có chắc muốn xóa khoa "${selectedFaculty?.name}"?`}
                 error={deleteError}
                 isLoading={deleteMutation.isPending}
                 onConfirm={handleConfirmDelete}
@@ -156,8 +148,8 @@ export default function GenSubjectPage() {
 
             <ConfirmDialog
                 isOpen={restoreDialog.isOpen}
-                title="Khôi phục môn học"
-                message={`Bạn có chắc muốn khôi phục môn học "${selectedSubject?.name}"?`}
+                title="Khôi phục khoa"
+                message={`Bạn có chắc muốn khôi phục khoa "${selectedFaculty?.name}"?`}
                 error={restoreError}
                 isLoading={restoreMutation.isPending}
                 onConfirm={handleConfirmRestore}
