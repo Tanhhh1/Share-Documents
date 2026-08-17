@@ -1,12 +1,16 @@
 import { Outlet } from "react-router-dom";
+import { Header } from "./header";
+import { Footer } from "./footer";
+import "@/styles/client/layout.css";
 
 export default function ClientLayout() {
-  return (
-    <div>
-      <header className="p-4 border-b">Client Layout</header>
-      <main className="p-4">
-        <Outlet />
-      </main>
-    </div>
-  );
+    return (
+        <div className="client-layout">
+            <Header />
+            <main className="client-content">
+                <Outlet />
+            </main>
+            <Footer />
+        </div>
+    );
 }
