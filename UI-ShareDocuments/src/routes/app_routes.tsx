@@ -7,6 +7,7 @@ import ForgotPasswordPage from "@/modules/client/pages/auth/forgot_pw";
 import VerifyOtpPage from "@/modules/client/pages/auth/verify_otp";
 import ResetPasswordPage from "@/modules/client/pages/auth/reset_pw";
 import AdminRoutes from "@/modules/admin/routes";
+import ClientRoutes from "@/modules/client/routes";
 
 export function AppRoutes() {
   return (
@@ -18,7 +19,7 @@ export function AppRoutes() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       <Route element={<RequireClient />}>
-        <Route path="/"></Route>
+        <Route path="/*" element={<ClientRoutes />} />
       </Route>
 
       <Route element={<RequireAdmin />}>
