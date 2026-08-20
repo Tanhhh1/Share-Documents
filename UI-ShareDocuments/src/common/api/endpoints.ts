@@ -28,6 +28,14 @@ export const endpoints = {
         list: "/admin/comment",
         hide: (id: number) => `/admin/comment/hide/${id}`,
         unhide: (id: number) => `/admin/comment/unhide/${id}`,
+        byDocument: (documentId: number) => `/comment/document/${documentId}`,
+        create: "/comment",
+        delete: (id: number) => `/comment/${id}`,
+    },
+    bookmark: {
+        list: "/bookmark",
+        save: "/bookmark",
+        delete: (documentId: number) => `/bookmark/${documentId}`,
     },
     tag: {
         list: "/admin/tag",
@@ -65,6 +73,12 @@ export const endpoints = {
         list: "/admin/documentgroup",
         approve: (id: number) => `/admin/documentgroup/approve/${id}`,
         reject: (id: number) => `/admin/documentgroup/reject/${id}`,
+        myGroup: "/documentgroup/my/document-groups",
+        published: "/documentgroup",
+        create: "/documentgroup",
+        update: (id: number) => `/documentgroup/${id}`,
+        delete: (id: number) => `/documentgroup/delete/${id}`,
+        restore: (id: number) => `/documentgroup/restore/${id}`
     },
     document: {
         list: "/admin/document",
@@ -78,5 +92,12 @@ export const endpoints = {
         detail: (id: number) => `/document/${id}`,
         preview: (id: number) => `/document/preview/${id}`,
         download: (id: number) => `/document/download/${id}`,
+    },
+    payment: {
+        create: "/payment",
+        cancel: "/payment/cancel",
+    },
+    membership: {
+        getCurrent: "/membership",
     },
 };  

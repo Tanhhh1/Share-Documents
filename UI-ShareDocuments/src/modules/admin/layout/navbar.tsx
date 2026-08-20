@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { RootState } from "@/app/store/store";
 import { useLogout } from "@/features/auth/use_auth";
 
@@ -12,7 +12,6 @@ interface NavbarProps {
 export function Navbar({ onToggleSidebar, onToggleCollapse }: NavbarProps) {
     const user = useSelector((state: RootState) => state.auth.user);
     const logout = useLogout();
-    const navigate = useNavigate();
     const [isMenuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -26,14 +25,9 @@ export function Navbar({ onToggleSidebar, onToggleCollapse }: NavbarProps) {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const handleNavigateProfile = () => {
+    const handleLogout = () => {
         setMenuOpen(false);
-        navigate("/admin/profile");
-    };
-
-    const handleNavigateMyDocument = () => {
-        setMenuOpen(false);
-        navigate("/admin/my-document");
+        logout.mutate();
     };
 
     return (
@@ -59,15 +53,17 @@ export function Navbar({ onToggleSidebar, onToggleCollapse }: NavbarProps) {
 
                 {isMenuOpen && (
                     <div className="admin-navbar-dropdown">
-                        <button type="button" className="admin-navbar-dropdown-item" onClick={handleNavigateProfile}>
+                        <Link to="/admin/profile" className="admin-navbar-dropdown-item" onClick={() => setMenuOpen(false)}>
                             <i className="bx bx-user"></i>
                             Hồ sơ của tôi
-                        </button>
-                        <button type="button" className="admin-navbar-dropdown-item" onClick={handleNavigateMyDocument}>
+                        </Link>
+
+                        <Link to="/admin/my-document" className="admin-navbar-dropdown-item" onClick={() => setMenuOpen(false)}>
                             <i className="bx bx-file"></i>
                             Tài liệu của tôi
-                        </button>
-                        <button type="button" className="admin-navbar-dropdown-item admin-navbar-logout" onClick={() => logout.mutate()}>
+                        </Link>
+
+                        <button type="button" className="admin-navbar-dropdown-item admin-navbar-logout" onClick={handleLogout}>
                             <i className="bx bx-log-out"></i>
                             Đăng xuất
                         </button>

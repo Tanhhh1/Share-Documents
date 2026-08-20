@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "@/styles/client/home.css";
 
 const ABOUT_SECTIONS = [
     {

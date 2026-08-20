@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { useComments } from "@/features/comment/use_comment";
-import { useHideComment } from "@/features/comment/use_comment";
-import { useUnhideComment } from "@/features/comment/use_comment";
-import { useDisclosure } from "@/common/hooks/use_disclosure";
+import { useComments, useHideComment, useUnhideComment } from "@/features/comment/use_comment";
+import { useCrudModal } from "@/common/hooks/use_modal";
 import { CommentTable } from "@/features/comment/components/comment_table";
 import { CommentFilter } from "@/features/comment/components/comment_filter";
 import { ConfirmDialog } from "@/common/components/confirm";
-import { getGeneralErrors } from "@/common/utils/api_error";
 import type { ListCommentDto, CommentFilterParams } from "@/features/comment/comment_type";
 
 const DEFAULT_FILTERS: CommentFilterParams = {
@@ -16,59 +13,14 @@ const DEFAULT_FILTERS: CommentFilterParams = {
 
 export default function CommentPage() {
     const [filters, setFilters] = useState<CommentFilterParams>(DEFAULT_FILTERS);
-    const [selectedComment, setSelectedComment] = useState<ListCommentDto | null>(null);
-    const [hideError, setHideError] = useState<string | undefined>();
-    const [unhideError, setUnhideError] = useState<string | undefined>();
-
-    const hideDialog = useDisclosure();
-    const unhideDialog = useDisclosure();
-
+    const crud = useCrudModal<ListCommentDto>();
     const { data, isLoading } = useComments(filters);
     const hideMutation = useHideComment();
     const unhideMutation = useUnhideComment();
 
-    const handleOpenHide = (comment: ListCommentDto) => {
-        setSelectedComment(comment);
-        setHideError(undefined);
-        hideDialog.open();
-    };
-
-    const handleOpenUnhide = (comment: ListCommentDto) => {
-        setSelectedComment(comment);
-        setUnhideError(undefined);
-        unhideDialog.open();
-    };
-
-    const handleConfirmHide = () => {
-        if (!selectedComment) return;
-        setHideError(undefined);
-        hideMutation.mutate(selectedComment.id, {
-            onSuccess: (result) => {
-                if (result.succeeded) {
-                    hideDialog.close();
-                } else {
-                    setHideError(getGeneralErrors(result.errors) ?? "Có lỗi xảy ra, vui lòng thử lại");
-                }
-            },
-        });
-    };
-
-    const handleConfirmUnhide = () => {
-        if (!selectedComment) return;
-        setUnhideError(undefined);
-        unhideMutation.mutate(selectedComment.id, {
-            onSuccess: (result) => {
-                if (result.succeeded) {
-                    unhideDialog.close();
-                } else {
-                    setUnhideError(getGeneralErrors(result.errors) ?? "Có lỗi xảy ra, vui lòng thử lại");
-                }
-            },
-        });
-    };
     return (
-        <div className="page">
-            <div className="page-header">
+        <div className="admin-page">
+            <div className="admin-page-header">
                 <h2>Quản Lý Bình Luận</h2>
             </div>
 
@@ -77,29 +29,29 @@ export default function CommentPage() {
             <CommentTable
                 pageData={data?.result ?? undefined}
                 isLoading={isLoading}
-                onHide={handleOpenHide}
-                onUnhide={handleOpenUnhide}
+                onHide={crud.openDelete}
+                onUnhide={crud.openRestore}
                 onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
             />
 
             <ConfirmDialog
-                isOpen={hideDialog.isOpen}
+                isOpen={crud.deleteDialog.isOpen}
                 title="Ẩn bình luận"
                 message="Bạn có chắc muốn ẩn bình luận này?"
-                error={hideError}
+                error={crud.actionError}
                 isLoading={hideMutation.isPending}
-                onConfirm={handleConfirmHide}
-                onCancel={hideDialog.close}
+                onConfirm={() => crud.submitConfirm(hideMutation.mutate, crud.deleteDialog)}
+                onCancel={crud.deleteDialog.close}
             />
 
             <ConfirmDialog
-                isOpen={unhideDialog.isOpen}
+                isOpen={crud.restoreDialog.isOpen}
                 title="Bỏ ẩn bình luận"
                 message="Bạn có chắc muốn bỏ ẩn bình luận này?"
-                error={unhideError}
+                error={crud.actionError}
                 isLoading={unhideMutation.isPending}
-                onConfirm={handleConfirmUnhide}
-                onCancel={unhideDialog.close}
+                onConfirm={() => crud.submitConfirm(unhideMutation.mutate, crud.restoreDialog)}
+                onCancel={crud.restoreDialog.close}
             />
         </div>
     );

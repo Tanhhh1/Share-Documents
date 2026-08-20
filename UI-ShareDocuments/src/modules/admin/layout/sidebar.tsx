@@ -103,12 +103,7 @@ export function Sidebar({ isOpen, isCollapsed, onClose }: SidebarProps) {
                                 {isExpanded && !isCollapsed && (
                                     <div className="admin-submenu">
                                         {item.children.map((child) => (
-                                            <NavLink
-                                                key={child.key}
-                                                to={child.path}
-                                                onClick={onClose}
-                                                className={({ isActive }) => `admin-submenu-item ${isActive ? "active" : ""}`}
-                                            >
+                                            <NavLink key={child.key} to={child.path} onClick={onClose} className={({ isActive }) => `admin-submenu-item ${isActive ? "active" : ""}`}>
                                                 {child.label}
                                             </NavLink>
                                         ))}
@@ -119,12 +114,7 @@ export function Sidebar({ isOpen, isCollapsed, onClose }: SidebarProps) {
                     }
 
                     return (
-                        <NavLink
-                            key={item.key}
-                            to={item.path!}
-                            onClick={onClose}
-                            className={({ isActive }) => `admin-menu-item ${isActive ? "active" : ""}`}
-                        >
+                        <NavLink key={item.key} to={item.path!} onClick={onClose} className={({ isActive }) => `admin-menu-item ${isActive ? "active" : ""}`}>
                             <i className={`bx ${item.icon} admin-menu-icon`}></i>
                             <span className="admin-menu-label">{item.label}</span>
                         </NavLink>

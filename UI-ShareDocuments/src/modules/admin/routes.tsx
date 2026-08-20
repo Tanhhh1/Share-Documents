@@ -16,7 +16,8 @@ import MyDocumentPage from "./pages/document/my_document"
 import GroupDocumentPage from "./pages/document/group_document";
 import EditDocumentPage from "./pages/document/edit_document";
 
-import "@/styles/admin/page.css";
+import "@/styles/admin_layout.css"
+import "@/styles/page.css";
 
 export default function AdminRoutes() {
   return (

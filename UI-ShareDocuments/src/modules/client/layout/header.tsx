@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import type { RootState } from "@/app/store/store";
 import { useLogout } from "@/features/auth/use_auth";
 
 export function Header() {
     const user = useSelector((state: RootState) => state.auth.user);
     const logout = useLogout();
-    const navigate = useNavigate();
     const [isMenuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -21,14 +20,9 @@ export function Header() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const handleNavigateProfile = () => {
+    const handleLogout = () => {
         setMenuOpen(false);
-        navigate("/profile");
-    };
-
-    const handleNavigateMyDocument = () => {
-        setMenuOpen(false);
-        navigate("/my-document");
+        logout.mutate();
     };
 
     return (
@@ -42,20 +36,20 @@ export function Header() {
                 </Link>
 
                 <div className="client-header-actions">
-                    <button type="button" className="client-header-action-btn" onClick={() => navigate("/upload")}>
+                    <NavLink to="/upload" className={({ isActive }) => `client-header-action-btn ${isActive ? "active" : ""}`}>
                         <i className="bx bx-upload"></i>
                         <span>Upload</span>
-                    </button>
+                    </NavLink>
 
-                    <button type="button" className="client-header-action-btn" onClick={() => navigate("/bookmark")}>
-                        <i className="bx bx-bookmark"></i>
-                        <span>Save</span>
-                    </button>
+                    <NavLink to="/group" className={({ isActive }) => `client-header-action-btn ${isActive ? "active" : ""}`}>
+                        <i className="bx bx-folder"></i>
+                        <span>Nhóm tài liệu</span>
+                    </NavLink>
 
-                    <button type="button" className="client-header-upgrade-btn" onClick={() => navigate("/membership")}>
+                    <NavLink to="/membership" className={({ isActive }) => `client-header-upgrade-btn ${isActive ? "active" : ""}`}>
                         <i className="bx bx-crown"></i>
                         <span>Nâng cấp Member</span>
-                    </button>
+                    </NavLink>
 
                     {user ? (
                         <div className="client-header-user" ref={menuRef}>
@@ -67,19 +61,32 @@ export function Header() {
 
                             {isMenuOpen && (
                                 <div className="client-header-dropdown">
-                                    <button type="button" className="client-header-dropdown-item" onClick={handleNavigateProfile}>
+                                    <Link to="/profile" className="client-header-dropdown-item" onClick={() => setMenuOpen(false)}>
                                         <i className="bx bx-user"></i>
                                         Hồ sơ của tôi
-                                    </button>
-                                    <button type="button" className="client-header-dropdown-item" onClick={handleNavigateMyDocument}>
+                                    </Link>
+
+                                    <Link to="/my-group" className="client-header-dropdown-item" onClick={() => setMenuOpen(false)}>
+                                        <i className="bx bx-folder-open"></i>
+                                        Nhóm của tôi
+                                    </Link>
+
+                                    <Link to="/my-document" className="client-header-dropdown-item" onClick={() => setMenuOpen(false)}>
                                         <i className="bx bx-file"></i>
                                         Tài liệu của tôi
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="client-header-dropdown-item client-header-logout"
-                                        onClick={() => logout.mutate()}
-                                    >
+                                    </Link>
+
+                                    <Link to="/bookmark" className="client-header-dropdown-item" onClick={() => setMenuOpen(false)}>
+                                        <i className="bx bx-bookmark"></i>
+                                        Tài liệu đã lưu
+                                    </Link>
+
+                                    <Link to="/notifications" className="client-header-dropdown-item" onClick={() => setMenuOpen(false)}>
+                                        <i className="bx bx-bell"></i>
+                                        Thông báo
+                                    </Link>
+
+                                    <button type="button" className="client-header-dropdown-item client-header-logout" onClick={handleLogout}>
                                         <i className="bx bx-log-out"></i>
                                         Đăng xuất
                                     </button>
@@ -87,10 +94,10 @@ export function Header() {
                             )}
                         </div>
                     ) : (
-                        <button type="button" className="client-header-login-btn" onClick={() => navigate("/login")}>
+                        <Link to="/login" className="client-header-login-btn">
                             <i className="bx bx-log-in"></i>
                             <span>Đăng nhập</span>
-                        </button>
+                        </Link>
                     )}
                 </div>
             </div>

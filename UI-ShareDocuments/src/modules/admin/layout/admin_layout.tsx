@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "./sidebar";
 import { Navbar } from "./navbar";
-import "@/styles/admin/layout.css";
 
 export default function AdminLayout() {
     const [isAppOpen, setAppOpen] = useState(false);

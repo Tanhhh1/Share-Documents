@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { useAccounts, useCreateAccount, useUpdateAccount, useLockAccount, useUnlockAccount } from "@/features/account/use_account";
-import { useDisclosure } from "@/common/hooks/use_disclosure";
 import { AccountTable } from "@/features/account/components/account_table";
 import { AccountFilter } from "@/features/account/components/account_filter";
 import { AccountFormModal } from "@/features/account/components/account_form";
 import { ConfirmDialog } from "@/common/components/confirm";
-import { getGeneralErrors } from "@/common/utils/api_error";
+import { useCrudModal } from "@/common/hooks/use_modal"
 import type { AccountDto, AccountFilterParams, CreateAccountRequest, UpdateAccountRequest } from "@/features/account/account_type";
-import type { FieldError } from "@/common/types/api_result_type";
-
-type FormMode = "create" | "update";
 
 const DEFAULT_FILTERS: AccountFilterParams = {
     pageIndex: 1,
@@ -18,15 +14,7 @@ const DEFAULT_FILTERS: AccountFilterParams = {
 
 export default function AccountPage() {
     const [filters, setFilters] = useState<AccountFilterParams>(DEFAULT_FILTERS);
-    const [selectedAccount, setSelectedAccount] = useState<AccountDto | null>(null);
-    const [formMode, setFormMode] = useState<FormMode>("create");
-    const [formErrors, setFormErrors] = useState<FieldError[] | null>(null);
-    const [lockError, setLockError] = useState<string | undefined>();
-    const [unlockError, setUnlockError] = useState<string | undefined>();
-
-    const formModal = useDisclosure();
-    const lockDialog = useDisclosure();
-    const unlockDialog = useDisclosure();
+    const crud = useCrudModal<AccountDto>();
 
     const { data, isLoading } = useAccounts(filters);
     const createMutation = useCreateAccount();
@@ -34,82 +22,11 @@ export default function AccountPage() {
     const lockMutation = useLockAccount();
     const unlockMutation = useUnlockAccount();
 
-    const handleOpenCreate = () => {
-        setFormMode("create");
-        setSelectedAccount(null);
-        setFormErrors(null);
-        formModal.open();
-    };
-
-    const handleOpenEdit = (account: AccountDto) => {
-        setFormMode("update");
-        setSelectedAccount(account);
-        setFormErrors(null);
-        formModal.open();
-    };
-
-    const handleSubmitForm = (payload: CreateAccountRequest | UpdateAccountRequest) => {
-        setFormErrors(null);
-        const onSettled = (result: { succeeded: boolean; errors?: FieldError[] }) => {
-            if (result.succeeded) {
-                formModal.close();
-            } else {
-                setFormErrors(result.errors ?? null);
-            }
-        };
-
-        if (formMode === "create") {
-            createMutation.mutate(payload as CreateAccountRequest, { onSuccess: onSettled });
-        } else {
-            updateMutation.mutate(payload as UpdateAccountRequest, { onSuccess: onSettled });
-        }
-    };
-
-    const handleOpenLock = (account: AccountDto) => {
-        setSelectedAccount(account);
-        setLockError(undefined);
-        lockDialog.open();
-    };
-
-    const handleOpenUnlock = (account: AccountDto) => {
-        setSelectedAccount(account);
-        setUnlockError(undefined);
-        unlockDialog.open();
-    };
-
-    const handleConfirmLock = () => {
-        if (!selectedAccount) return;
-        setLockError(undefined);
-        lockMutation.mutate(selectedAccount.id, {
-            onSuccess: (result) => {
-                if (result.succeeded) {
-                    lockDialog.close();
-                } else {
-                    setLockError(getGeneralErrors(result.errors) ?? "Có lỗi xảy ra, vui lòng thử lại");
-                }
-            },
-        });
-    };
-
-    const handleConfirmUnlock = () => {
-        if (!selectedAccount) return;
-        setUnlockError(undefined);
-        unlockMutation.mutate(selectedAccount.id, {
-            onSuccess: (result) => {
-                if (result.succeeded) {
-                    unlockDialog.close();
-                } else {
-                    setUnlockError(getGeneralErrors(result.errors) ?? "Có lỗi xảy ra, vui lòng thử lại");
-                }
-            },
-        });
-    };
-
     return (
-        <div className="page">
-            <div className="page-header">
+        <div className="admin-page">
+            <div className="admin-page-header">
                 <h2>Quản Lý Tài Khoản</h2>
-                <button className="page-create" onClick={handleOpenCreate}>
+                <button className="admin-page-create" onClick={crud.openCreate}>
                     + Tạo Tài Khoản
                 </button>
             </div>
@@ -119,40 +36,46 @@ export default function AccountPage() {
             <AccountTable
                 pageData={data?.result ?? undefined}
                 isLoading={isLoading}
-                onEdit={handleOpenEdit}
-                onLock={handleOpenLock}
-                onUnlock={handleOpenUnlock}
+                onEdit={crud.openEdit}
+                onLock={crud.openDelete}
+                onUnlock={crud.openRestore}
                 onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
             />
 
             <AccountFormModal
-                isOpen={formModal.isOpen}
-                mode={formMode}
-                initialValues={selectedAccount ?? undefined}
-                isLoading={formMode === "create" ? createMutation.isPending : updateMutation.isPending}
-                apiErrors={formErrors}
-                onClose={formModal.close}
-                onSubmit={handleSubmitForm}
+                isOpen={crud.formModal.isOpen}
+                mode={crud.formMode}
+                initialValues={crud.selectedItem ?? undefined}
+                isLoading={crud.formMode === "create" ? createMutation.isPending : updateMutation.isPending}
+                apiErrors={crud.formErrors}
+                onClose={crud.formModal.close}
+                onSubmit={(payload) => {
+                    if (crud.formMode === "create") {
+                        crud.submitForm(createMutation.mutate, payload as CreateAccountRequest);
+                    } else {
+                        crud.submitForm(updateMutation.mutate, payload as UpdateAccountRequest);
+                    }
+                }}
             />
 
             <ConfirmDialog
-                isOpen={lockDialog.isOpen}
+                isOpen={crud.deleteDialog.isOpen}
                 title="Khóa tài khoản"
-                message={`Bạn có chắc muốn khóa tài khoản "${selectedAccount?.userName}"?`}
-                error={lockError}
+                message={`Bạn có chắc muốn khóa tài khoản "${crud.selectedItem?.userName}"?`}
+                error={crud.actionError}
                 isLoading={lockMutation.isPending}
-                onConfirm={handleConfirmLock}
-                onCancel={lockDialog.close}
+                onConfirm={() => crud.submitConfirm(lockMutation.mutate, crud.deleteDialog)}
+                onCancel={crud.deleteDialog.close}
             />
 
             <ConfirmDialog
-                isOpen={unlockDialog.isOpen}
+                isOpen={crud.restoreDialog.isOpen}
                 title="Mở khóa tài khoản"
-                message={`Bạn có chắc muốn mở khóa tài khoản "${selectedAccount?.userName}"?`}
-                error={unlockError}
+                message={`Bạn có chắc muốn mở khóa tài khoản "${crud.selectedItem?.userName}"?`}
+                error={crud.actionError}
                 isLoading={unlockMutation.isPending}
-                onConfirm={handleConfirmUnlock}
-                onCancel={unlockDialog.close}
+                onConfirm={() => crud.submitConfirm(unlockMutation.mutate, crud.restoreDialog)}
+                onCancel={crud.restoreDialog.close}
             />
         </div>
     );
