@@ -22,7 +22,7 @@ export function SubjectList({
 }: SubjectListProps) {
     return (
         <>
-            <div className="card-grid">
+            <div className="subject-list">
                 {pageData?.items.map((subject) => (
                     <CardItem
                         key={subject.id}

@@ -96,7 +96,7 @@ export function SubjectFormModal({
 
     return (
         <Modal isOpen={isOpen} title={mode === "create" ? "Tạo môn học" : "Cập nhật môn học"} onClose={onClose}>
-            <form className="page-form" onSubmit={handleSubmit}>
+            <form className="data-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
                 {!isUniversityBranch && (
@@ -126,7 +126,7 @@ export function SubjectFormModal({
                     />
                 </div>
 
-                <div className="page-form-actions">
+                <div className="data-form-actions">
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? "Đang lưu..." : mode === "create" ? "Tạo môn học" : "Cập nhật"}
                     </Button>

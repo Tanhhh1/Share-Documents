@@ -25,7 +25,7 @@ export function FacultyList({
 
     return (
         <>
-            <div className="card-grid">
+            <div className="faculty-list">
                 {pageData?.items.map((faculty) => (
                     <CardItem
                         key={faculty.id}

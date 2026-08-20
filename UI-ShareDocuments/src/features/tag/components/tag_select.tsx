@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Input } from "@/common/components/input";
 import { useDebounce } from "@/common/hooks/use_debounce";
 import { useTags } from "../use_tag";
-import "@/styles/component/combobox.css"
 
 interface TagMultiSelectProps {
     value?: number[];

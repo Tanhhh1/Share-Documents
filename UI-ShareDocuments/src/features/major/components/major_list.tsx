@@ -25,7 +25,7 @@ export function MajorList({
 
     return (
         <>
-            <div className="card-grid">
+            <div className="major-list">
                 {pageData?.items.map((major) => (
                     <CardItem
                         key={major.id}

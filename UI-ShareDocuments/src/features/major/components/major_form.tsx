@@ -69,7 +69,7 @@ export function MajorFormModal({ isOpen, mode, facultyId, initialValues, isLoadi
 
     return (
         <Modal isOpen={isOpen} title={mode === "create" ? "Tạo ngành" : "Cập nhật ngành"} onClose={onClose}>
-            <form className="page-form" onSubmit={handleSubmit}>
+            <form className="data-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
                 <div className="form-group">
@@ -84,7 +84,7 @@ export function MajorFormModal({ isOpen, mode, facultyId, initialValues, isLoadi
                     />
                 </div>
 
-                <div className="page-form-actions">
+                <div className="data-form-actions">
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? "Đang lưu..." : mode === "create" ? "Tạo ngành" : "Cập nhật"}
                     </Button>

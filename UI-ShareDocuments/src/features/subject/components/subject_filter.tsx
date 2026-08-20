@@ -18,15 +18,15 @@ export function SubjectFilter({ filters, onChange }: SubjectFilterProps) {
     }, [debouncedSearch]);
 
     return (
-        <div className="page-filter">
+        <div className="data-filter">
             <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Tìm theo tên môn học..."
             />
 
-            <div className="page-select">
-                <select className="page-filter-status" value={filters.educationLevel ?? ""}
+            <div className="data-select">
+                <select className="data-filter-status" value={filters.educationLevel ?? ""}
                     onChange={(e) => onChange({ ...filters, educationLevel: (e.target.value as EducationLevel) || undefined, pageIndex: 1 })}
                 >
                     {GENERAL_EDUCATION_LEVELS.map((level) => (
@@ -36,7 +36,7 @@ export function SubjectFilter({ filters, onChange }: SubjectFilterProps) {
                     ))}
                 </select>
 
-                <select className="page-filter-status" value={filters.isActive === undefined ? "" : String(filters.isActive)}
+                <select className="data-filter-status" value={filters.isActive === undefined ? "" : String(filters.isActive)}
                     onChange={(e) => onChange({ ...filters, isActive: e.target.value === "" ? undefined : e.target.value === "true", pageIndex: 1 })}
                 >
                     <option value="">Tất cả trạng thái</option>

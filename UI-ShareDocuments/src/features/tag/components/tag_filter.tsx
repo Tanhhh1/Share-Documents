@@ -17,15 +17,15 @@ export function TagFilter({ filters, onChange }: TagFilterProps) {
     }, [debouncedSearch]);
 
     return (
-        <div className="page-filter">
+        <div className="data-filter">
             <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Tìm theo tên thẻ phân loại..."
             />
 
-            <div className="page-select">
-                <select className="page-filter-status" value={filters.isDeleted === undefined ? "" : String(filters.isDeleted)}
+            <div className="data-select">
+                <select className="data-filter-status" value={filters.isDeleted === undefined ? "" : String(filters.isDeleted)}
                     onChange={(e) => onChange({ ...filters, isDeleted: e.target.value === "" ? undefined : e.target.value === "true", pageIndex: 1 })}
                 >
                     <option value="">Tất cả trạng thái</option>
