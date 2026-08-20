@@ -11,11 +11,16 @@ namespace Application.CQRS.Bookmarks.Queries.GetBookmarkByUserId
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUser _currentUser;
+        private readonly ISupabaseStorageService _storageService;
 
-        public GetBookmarkByUserIdHandler(IUnitOfWork unitOfWork, ICurrentUser currentUser)
+        public GetBookmarkByUserIdHandler(
+            IUnitOfWork unitOfWork,
+            ICurrentUser currentUser,
+            ISupabaseStorageService storageService)
         {
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
+            _storageService = storageService;
         }
 
         public async Task<ApiResult<PageList<BookmarkDto>>> Handle(GetBookmarkByUserIdQuery request, CancellationToken cancellationToken)
@@ -31,6 +36,14 @@ namespace Application.CQRS.Bookmarks.Queries.GetBookmarkByUserId
                 request.PageSize,
                 cancellationToken
             );
+
+            foreach (var item in pageList.Items)
+            {
+                if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                {
+                    item.ThumbnailUrl = _storageService.GetPublicUrl(item.ThumbnailUrl);
+                }
+            }
 
             return ApiResult<PageList<BookmarkDto>>.Success(pageList);
         }

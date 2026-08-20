@@ -21,11 +21,11 @@ namespace Application.CQRS.Auth.Commands.SignUp
         {
             var existingByUsername = await _userManager.FindByNameAsync(request.UserName);
             if (existingByUsername is not null)
-                return ApiResult<bool>.Failure([new FieldError("Username", "Tên đăng nhập đã tồn tại")]);
+                return ApiResult<bool>.Failure("Tên đăng nhập đã tồn tại");
 
             var existingByEmail = await _userManager.FindByEmailAsync(request.Email);
             if (existingByEmail is not null)
-                return ApiResult<bool>.Failure([new FieldError("Email", "Email đã được sử dụng")]);
+                return ApiResult<bool>.Failure("Email đã được sử dụng");
 
             var user = request.Adapt<User>();
 

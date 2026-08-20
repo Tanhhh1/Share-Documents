@@ -26,9 +26,9 @@ namespace Application.CQRS.Documents.Queries.GetByDocumentId
         public async Task<ApiResult<DocumentDetailDto>> Handle(GetByDocumentIdQuery request, CancellationToken cancellationToken)
         {
             var document = await _unitOfWork.DocumentRepository
-                 .GetByCondition(d => d.Id == request.Id)
-                 .ProjectToType<DocumentDetailDto>()
-                 .FirstOrDefaultAsync(cancellationToken);
+                .GetByCondition(d => d.Id == request.Id)
+                .ProjectToType<DocumentDetailDto>()
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (document is null)
                 return ApiResult<DocumentDetailDto>.Failure("Không tìm thấy tài liệu");
@@ -42,16 +42,12 @@ namespace Application.CQRS.Documents.Queries.GetByDocumentId
             if (document.Status != DocumentStatus.Published && !isOwner && !isModerationBypass)
                 return ApiResult<DocumentDetailDto>.Failure("Không tìm thấy tài liệu");
 
-            if (!document.IsDeleted && _currentUser.Id.HasValue && !_currentUser.IsAdmin && !_currentUser.IsModerator)
-                await _statisticsService.IncrementViewAsync(document.Id, _currentUser.Id.Value, cancellationToken);
-
-            if (_currentUser.Id.HasValue && !_currentUser.IsAdmin && !_currentUser.IsModerator)
+            if (!document.IsDeleted && _currentUser.Id.HasValue && !isModerationBypass && !isOwner)
                 await _statisticsService.IncrementViewAsync(document.Id, _currentUser.Id.Value, cancellationToken);
 
             if (document.AccessLevel == AccessLevel.Premium && !isOwner && !isModerationBypass)
             {
                 var isActiveMember = await _memberService.IsActiveMemberAsync(_currentUser.Id!.Value, cancellationToken);
-
                 if (!isActiveMember)
                     return ApiResult<DocumentDetailDto>.Failure("Tài liệu này chỉ dành cho thành viên Premium. Vui lòng nâng cấp tài khoản để xem chi tiết");
             }

@@ -26,7 +26,9 @@ namespace Application.Mappers
                 .Ignore(dest => dest.Tags);
 
             config.NewConfig<Bookmark, BookmarkDto>()
-               .Map(dest => dest.DocumentTitle, src => src.Document.Title);
+               .Map(dest => dest.DocumentTitle, src => src.Document.Title)
+               .Map(dest => dest.DocumentDescription, src => src.Document.Description)
+               .Map(dest => dest.ThumbnailUrl, src => src.Document.ThumbnailKey);
 
             config.NewConfig<Comment, CommentDto>()
                 .Map(dest => dest.UserName, src => src.User.UserName)

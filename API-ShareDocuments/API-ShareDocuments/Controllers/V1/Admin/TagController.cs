@@ -8,6 +8,7 @@ using Application.CQRS.Tags.DTOs;
 using Application.CQRS.Tags.Queries.GetAllTag;
 using Application.CQRS.Tags.Queries.GetByTagId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_ShareDocuments.Controllers.V1.Admin
@@ -21,6 +22,7 @@ namespace API_ShareDocuments.Controllers.V1.Admin
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(ApiResult<PageList<TagDto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResult<PageList<TagDto>>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll([FromQuery] GetAllTagQuery query)
