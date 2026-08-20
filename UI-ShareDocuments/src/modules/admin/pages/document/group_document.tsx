@@ -4,7 +4,6 @@ import { useDocuments } from "@/features/document/use_document";
 import { DocumentList } from "@/features/document/components/document_list";
 import { DocumentFilter } from "@/features/document/components/document_filter";
 import type { DocumentFilterParams } from "@/features/document/document_type";
-import "@/styles/admin/document.css";
 
 interface GroupLocationState {
     title?: string;
@@ -28,11 +27,11 @@ export default function GroupDocumentPage() {
     const { data, isLoading } = useDocuments(filters);
 
     return (
-        <div className="page">
-            <div className="page-header">
+        <div className="admin-page">
+            <div className="admin-page-header">
                 <div>
                     <h2>
-                        <a className="page-back" onClick={() => navigate(-1)}>
+                        <a className="admin-page-back" onClick={() => navigate(-1)}>
                             <i className="bx bx-chevrons-left" />
                         </a>
                         {state?.title ?? "Tài liệu thuộc nhóm"}

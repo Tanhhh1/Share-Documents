@@ -30,7 +30,22 @@ export interface GroupFilterParams extends PageListParams {
     isDeleted?: boolean;
 }
 
+export interface GetPublishedGroupParams extends PageListParams {
+    search?: string;
+}
+
 export interface RejectGroupRequest {
     id: number;
     reason: string;
+}
+
+export interface CreateGroupRequest {
+    title: string;
+    description?: string;
+}
+
+export interface UpdateGroupRequest {
+    id: number;
+    title: string;
+    description?: string;
 }

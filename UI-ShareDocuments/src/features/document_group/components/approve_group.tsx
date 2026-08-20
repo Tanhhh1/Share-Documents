@@ -25,7 +25,7 @@ export function ApproveGroupDialog({ isOpen, group, isLoading = false, apiErrors
 
     return (
         <Modal isOpen={isOpen} title="Duyệt nhóm chủ đề" onClose={onClose}>
-            <form className="page-form" onSubmit={handleSubmit}>
+            <form className="data-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
                 <GroupInfoSummary group={group} />
@@ -34,7 +34,7 @@ export function ApproveGroupDialog({ isOpen, group, isLoading = false, apiErrors
                     Duyệt nhóm chủ đề này sẽ đồng thời duyệt các tài liệu đang chờ duyệt thuộc nhóm.
                 </p>
 
-                <div className="page-form-actions">
+                <div className="data-form-actions">
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? "Đang xử lý..." : "Duyệt"}
                     </Button>

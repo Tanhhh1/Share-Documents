@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDocumentGroups } from "@/features/document_group/use_group";
-import { useApproveGroup, useRejectGroup } from "@/features/document_group/use_group";
-import { useDisclosure } from "@/common/hooks/use_disclosure";
-import { DocumentGroupFilter } from "@/features/document_group/components/group_filter";
+import { useDocumentGroups, useApproveGroup, useRejectGroup } from "@/features/document_group/use_group";
+import { useCrudModal } from "@/common/hooks/use_modal";
+import { GroupFilter } from "@/features/document_group/components/group_filter";
 import { DocumentGroupList } from "@/features/document_group/components/group_list";
 import { ApproveGroupDialog } from "@/features/document_group/components/approve_group";
 import { RejectGroupDialog } from "@/features/document_group/components/reject_group";
-import { getGeneralErrors } from "@/common/utils/api_error";
 import type { GroupDto, GroupFilterParams } from "@/features/document_group/group_type";
-import type { FieldError } from "@/common/types/api_result_type";
-
-import "@/styles/admin/group.css";
 
 const DEFAULT_FILTERS: GroupFilterParams = {
     pageIndex: 1,
@@ -21,13 +16,7 @@ const DEFAULT_FILTERS: GroupFilterParams = {
 export default function DocumentGroupPage() {
     const navigate = useNavigate();
     const [filters, setFilters] = useState<GroupFilterParams>(DEFAULT_FILTERS);
-    const [selectedGroup, setSelectedGroup] = useState<GroupDto | null>(null);
-    const [approveError, setApproveError] = useState<string | undefined>();
-    const [rejectErrors, setRejectErrors] = useState<FieldError[] | null>(null);
-
-    const approveDialog = useDisclosure();
-    const rejectDialog = useDisclosure();
-
+    const crud = useCrudModal<GroupDto>();
     const { data, isLoading } = useDocumentGroups(filters);
     const approveMutation = useApproveGroup();
     const rejectMutation = useRejectGroup();
@@ -38,82 +27,42 @@ export default function DocumentGroupPage() {
         });
     };
 
-    const handleOpenApprove = (group: GroupDto) => {
-        setSelectedGroup(group);
-        setApproveError(undefined);
-        approveDialog.open();
-    };
-
-    const handleOpenReject = (group: GroupDto) => {
-        setSelectedGroup(group);
-        setRejectErrors(null);
-        rejectDialog.open();
-    };
-
-    const handleConfirmApprove = () => {
-        if (!selectedGroup) return;
-        setApproveError(undefined);
-        approveMutation.mutate(selectedGroup.id, {
-            onSuccess: (result) => {
-                if (result.succeeded) {
-                    approveDialog.close();
-                } else {
-                    setApproveError(getGeneralErrors(result.errors) ?? "Có lỗi xảy ra, vui lòng thử lại");
-                }
-            },
-        });
-    };
-
-    const handleSubmitReject = (reason: string) => {
-        if (!selectedGroup) return;
-        setRejectErrors(null);
-        rejectMutation.mutate(
-            { id: selectedGroup.id, reason },
-            {
-                onSuccess: (result) => {
-                    if (result.succeeded) {
-                        rejectDialog.close();
-                    } else {
-                        setRejectErrors(result.errors ?? null);
-                    }
-                },
-            }
-        );
-    };
-
     return (
-        <div className="page">
-            <div className="page-header">
-                <h2>Quản lý nhóm chủ đề</h2>
+        <div className="admin-page">
+            <div className="admin-page-header">
+                <h2>Quản lý Nhóm Chủ Đề</h2>
             </div>
 
-            <DocumentGroupFilter filters={filters} onChange={setFilters} />
+            <GroupFilter filters={filters} onChange={setFilters} />
 
             <DocumentGroupList
                 pageData={data?.result ?? undefined}
                 isLoading={isLoading}
-                onApprove={handleOpenApprove}
-                onReject={handleOpenReject}
+                onApprove={crud.openDelete} 
+                onReject={crud.openEdit}
                 onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
                 onView={handleView}
             />
 
             <ApproveGroupDialog
-                isOpen={approveDialog.isOpen}
-                group={selectedGroup ?? undefined}
+                isOpen={crud.deleteDialog.isOpen}
+                group={crud.selectedItem ?? undefined}
                 isLoading={approveMutation.isPending}
-                apiErrors={approveError ? [{ propertyName: null, errorMessage: approveError }] : null}
-                onClose={approveDialog.close}
-                onConfirm={handleConfirmApprove}
+                apiErrors={ crud.actionError ? [{ propertyName: null, errorMessage: crud.actionError }] : null }
+                onClose={crud.deleteDialog.close}
+                onConfirm={() => crud.submitConfirm(approveMutation.mutate, crud.deleteDialog)}
             />
 
             <RejectGroupDialog
-                isOpen={rejectDialog.isOpen}
-                group={selectedGroup ?? undefined}
+                isOpen={crud.formModal.isOpen}
+                group={crud.selectedItem ?? undefined}
                 isLoading={rejectMutation.isPending}
-                apiErrors={rejectErrors}
-                onClose={rejectDialog.close}
-                onConfirm={handleSubmitReject}
+                apiErrors={crud.formErrors}
+                onClose={crud.formModal.close}
+                onConfirm={(reason: string) => {
+                    if (!crud.selectedItem) return;
+                    crud.submitForm(rejectMutation.mutate, { id: crud.selectedItem.id, reason });
+                }}
             />
         </div>
     );

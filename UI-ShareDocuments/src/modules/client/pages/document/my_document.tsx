@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMyDocuments, useDeleteDocument, useRestoreDocument } from "@/features/document/use_document";
 import { useCrudModal } from "@/common/hooks/use_modal";
 import { DocumentList } from "@/features/document/components/document_list";
 import { DocumentFilter } from "@/features/document/components/document_filter";
 import { ConfirmDialog } from "@/common/components/confirm";
 import type { DocumentDto, DocumentFilterParams } from "@/features/document/document_type";
-import { useNavigate } from "react-router-dom";
 
 const DEFAULT_FILTERS: DocumentFilterParams = {
     pageIndex: 1,
@@ -22,12 +22,12 @@ export default function MyDocumentPage() {
     const restoreMutation = useRestoreDocument();
 
     return (
-        <div className="admin-page">
-            <div className="admin-page-header">
+        <div className="client-page">
+            <div className="client-page-header">
                 <h2>Tài Liệu Của Tôi</h2>
+                <p>Quản lý các tài liệu bạn đã tải lên</p>
+                <DocumentFilter filters={filters} onChange={setFilters} />
             </div>
-
-            <DocumentFilter filters={filters} onChange={setFilters} />
 
             <DocumentList
                 pageData={data?.result ?? undefined}
@@ -35,8 +35,8 @@ export default function MyDocumentPage() {
                 onPageChange={(pageIndex) => setFilters((prev) => ({ ...prev, pageIndex }))}
                 showStatus={false}
                 variant="horizontal"
-                onCardClick={(id) => navigate(`/admin/document/${id}`)}
-                onEdit={(document) => navigate(`/admin/document/${document.id}/edit`)}
+                onCardClick={(id) => navigate(`/document/${id}`)}
+                onEdit={(document) => navigate(`/document/${document.id}/edit`)}
                 onDelete={crud.openDelete}
                 onRestore={crud.openRestore}
             />

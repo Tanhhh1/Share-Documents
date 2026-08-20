@@ -7,7 +7,6 @@ import { AccessLevel, ACCESS_LEVELS, ACCESS_LEVEL_LABEL } from "@/common/constan
 import { SubjectSelect } from "@/features/subject/components/subject_select";
 import { TagMultiSelect } from "@/features/tag/components/tag_select";
 import type { CreateDocumentRequest, UpdateDocumentRequest, DocumentDetailDto } from "../document_type";
-import "@/styles/admin/form.css";
 
 export type DocumentFormMode = "create" | "update";
 
@@ -158,7 +157,7 @@ export function DocumentForm({
                             <i className="bx bx-cloud-upload dropzone-icon"></i>
                             <p className="dropzone-title">Tải tệp lên</p>
                             <p className="dropzone-sub">Kéo thả hoặc bấm để chọn (PDF, DOCX, PPTX)</p>
-                            <input ref={fileInputRef} type="file" accept=".pdf,.docx,.pptx" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)}/>
+                            <input ref={fileInputRef} type="file" accept=".pdf,.docx,.pptx" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
                         </div>
                     ) : (
                         <div className="doc-preview-card">
@@ -187,19 +186,18 @@ export function DocumentForm({
                 </div>
 
                 <div className="doc-fields-column">
-                    <div className="doc-field-group">
-                        <label className="doc-field-label">
-                            Tiêu đề <span className="label-required">*</span>
-                        </label>
-                        <div className={`doc-input-wrapper ${errors.title ? "has-error" : ""}`}>
-                            <input type="text" className="doc-custom-input" placeholder="Nhập tiêu đề tài liệu..." value={form.title}
-                                onChange={(e) => { setForm((prev) => ({ ...prev, title: e.target.value })); setErrors((prev) => ({ ...prev, title: undefined }))}}
-                            />
-                        </div>
-                        {errors.title && <p className="input-error-message">{errors.title}</p>}
-                    </div>
-
                     <div className="doc-field-row">
+                        <div className="doc-field-group">
+                            <label className="doc-field-label">
+                                Tiêu đề <span className="label-required">*</span>
+                            </label>
+                            <div className={`doc-input-wrapper ${errors.title ? "has-error" : ""}`}>
+                                <input type="text" className="doc-custom-input" placeholder="Nhập tiêu đề tài liệu..." value={form.title}
+                                    onChange={(e) => { setForm((prev) => ({ ...prev, title: e.target.value })); setErrors((prev) => ({ ...prev, title: undefined })) }}
+                                />
+                            </div>
+                            {errors.title && <p className="input-error-message">{errors.title}</p>}
+                        </div>
                         <div className="doc-field-group">
                             <label className="doc-field-label">
                                 Môn học <span className="label-required">*</span>
@@ -213,7 +211,15 @@ export function DocumentForm({
                             />
                             {errors.subjectId && <p className="input-error-message">{errors.subjectId}</p>}
                         </div>
-
+                    </div>
+                    <div className="doc-field-row">
+                        <div className="doc-field-group">
+                            <label className="doc-field-label">Thẻ phân loại</label>
+                            <TagMultiSelect
+                                value={form.tagIds}
+                                onChange={(tagIds) => setForm((prev) => ({ ...prev, tagIds: tagIds ?? [] }))}
+                            />
+                        </div>
                         {!hideAccessLevel && (
                             <div className="doc-field-group">
                                 <label className="doc-field-label">
@@ -230,14 +236,6 @@ export function DocumentForm({
                                 </select>
                             </div>
                         )}
-                    </div>
-
-                    <div className="doc-field-group">
-                        <label className="doc-field-label">Thẻ phân loại</label>
-                        <TagMultiSelect
-                            value={form.tagIds}
-                            onChange={(tagIds) => setForm((prev) => ({ ...prev, tagIds: tagIds ?? [] }))}
-                        />
                     </div>
 
                     <div className="doc-field-group">

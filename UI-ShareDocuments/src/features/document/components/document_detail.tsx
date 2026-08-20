@@ -8,13 +8,11 @@ interface DocumentDetailViewProps {
     isDownloading?: boolean;
     onDownload?: (id: number) => void;
     onBack?: () => void;
-
     onApprove?: () => void;
     onReject?: () => void;
-
-    onEdit?: () => void;
-    onDelete?: () => void;
-    onRestore?: () => void;
+    isSaved?: boolean;
+    isSaving?: boolean;
+    onToggleSave?: () => void;
 }
 
 function formatDate(value: string): string {
@@ -39,20 +37,18 @@ export function DocumentDetailView({
     onBack,
     onApprove,
     onReject,
-    onEdit,
-    onDelete,
-    onRestore,
+    isSaved,
+    isSaving,
+    onToggleSave,
 }: DocumentDetailViewProps) {
     const { data: previewData, isLoading: isPreviewLoading } = useDocumentPreview(document.id);
-
     const hasApprovalActions = !!(onApprove || onReject);
-    const hasMyDocumentActions = !!(onEdit || onDelete || onRestore);
 
     return (
         <div className="document-detail-layout">
             <div className="detail-sidebar-left">
                 <div className="sidebar-top-bar">
-                    <a className="page-back" onClick={onBack}>
+                    <a className="admin-page-back" onClick={onBack}>
                         <i className="bx bx-chevrons-left" />
                     </a>
                     <div className="sidebar-stats-group">
@@ -117,6 +113,24 @@ export function DocumentDetailView({
                     </button>
 
                     <div className="preview-header-actions">
+                        {(onToggleSave) && (
+                            <>
+                                {onToggleSave && (
+                                    <button
+                                        className={`table-action-btn${isSaved ? " saved" : ""}`}
+                                        title={isSaved ? "Bỏ lưu" : "Lưu tài liệu"}
+                                        onClick={onToggleSave}
+                                        disabled={isSaving}
+                                    >
+                                        <i className={`bx ${isSaved ? "bxs-bookmark" : "bx-bookmark"}`}></i>
+                                    </button>
+                                )}
+                                <button className="table-action-btn" title="Chia sẻ">
+                                    <i className="bx bx-share-alt"></i>
+                                </button>
+                            </>
+                        )}
+
                         {hasApprovalActions && (
                             !document.isDeleted && document.status === DocumentStatus.Pending ? (
                                 <>
@@ -131,23 +145,6 @@ export function DocumentDetailView({
                                 <span className={statusBadgeClass(document.status)}>
                                     {DOCUMENT_STATUS_LABEL[document.status]}
                                 </span>
-                            )
-                        )}
-
-                        {hasMyDocumentActions && (
-                            document.isDeleted ? (
-                                <button className="table-action-btn unlock" title="Khôi phục" onClick={onRestore}>
-                                    <i className="bx bx-undo"></i>
-                                </button>
-                            ) : (
-                                <>
-                                    <button className="table-action-btn edit" title="Sửa" onClick={onEdit}>
-                                        <i className="bx bx-edit"></i>
-                                    </button>
-                                    <button className="table-action-btn lock" title="Xóa" onClick={onDelete}>
-                                        <i className="bx bx-trash"></i>
-                                    </button>
-                                </>
                             )
                         )}
                     </div>

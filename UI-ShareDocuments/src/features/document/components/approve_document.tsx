@@ -33,7 +33,7 @@ export function ApproveDocumentDialog({
 
     return (
         <Modal isOpen={isOpen} title="Phê duyệt tài liệu" onClose={onClose}>
-            <form className="page-form" onSubmit={handleSubmit}>
+            <form className="data-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
                 <DocumentInfo document={document} />
@@ -42,7 +42,7 @@ export function ApproveDocumentDialog({
                     Bạn có chắc chắn muốn phê duyệt tài liệu này không?
                 </p>
 
-                <div className="page-form-actions">
+                <div className="data-form-actions">
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? "Đang xử lý..." : "Phê duyệt"}
                     </Button>

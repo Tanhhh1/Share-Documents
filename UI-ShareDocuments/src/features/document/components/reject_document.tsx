@@ -47,7 +47,7 @@ export function RejectDocumentDialog({
 
     return (
         <Modal isOpen={isOpen} title="Từ chối tài liệu" onClose={onClose}>
-            <form className="page-form" onSubmit={handleSubmit}>
+            <form className="data-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
                 <DocumentInfo document={document} />
@@ -66,7 +66,7 @@ export function RejectDocumentDialog({
                     {error && <p className="input-error-message">{error}</p>}
                 </div>
 
-                <div className="page-form-actions">
+                <div className="data-form-actions">
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? "Đang xử lý..." : "Từ chối"}
                     </Button>

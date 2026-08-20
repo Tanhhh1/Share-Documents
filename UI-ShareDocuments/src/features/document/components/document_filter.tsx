@@ -5,7 +5,7 @@ import { DOCUMENT_STATUS_LABEL, DOCUMENT_STATUSES } from "@/common/constants/doc
 import { ACCESS_LEVEL_LABEL, ACCESS_LEVELS } from "@/common/constants/access_level";
 import { SubjectSelect } from "@/features/subject/components/subject_select";
 import { TagMultiSelect } from "@/features/tag/components/tag_select";
-import type { DocumentFilterParams } from "../document_type";
+import type { DocumentFilterParams, PublishedDocumentFilterParams } from "../document_type";
 
 interface DocumentFilterProps {
     filters: DocumentFilterParams;
@@ -21,14 +21,14 @@ export function DocumentFilter({ filters, onChange }: DocumentFilterProps) {
     }, [debouncedKeyword]);
 
     return (
-        <div className="page-filter">
+        <div className="data-filter">
             <Input
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="Tìm theo tiêu đề tài liệu..."
             />
-            <div className="page-select">
-                <select className="page-filter-status" value={filters.accessLevel ?? ""}
+            <div className="data-select">
+                <select className="data-filter-status" value={filters.accessLevel ?? ""}
                     onChange={(e) => onChange({ ...filters, accessLevel: e.target.value === "" ? undefined : (e.target.value as DocumentFilterParams["accessLevel"]), pageIndex: 1 })}
                 >
                     <option value="">Tất cả gói</option>
@@ -39,7 +39,7 @@ export function DocumentFilter({ filters, onChange }: DocumentFilterProps) {
                     ))}
                 </select>
 
-                <select className="page-filter-status" value={filters.status ?? ""}
+                <select className="data-filter-status" value={filters.status ?? ""}
                     onChange={(e) => onChange({ ...filters, status: e.target.value === "" ? undefined : (e.target.value as DocumentFilterParams["status"]), pageIndex: 1 })}
                 >
                     <option value="">Tất cả trạng thái</option>
@@ -50,12 +50,58 @@ export function DocumentFilter({ filters, onChange }: DocumentFilterProps) {
                     ))}
                 </select>
 
-                <select className="page-filter-status" value={filters.isDeleted === undefined ? "" : filters.isDeleted ? "true" : "false"}
+                <select className="data-filter-status" value={filters.isDeleted === undefined ? "" : filters.isDeleted ? "true" : "false"}
                     onChange={(e) => { const val = e.target.value; onChange({ ...filters, isDeleted: val === "" ? undefined : val === "true", pageIndex: 1 }) }}
                 >
                     <option value="">Tất cả lưu trữ</option>
                     <option value="false">Đang hoạt động</option>
                     <option value="true">Đã xóa</option>
+                </select>
+
+                <SubjectSelect
+                    value={filters.subjectId}
+                    onChange={(subjectId) => onChange({ ...filters, subjectId, pageIndex: 1 })}
+                />
+
+                <TagMultiSelect
+                    value={filters.tagIds}
+                    onChange={(tagIds) => onChange({ ...filters, tagIds, pageIndex: 1 })}
+                />
+            </div>
+        </div>
+    );
+}
+
+interface PublishedDocumentFilterProps {
+    filters: DocumentFilterParams;
+    onChange: (filters: PublishedDocumentFilterParams) => void;
+}
+
+export function PublishedDocumentFilter({ filters, onChange }: PublishedDocumentFilterProps) {
+    const [keyword, setKeyword] = useState(filters.keyword ?? "");
+    const debouncedKeyword = useDebounce(keyword, 500);
+
+    useEffect(() => {
+        onChange({ ...filters, keyword: debouncedKeyword, pageIndex: 1 });
+    }, [debouncedKeyword]);
+
+    return (
+        <div className="data-filter">
+            <Input
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Tìm theo tiêu đề tài liệu..."
+            />
+            <div className="data-select">
+                <select className="data-filter-status" value={filters.accessLevel ?? ""}
+                    onChange={(e) => onChange({ ...filters, accessLevel: e.target.value === "" ? undefined : (e.target.value as PublishedDocumentFilterParams["accessLevel"]), pageIndex: 1 })}
+                >
+                    <option value="">Tất cả gói</option>
+                    {ACCESS_LEVELS.map((level) => (
+                        <option key={level} value={level}>
+                            {ACCESS_LEVEL_LABEL[level]}
+                        </option>
+                    ))}
                 </select>
 
                 <SubjectSelect

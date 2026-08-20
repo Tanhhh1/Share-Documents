@@ -1,20 +1,10 @@
 import { useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-    useDocumentDetail,
-    useDownloadDocument,
-    useApproveDocument,
-    useRejectDocument,
-    useDeleteDocument,
-    useRestoreDocument,
-} from "@/features/document/use_document";
+import { useDocumentDetail, useDownloadDocument, useApproveDocument, useRejectDocument } from "@/features/document/use_document";
 import { DocumentDetailView } from "@/features/document/components/document_detail";
 import { ApproveDocumentDialog } from "@/features/document/components/approve_document";
 import { RejectDocumentDialog } from "@/features/document/components/reject_document";
-import { ConfirmDialog } from "@/common/components/confirm";
-import { getGeneralErrors } from "@/common/utils/api_error";
-import "@/styles/admin/document.css";
 
 export default function DocumentDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -30,15 +20,9 @@ export default function DocumentDetailPage() {
     const downloadMutation = useDownloadDocument();
     const approveMutation = useApproveDocument();
     const rejectMutation = useRejectDocument();
-    const deleteMutation = useDeleteDocument();
-    const restoreMutation = useRestoreDocument();
 
     const [isApproveOpen, setIsApproveOpen] = useState(false);
     const [isRejectOpen, setIsRejectOpen] = useState(false);
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [isRestoreOpen, setIsRestoreOpen] = useState(false);
-    const [deleteError, setDeleteError] = useState<string | undefined>();
-    const [restoreError, setRestoreError] = useState<string | undefined>();
 
     const handleBack = () => navigate(-1);
 
@@ -84,34 +68,6 @@ export default function DocumentDetailPage() {
         );
     };
 
-    const handleConfirmDelete = () => {
-        setDeleteError(undefined);
-        deleteMutation.mutate(documentId, {
-            onSuccess: (result) => {
-                if (result.succeeded) {
-                    setIsDeleteOpen(false);
-                    queryClient.invalidateQueries({ queryKey: ["document", documentId] });
-                } else {
-                    setDeleteError(getGeneralErrors(result.errors) ?? "Có lỗi xảy ra, vui lòng thử lại");
-                }
-            },
-        });
-    };
-
-    const handleConfirmRestore = () => {
-        setRestoreError(undefined);
-        restoreMutation.mutate(documentId, {
-            onSuccess: (result) => {
-                if (result.succeeded) {
-                    setIsRestoreOpen(false);
-                    queryClient.invalidateQueries({ queryKey: ["document", documentId] });
-                } else {
-                    setRestoreError(getGeneralErrors(result.errors) ?? "Có lỗi xảy ra, vui lòng thử lại");
-                }
-            },
-        });
-    };
-
     return (
         <div className="document-detail-page">
             {isLoading && (
@@ -130,9 +86,6 @@ export default function DocumentDetailPage() {
                         onBack={handleBack}
                         onApprove={!isMineContext ? () => setIsApproveOpen(true) : undefined}
                         onReject={!isMineContext ? () => setIsRejectOpen(true) : undefined}
-                        onEdit={isMineContext ? () => navigate(`/admin/document/${documentId}/edit`) : undefined}
-                        onDelete={isMineContext ? () => setIsDeleteOpen(true) : undefined}
-                        onRestore={isMineContext ? () => setIsRestoreOpen(true) : undefined}
                     />
 
                     <ApproveDocumentDialog
@@ -151,30 +104,6 @@ export default function DocumentDetailPage() {
                         apiErrors={rejectMutation.error ? (rejectMutation.error as any)?.response?.data?.errors : null}
                         onClose={() => setIsRejectOpen(false)}
                         onConfirm={handleConfirmReject}
-                    />
-
-                    <ConfirmDialog
-                        isOpen={isDeleteOpen}
-                        title="Xóa tài liệu"
-                        message="Bạn có chắc chắn muốn xóa tài liệu này không?"
-                        confirmText="Xóa"
-                        cancelText="Hủy"
-                        error={deleteError}
-                        isLoading={deleteMutation.isPending}
-                        onConfirm={handleConfirmDelete}
-                        onCancel={() => setIsDeleteOpen(false)}
-                    />
-
-                    <ConfirmDialog
-                        isOpen={isRestoreOpen}
-                        title="Khôi phục tài liệu"
-                        message="Bạn có chắc chắn muốn khôi phục tài liệu này không?"
-                        confirmText="Khôi phục"
-                        cancelText="Hủy"
-                        error={restoreError}
-                        isLoading={restoreMutation.isPending}
-                        onConfirm={handleConfirmRestore}
-                        onCancel={() => setIsRestoreOpen(false)}
                     />
                 </>
             )}

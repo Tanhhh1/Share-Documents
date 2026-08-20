@@ -24,7 +24,7 @@ export function DocumentGroupList({
 }: DocumentGroupListProps) {
     return (
         <>
-            <div className="card-grid">
+            <div className="group-list">
                 {pageData?.items.map((group) => (
                     <CardItem
                         key={group.id}
@@ -37,6 +37,50 @@ export function DocumentGroupList({
                         onApprove={() => onApprove(group)}
                         onReject={() => onReject(group)}
                         onClick={onView ? () => onView(group) : undefined}
+                    />
+                ))}
+                {!isLoading && (!pageData?.items || pageData.items.length === 0) && (
+                    <p className="card-empty">Không có nhóm chủ đề nào</p>
+                )}
+            </div>
+
+            {pageData && (
+                <Pagination
+                    pageIndex={pageData.pageIndex}
+                    totalPages={pageData.totalPages}
+                    hasPrevious={pageData.hasPrevious}
+                    hasNext={pageData.hasNext}
+                    onPageChange={onPageChange}
+                />
+            )}
+        </>
+    );
+}
+
+
+interface MyGroupListProps {
+    pageData?: PageList<GroupDto>;
+    isLoading: boolean;
+    onEdit: (group: GroupDto) => void;
+    onDelete: (group: GroupDto) => void;
+    onRestore: (group: GroupDto) => void;
+    onPageChange: (pageIndex: number) => void;
+}
+
+export function MyGroupList({ pageData, isLoading, onEdit, onDelete, onRestore, onPageChange }: MyGroupListProps) {
+    return (
+        <>
+            <div className="group-list">
+                {pageData?.items.map((group) => (
+                    <CardItem
+                        key={group.id}
+                        variant="crud"
+                        name={group.title}
+                        createdAt={group.createdAt}
+                        isDeleted={group.isDeleted}
+                        onEdit={() => onEdit(group)}
+                        onDelete={() => onDelete(group)}
+                        onRestore={() => onRestore(group)}
                     />
                 ))}
                 {!isLoading && (!pageData?.items || pageData.items.length === 0) && (

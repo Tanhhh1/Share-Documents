@@ -1,22 +1,26 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { DocumentForm } from "@/features/document/components/document_form";
-import { useCreateDocument } from "@/features/document/use_document";
+import { useDocumentDetail, useUpdateDocument } from "@/features/document/use_document";
 import type { CreateDocumentRequest, UpdateDocumentRequest } from "@/features/document/document_type";
 import type { FieldError } from "@/common/types/api_result_type";
 
-export default function CreateDocumentPage() {
+export default function EditDocumentPage() {
     const navigate = useNavigate();
-    const createMutation = useCreateDocument();
+    const { id } = useParams<{ id: string }>();
+    const documentId = Number(id);
+
+    const { data } = useDocumentDetail(documentId);
+    const updateMutation = useUpdateDocument();
     const [apiErrors, setApiErrors] = useState<FieldError[] | null>(null);
 
     const handleSubmit = (payload: CreateDocumentRequest | UpdateDocumentRequest) => {
         setApiErrors(null);
 
-        createMutation.mutate(payload as CreateDocumentRequest, {
+        updateMutation.mutate(payload as UpdateDocumentRequest, {
             onSuccess: (res) => {
                 if (res.succeeded) {
-                    navigate("/my-document");
+                    navigate(`/document/${documentId}`);
                 } else {
                     setApiErrors(res.errors ?? null);
                 }
@@ -27,12 +31,13 @@ export default function CreateDocumentPage() {
     return (
         <div className="client-page">
             <div className="client-page-header">
-                <h2>Upload Tài Liệu</h2>
-                <span>Chia sẻ tài liệu của Bạn bằng cách Upload files để mọi người có thể xem, tải và kết nối cùng Bạn.</span>
+                <h2>Chỉnh Sửa Tài Liệu</h2>
+                <span>Cập nhật thông tin tài liệu của Bạn.</span>
             </div>
             <DocumentForm
-                mode="create"
-                isLoading={createMutation.isPending}
+                mode="update"
+                initialValues={data?.result ?? undefined}
+                isLoading={updateMutation.isPending}
                 apiErrors={apiErrors}
                 onSubmit={handleSubmit}
                 hideAccessLevel
