@@ -22,8 +22,8 @@ export default function ProfilePage() {
     );
 
     return (
-        <div className="admin-page">
-            <div className="admin-page-header">
+        <div className="client-page">
+            <div className="client-page-header">
                 <h2>Hồ Sơ Cá Nhân</h2>
             </div>
 

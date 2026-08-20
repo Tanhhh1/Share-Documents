@@ -57,7 +57,7 @@ export function ChangePasswordForm({ isLoading = false, apiErrors, apiSuccess, o
     };
 
     return (
-        <form className="page-form form-section-card" onSubmit={handleSubmit}>
+        <form className="data-form form-section-card" onSubmit={handleSubmit}>
             <div className="form-section-header">
                 <i className="bx bx-lock-alt"></i>
                 <h3>Đổi Mật Khẩu</h3>
@@ -101,7 +101,7 @@ export function ChangePasswordForm({ isLoading = false, apiErrors, apiSuccess, o
                 </div>
             </div>
 
-            <div className="page-form-actions">
+            <div className="data-form-actions">
                 <Button type="submit" disabled={isLoading}>
                     {isLoading ? "Đang xử lý..." : "Lưu thay đổi"}
                 </Button>

@@ -74,7 +74,7 @@ export function ProfileInfoForm({
     };
 
     return (
-        <form className="page-form form-section-card" onSubmit={handleSubmit}>
+        <form className="data-form form-section-card" onSubmit={handleSubmit}>
             <div className="form-section-header">
                 <i className="bx bx-id-card"></i>
                 <h3>Thông Tin Cá Nhân</h3>
@@ -121,7 +121,7 @@ export function ProfileInfoForm({
                 </div>
             </div>
 
-            <div className="page-form-actions" style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px" }}>
+            <div className="data-form-actions" style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px" }}>
                 <Button type="submit" disabled={isLoading}>
                     {isLoading ? "Đang lưu..." : "Lưu thay đổi"}
                 </Button>

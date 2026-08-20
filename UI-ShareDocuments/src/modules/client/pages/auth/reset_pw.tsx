@@ -6,7 +6,6 @@ import { useResetPassword } from "@/features/auth/use_auth";
 import type { ApiResult } from "@/common/types/api_result_type";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
-import "@/styles/client/auth.css";
 
 const schema = z.object({
     newPassword: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),

@@ -6,7 +6,6 @@ import { useVerifyOtp } from "@/features/auth/use_auth";
 import type { ApiResult } from "@/common/types/api_result_type";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
-import "@/styles/client/auth.css";
 
 const schema = z.object({
     otp: z.string().min(1, "Vui lòng nhập mã OTP"),

@@ -9,7 +9,6 @@ import { Button } from "@/common/components/button";
 import { ErrorAlert } from "@/common/components/error_alert";
 import { getGeneralErrors } from "@/common/utils/api_error";
 import type { ApiResult, FieldError } from "@/common/types/api_result_type";
-import "@/styles/client/auth.css";
 
 const schema = z.object({
     username: z.string().min(1, "Vui lòng nhập tên đăng nhập"),

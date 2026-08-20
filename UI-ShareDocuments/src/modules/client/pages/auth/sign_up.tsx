@@ -1,12 +1,14 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, Link } from "react-router-dom";
 import { useSignUp } from "@/features/auth/use_auth";
-import type { ApiResult } from "@/common/types/api_result_type";
 import { Input } from "@/common/components/input";
 import { Button } from "@/common/components/button";
-import "@/styles/client/auth.css";
+import { ErrorAlert } from "@/common/components/error_alert";
+import { getGeneralErrors } from "@/common/utils/api_error";
+import type { ApiResult, FieldError } from "@/common/types/api_result_type";
 
 const schema = z
     .object({
@@ -24,23 +26,35 @@ const schema = z
 type FormValues = z.infer<typeof schema>;
 
 export default function SignUpPage() {
+    const [apiErrors, setApiErrors] = useState<FieldError[] | null>(null);
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ resolver: zodResolver(schema) });
     const signUp = useSignUp();
     const navigate = useNavigate();
 
     const onSubmit = (values: FormValues) => {
+        setApiErrors(null);
         signUp.mutate(values, {
-            onSuccess: (data) => {
-                if (data.succeeded) navigate("/sign-in");
+            onSuccess: (data: ApiResult<unknown>) => {
+                if (data.succeeded) {
+                    navigate("/sign-in");
+                } else {
+                    setApiErrors(data.errors ?? null);
+                }
+            },
+            onError: (error) => {
+                const responseData = (error as { response?: { data?: ApiResult<unknown> } })?.response?.data;
+                if (responseData?.errors) {
+                    setApiErrors(responseData.errors);
+                }
             },
         });
     };
-    const apiErrors = (signUp.error as { response?: { data?: ApiResult<unknown> } })?.response?.data?.errors;
 
     return (
         <div className="auth-container">
             <div className="auth-card">
                 <h1 className="auth-title">Đăng Ký</h1>
+                <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
                 <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
                     <Input {...register("userName")} placeholder="Tên đăng nhập" error={errors.userName?.message}/>
@@ -48,11 +62,7 @@ export default function SignUpPage() {
                     <Input {...register("fullName")} placeholder="Họ tên" error={errors.fullName?.message}/>
                     <Input {...register("password")} type="password" placeholder="Mật khẩu" error={errors.password?.message}/>
                     <Input {...register("confirmPassword")} type="password" placeholder="Xác nhận mật khẩu" error={errors.confirmPassword?.message}/>
-                    {apiErrors?.map((err, i) => (
-                        <p key={i} className="auth-api-error">
-                            {err.errorMessage}
-                        </p>
-                    ))}
+                    
                     <Button type="submit" disabled={signUp.isPending}>
                         {signUp.isPending ? "Đang đăng ký..." : "Đăng ký"}
                     </Button>
