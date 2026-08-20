@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "@/styles/component/alert.css"
 
 interface ErrorAlertProps {
     message?: string | null;
@@ -17,12 +16,7 @@ export function ErrorAlert({ message }: ErrorAlertProps) {
     return (
         <div className="error-alert" role="alert">
             <p className="error-alert-message">{message}</p>
-            <button
-                type="button"
-                className="alert-close-btn"
-                aria-label="Đóng thông báo"
-                onClick={() => setIsVisible(false)}
-            >
+            <button type="button" className="alert-close-btn" aria-label="Đóng thông báo" onClick={() => setIsVisible(false)} >
                 ×
             </button>
         </div>

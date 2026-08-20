@@ -1,5 +1,3 @@
-import "@/styles/component/pagination.css";
-
 interface PaginationProps {
     pageIndex: number;
     totalPages: number;

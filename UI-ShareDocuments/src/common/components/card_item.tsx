@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import "@/styles/component/card_item.css";
 
 interface CardItemBaseProps {
     name: string;

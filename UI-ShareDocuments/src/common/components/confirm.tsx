@@ -1,6 +1,5 @@
 import { Button } from "@/common/components/button";
 import { ErrorAlert } from "@/common/components/error_alert";
-import "@/styles/component/confirm.css";
 
 interface ConfirmDialogProps {
     isOpen: boolean;

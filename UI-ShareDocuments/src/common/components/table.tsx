@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import "@/styles/component/table.css"
 
 export interface TableColumn<T> {
     key: string;

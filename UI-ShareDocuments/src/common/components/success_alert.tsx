@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "@/styles/component/alert.css"
 
 interface SuccessAlertProps {
     message?: string | null;
