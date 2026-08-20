@@ -1,4 +1,4 @@
-.page {
+.admin-page {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
@@ -8,14 +8,14 @@
     color: var(--color-text-dark);
 }
 
-.page-header {
+.admin-page-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
 }
 
-.page-header h2 {
+.admin-page-header h2 {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -26,7 +26,7 @@
     line-height: 1.3;
 }
 
-.page-create {
+.admin-page-create {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -42,15 +42,54 @@
     box-shadow: var(--shadow-sm);
 }
 
-.page-create:hover {
+.admin-page-create:hover {
     background-color: var(--color-primary-hover);
 }
 
-.page-create:active {
-    transform: translateY(1px);
+.client-page {
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
-.page-filter {
+.client-page-header {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 30px 0;
+}
+
+.client-page-header h2 a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.client-page-header h2 a:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.client-page .group-list {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.client-page .data-filter {
+    min-width: 1000px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.data-filter {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -61,26 +100,26 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.page-filter > input,
-.page-filter-input {
+.data-filter>input,
+.data-filter-input {
     width: 100%;
 }
 
-.page-select {
+.data-select {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 12px;
     width: 100%;
 }
 
-.page-select > * {
+.data-select > * {
     width: 100%;
     min-width: 0;
 }
 
-.page-filter-role,
-.page-filter-status,
-.page-filter-input {
+.data-filter-role,
+.data-filter-status,
+.data-filter-input {
     width: 100%;
     height: 38px;
     padding: 0 12px;
@@ -93,20 +132,20 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.page-filter-role,
-.page-filter-status {
+.data-filter-role,
+.data-filter-status {
     padding-right: 32px;
     cursor: pointer;
 }
 
-.page-filter-role:focus,
-.page-filter-status:focus,
-.page-filter-input:focus {
+.data-filter-role:focus,
+.data-filter-status:focus,
+.data-filter-input:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.page-filter-clear {
+.data-filter-clear {
     height: 38px;
     padding: 0 16px;
     font-size: 14px;
@@ -119,12 +158,12 @@
     transition: all 0.15s ease-in-out;
 }
 
-.page-filter-clear:hover {
+.data-filter-clear:hover {
     background-color: var(--color-border-light);
     color: var(--color-text-dark);
 }
 
-.page-back {
+.admin-page-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -139,40 +178,29 @@
     transition: all 0.15s ease-in-out;
 }
 
-.page-back:hover {
+.admin-page-back:hover {
     color: var(--color-primary);
     background-color: rgba(37, 99, 235, 0.08);
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 16px;
+.group-list,
+.faculty-list,
+.major-list,
+.subject-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
 }
 
-.form-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-ink);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
+@media (max-width: 640px) {
 
-.form-label .required {
-    color: var(--color-danger);
-    font-weight: 600;
-}
-
-.page-form-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 8px;
-    padding-top: 16px;
-    border-top: 1px solid var(--color-border-light);
+    .group-list,
+    .faculty-list,
+    .major-list,
+    .subject-list {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 1024px) {

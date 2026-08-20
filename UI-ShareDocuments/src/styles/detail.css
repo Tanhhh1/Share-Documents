@@ -1,12 +1,13 @@
 .document-detail-page {
     width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
 }
 
 .document-detail-layout {
     display: flex;
     height: calc(100vh - 110px);
-    max-width: 1800px;
-    margin: 0 auto;
+
 }
 
 .detail-sidebar-left {
@@ -238,20 +239,44 @@
 .state-error-icon { font-size: 36px; color: var(--color-danger); }
 .state-text { font-size: 14px; color: var(--color-text-muted); }
 
-.card-document-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 16px;
+
+.info-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: var(--color-bg-light);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
 }
 
-@media (max-width: 1200px) {
-    .card-document-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.info-row {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
 }
 
-@media (max-width: 768px) {
-    .card-document-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.info-row-block {
+    flex-direction: column;
 }
 
-@media (max-width: 480px) {
-    .card-document-grid { grid-template-columns: 1fr; }
+.info-label {
+    min-width: 80px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.info-value {
+    color: var(--color-text-dark);
+}
+
+.badge-pending {
+    background: var(--color-warning-light);
+    color: var(--color-warning-text);
+}
+
+.approve-note {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: 12px;
 }

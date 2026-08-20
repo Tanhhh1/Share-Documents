@@ -7,7 +7,7 @@
     background-color: #d4d3d0;
     background-image:
         radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.85) 0%, rgba(243, 237, 223, 0.3) 55%, rgba(241, 238, 230, 0) 76%),
-        url("../../assets/auth-pattern.svg");
+        url("../assets/auth-pattern.svg");
     background-size: cover, 260px 260px;
     background-repeat: no-repeat, repeat;
     background-position: center, center;
