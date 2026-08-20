@@ -96,7 +96,7 @@ export function AccountFormModal({ isOpen, mode, initialValues, isLoading = fals
 
     return (
         <Modal isOpen={isOpen} title={mode === "create" ? "Tạo tài khoản" : "Cập nhật tài khoản"} onClose={onClose}>
-            <form className="page-form" onSubmit={handleSubmit}>
+            <form className="data-form" onSubmit={handleSubmit}>
                 <ErrorAlert message={getGeneralErrors(apiErrors)} />
 
                 <div className="form-group">
@@ -152,7 +152,7 @@ export function AccountFormModal({ isOpen, mode, initialValues, isLoading = fals
                     />
                 </div>
 
-                <div className="page-form-actions">
+                <div className="data-form-actions">
                     <Button type="submit" disabled={isLoading}>
                         {isLoading ? "Đang lưu..." : mode === "create" ? "Tạo tài khoản" : "Cập nhật"}
                     </Button>

@@ -17,22 +17,22 @@ export function AccountFilter({ filters, onChange }: AccountFilterProps) {
     }, [debouncedKeyword]);
 
     return (
-        <div className="page-filter">
+        <div className="data-filter">
             <Input
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="Tìm theo tên tài khoản, email..."
             />
 
-            <div className="page-select">
-                <select className="page-filter-role" value={filters.role ?? ""} onChange={(e) => onChange({ ...filters, role: e.target.value || undefined, pageIndex: 1 })}>
+            <div className="data-select">
+                <select className="data-filter-role" value={filters.role ?? ""} onChange={(e) => onChange({ ...filters, role: e.target.value || undefined, pageIndex: 1 })}>
                     <option value="">Tất cả vai trò</option>
                     <option value="Admin">Admin</option>
                     <option value="Moderator">Moderator</option>
                     <option value="User">User</option>
                 </select>
 
-                <select className="page-filter-status" value={filters.isActive === undefined ? "" : String(filters.isActive)}
+                <select className="data-filter-status" value={filters.isActive === undefined ? "" : String(filters.isActive)}
                     onChange={(e) => onChange({ ...filters, isActive: e.target.value === "" ? undefined : e.target.value === "true", pageIndex: 1 })}>
                     <option value="">Tất cả trạng thái</option>
                     <option value="true">Hoạt động</option>

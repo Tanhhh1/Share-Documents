@@ -17,19 +17,19 @@ export function CommentFilter({ filters, onChange }: CommentFilterProps) {
     }, [debouncedKeyword]);
 
     return (
-        <div className="page-filter">
+        <div className="data-filter">
             <Input
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="Tìm theo nội dung bình luận..."
             />
 
-            <div className="page-select">
-                <input type="date" className="page-filter-input" value={filters.createdDate ?? ""}
+            <div className="data-select">
+                <input type="date" className="data-filter-input" value={filters.createdDate ?? ""}
                     onChange={(e) => onChange({ ...filters, createdDate: e.target.value || undefined, pageIndex: 1 })}
                 />
 
-                <select className="page-filter-status" value={filters.isDeleted === undefined ? "" : String(filters.isDeleted)}
+                <select className="data-filter-status" value={filters.isDeleted === undefined ? "" : String(filters.isDeleted)}
                     onChange={(e) => onChange({ ...filters, isDeleted: e.target.value === "" ? undefined : e.target.value === "true", pageIndex: 1 })}
                 >
                     <option value="">Tất cả trạng thái</option>

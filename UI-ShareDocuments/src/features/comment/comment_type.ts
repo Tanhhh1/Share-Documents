@@ -18,3 +18,23 @@ export interface CommentFilterParams extends PageListParams {
     isDeleted?: boolean;
     createdDate?: string;
 }
+
+export interface CommentDto {
+    id: number;
+    documentId: number;
+    parentCommentId: number | null;
+    userId: number;
+    userName: string;
+    content: string;
+    isDeleted: boolean;
+    createdAt: string;
+    replies: CommentDto[];
+}
+
+export interface CommentFilterParams extends PageListParams {}
+
+export interface CreateCommentRequest {
+    documentId: number;
+    parentCommentId?: number;
+    content: string;
+}
