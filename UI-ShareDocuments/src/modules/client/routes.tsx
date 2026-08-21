@@ -11,10 +11,12 @@ import MyDocumentPage from "./pages/document/my_document";
 import PublishedGroupPage from "./pages/group/list_group"
 import MyGroupPage from "./pages/group/my_group";
 import ProfilePage from "./pages/profile";
+import NotificationsPage from "./pages/notification";
 
 import "@/styles/home.css"
 import "@/styles/client_layout.css"
 import "@/styles/membership.css"
+import "@/styles/notification.css"
 
 export default function ClientRoutes() {
     return (
@@ -31,6 +33,7 @@ export default function ClientRoutes() {
                 <Route path="group" element={<PublishedGroupPage />} />
                 <Route path="my-group" element={<MyGroupPage />} />
                 <Route path="profile" element={<ProfilePage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
             </Route>
         </Routes>
     );

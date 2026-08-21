@@ -100,4 +100,8 @@ export const endpoints = {
     membership: {
         getCurrent: "/membership",
     },
+    notification: {
+        list: "/notifications",
+        markAsRead: (id: number) => `/notifications/${id}/read`,
+    },
 };  
