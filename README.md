@@ -14,7 +14,6 @@ The system allows users to upload, manage, search, preview, and share documents 
 - Project Structure
 - Installation
 - Configuration
-- Authentication & Authorization
 - Third-Party Services
 - Future Improvements
 
@@ -208,9 +207,63 @@ Before running the project, make sure the following tools are installed:
 - Supabase account
 - Gotenberg
 
+Verify the installation:
+```bash
+dotnet --version
+node --version
+npm --version
+docker --version
+git --version
+```
+
 ### 2. Clone Repository
 
-### 3. 
+Clone the repository and navigate to the project directory:
+```bash
+git clone https://github.com/Tanhhh1/Share-Documents.git
+cd ShareDocuments
+```
+
+### 3. Configure Backend
+
+Create or update the backend configuration file:
+API-ShareDocuments/API-ShareDocuments/appsettings.json
+See the ##Configuration section for more details.
+
+### 4. Start Required Services
+
+Start PostgreSQL, Redis, Gotenberg, and other required services using Docker Compose:
+```bash
+docker compose up -d
+```
+Check the running containers:
+```bash
+docker compose ps
+```
+
+### 5. Run Backend
+
+Apply Entity Framework Core migrations:
+```bash
+dotnet ef database update
+```
+
+Start the ASP.NET Core Web API:
+```bash
+dotnet run
+```
+The API will be available at the URL configured in `launchSettings.json`.
+
+### 6. Run Frontend
+
+Install dependencies:
+```bash
+npm install
+```
+Start the React development server:
+```bash
+npm run dev
+```
 
 ---
 
@@ -260,18 +313,71 @@ Before starting the application, configure the required settings in appsettings.
 
 ---
 
-## Authentication & Authorization
-
-### Authentication
-
-### Authorize
-
----
-
 ## Third-Party Services
+
+The system integrates with several third-party services to provide document storage, document processing, payment, email, and caching capabilities.
+
+### Supabase
+
+Used as an S3-compatible object storage service for storing uploaded document files and generated files.
+
+- Store original document files
+- Store converted PDF files for preview
+- Store document thumbnails
+- Generate and manage file access
+
+### Gotenberg
+
+Used for document conversion and PDF generation.
+
+- Convert DOCX and PPTX files to PDF
+- Generate PDF files for document preview
+- Provide a consistent document conversion service
+
+### PayOS
+
+Used as the payment gateway for membership subscriptions.
+
+- Create payment links
+- Process membership payments
+- Handle payment callbacks
+- Update membership status after successful payment
+
+### SMTP Email Service
+
+Used for sending system emails.
+
+- Password reset emails
+- Membership-related notifications
+
+### Redis
+
+Used as an in-memory data store for application caching and temporary data.
+
+- Cache frequently accessed data
+- Store temporary application data
+- Improve application response time
+
+### SignalR
+
+Used for real-time communication between the backend and frontend.
+
+- Real-time notifications
+- Push updates to connected users
+- Maintain persistent client-server connections
 
 ---
 
 ## Future Improvements
+
+The following improvements could be considered for future versions of the system:
+
+- **Advanced Search** — Improve document search with full-text search, advanced filters, and relevance-based results.
+- **Document Versioning** — Support multiple versions of the same document and allow users to view or restore previous versions.
+- **File Sharing & Access Control** — Provide more granular permissions for sharing documents with specific users or groups.
+- **Audit Logging** — Track important user and administrative activities for better monitoring and accountability.
+- **Monitoring & Observability** — Add centralized metrics, health monitoring, and distributed tracing.
+- **Cloud Deployment** — Deploy the application and infrastructure to a cloud environment with CI/CD automation.
+
 
 ---
