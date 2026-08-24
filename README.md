@@ -156,47 +156,61 @@ ShareDocuments/
 │   │   ├── Mappers/                   # Mapster configuration
 │   │   ├── ApplicationDI.cs           # Dependency injection registration
 │   ├── Domain/
-│   │   ├── Common/                    # Base entities
-│   │   ├── Entities/                  # Domain entities
-│   │   ├── Enums/                     # Enumerations
-│   │   ├── Events/
-│   │   ├── Identity/                  # Identity domain models
-│   │   ├── InfrastructureDI.cs
+│   │   ├── Common/                    # Base domain classes such as BaseEntity and BaseDomainEntity
+│   │   ├── Entities/                  # Core business entities and domain models
+│   │   ├── Enums/                     # Domain-specific enumerations
+│   │   ├── Events/                    # Domain event definitions
+│   │   ├── Identity/                  # Identity-related domain models
 │   ├── Infrastructure
-│   │   ├── BackgroundServices
-│   │   ├── Configurations
-│   │   ├── Migrations/                # Entity Framework Core migrations
-│   │   ├── Persistences/              # DbContext and entity configurations
-│   │   ├── Services/                  # External service implementations
-│   │   ├── Repositories/              # Repository implementations
-│   │   ├── UnitOfWork/                # Unit of Work implementation
+│   │   ├── BackgroundServices/        # Background jobs and hosted services for asynchronous or scheduled tasks
+│   │   ├── Configurations/            # Infrastructure configuration options
+│   │   ├── Migrations/                # Entity Framework Core database migrations
+│   │   ├── Persistences/              # Database context, EF Core configurations, and persistence-related components
+│   │   ├── Services/                  # Implementations of external services such as storage, email, conversion, and authentication
+│   │   ├── Repositories/              # Repository implementations for database access
+│   │   ├── UnitOfWork/                # Unit of Work implementation for coordinating database operations and transactions
+│   │   ├── InfrastructureDI.cs        # Dependency injection registration
 │   └── Shared/
 │   │   ├── Helpers/                   # Shared helper classes and utility functions
 │   │   ├── Identity/                  # JWT settings and authentication models
-│   │   ├── Logger/                    # # Centralized logging utilities
+│   │   ├── Logger/                    # Centralized logging utilities
 │
 ├── UI-FlightSystem
 │   ├── src/
-│   │   ├── app/                                              
-│   │   ├── assets/
+│   │   ├── app/                       # Application-level setup, providers, and state management
+│   │   ├── assets/                    # Static frontend assets
 │   │   ├── common/
-│   │   │   ├── api/
-│   │   │   ├── components/
-│   │   │   ├── constants/
-│   │   │   ├── hooks/
-│   │   │   ├── types/
-│   │   │   ├── utils/
-│   │   ├── config/               
-│   │   ├── features/                 
-│   │   ├── modules/                   
-│   │   ├── routes/                   
-│   │   ├── styles/                       
+│   │   │   ├── api/                   # Shared API clients and HTTP request configurations
+│   │   │   ├── components/            # Reusable UI components shared across multiple features
+│   │   │   ├── constants/             # Shared application constants and configuration values
+│   │   │   ├── hooks/                 # Custom reusable React hooks
+│   │   │   ├── types/                 # Shared common API and PageList return types
+│   │   │   ├── utils/                 # Shared utility and helper functions
+│   │   ├── config/                    # Frontend environment configuration
+│   │   ├── features/                  # Feature-based modules encapsulating UI, logic, and state
+│   │   ├── modules/                   # Core UI presentation layers and main page views
+│   │   ├── routes/                    # Application route definitions and route guards
+│   │   └── styles/                    # Files CSS for user interface
 │   ├── public/
 ```
 
 ---
 
 ## Installation
+
+### 1. Prerequisites
+
+Before running the project, make sure the following tools are installed:
+- .NET 8 SDK 
+- Node.js (v22 or later)
+- PostgreSQL
+- Docker Desktop
+- Supabase account
+- Gotenberg
+
+### 2. Clone Repository
+
+### 3. 
 
 ---
 
